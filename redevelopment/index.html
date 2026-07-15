@@ -588,40 +588,14 @@
     </div>
 
     <div class="card">
-      <h2><span class="num">G</span>비교 참고 구역</h2>
-      <p class="sub">입력하신 주소·구역명과 관련성이 높은 사례를 아래 데이터베이스에서 자동으로 골라 보여줍니다.</p>
+      <h2><span class="num">G</span>주변 사례 기반 예상 비례율 · 일반분양가</h2>
+      <p class="sub">분석 지역과 관련성이 높은 사례 3곳의 확정·보도값입니다. 내 구역의 비례율과 분양가 수준을 가늠하는 참고치로만 활용하세요.</p>
       <div class="table-scroll"><table id="rCaseTable"></table></div>
       <div id="rCaseComment" style="font-size:0.92rem; color:var(--text-secondary); margin-top:12px;"></div>
+      <p class="axis-note" style="margin-top:10px">사례 데이터 추가·수정: 저장소의 <code>redevelopment/districts.js</code> 파일을 GitHub에서 편집하고 커밋하면 자동으로 반영됩니다.</p>
     </div>
 
   </div><!-- /results -->
-
-  <!-- ============ 사례 데이터베이스 (항상 표시) ============ -->
-  <div class="card" id="dbCard">
-    <h2><span class="num">DB</span>서울·경기 재개발 사례 데이터베이스</h2>
-    <p class="sub">완료·진행 중인 주요 정비사업 구역 모음. ⚠️ 세대수·단계는 대략적인 참고값(작성 시점 기준)입니다. 비례율·분양가는 각 값의 <strong>출처·신뢰도</strong>를 함께 표기했으니 투자 판단 전 원문(고시문·모집공고)을 확인하세요. <span id="dbMeta"></span></p>
-    <div class="form-grid" style="margin-bottom:14px">
-      <div class="field"><label for="dbRegion">지역</label>
-        <select id="dbRegion" onchange="renderCaseDB()">
-          <option value="">전체</option>
-          <option value="서울">서울</option>
-          <option value="경기">경기</option>
-        </select>
-      </div>
-      <div class="field"><label for="dbStatus">상태</label>
-        <select id="dbStatus" onchange="renderCaseDB()">
-          <option value="">전체</option>
-          <option value="완료">완료·입주</option>
-          <option value="진행">진행 중</option>
-        </select>
-      </div>
-      <div class="field"><label for="dbSearch">검색</label>
-        <input type="text" id="dbSearch" placeholder="구역명·지역·단지명 검색" oninput="renderCaseDB()">
-      </div>
-    </div>
-    <div class="table-scroll"><table id="dbTable"></table></div>
-    <p class="axis-note" style="margin-top:10px">데이터 추가·수정: 저장소의 <code>redevelopment/districts.js</code> 파일을 GitHub에서 편집하고 커밋하면 자동으로 반영됩니다.</p>
-  </div>
 
 </section>
 
@@ -680,42 +654,18 @@ function reliabilityBadge(r) {
   const [cls, label] = map[r] || ['badge key', r];
   return `<span class="${cls}">${label}</span>`;
 }
-function dbRow(e) {
-  const dash = v => v && String(v).trim() ? v : '—';
-  const needCheck = v => v && String(v).trim() ? v : '<span style="color:var(--text-muted)">확인 필요</span>';
+function caseRow(e) {
+  const dash = v => v && String(v).trim() ? v : '<span style="color:var(--text-muted)">확인 필요</span>';
   return `<tr>
-    <td><strong>${e.name}</strong><br><small style="color:var(--text-muted)">${e.region} ${e.city} · ${e.type}</small></td>
-    <td>${e.status === '완료' ? '✅ ' : '🔄 '}${e.stage}</td>
-    <td>${dash(e.newName)}</td>
-    <td class="num">${dash(e.households)}</td>
-    <td class="num">${dash(e.moveIn)}</td>
-    <td class="num">${needCheck(e.prorata)}</td>
-    <td>${dash(e.unionPrice)}</td>
+    <td><strong>${e.name}</strong><br><small style="color:var(--text-muted)">${e.region} ${e.city} · ${e.type} · ${e.status === '완료' ? '✅' : '🔄'} ${e.stage}${e.newName && !e.newName.startsWith('(') ? ' · ' + e.newName : ''}</small></td>
+    <td>${dash(e.prorata)}</td>
     <td>${dash(e.genPrice)}</td>
     <td class="src-cell">${e.source ? `${reliabilityBadge(e.reliability)}<br><small style="color:var(--text-muted)">${e.source}</small>` : '—'}</td>
-    <td><small>${dash(e.note)}</small></td>
   </tr>`;
 }
-const DB_THEAD = '<thead><tr><th>구역</th><th>상태·단계</th><th>신축 단지명</th><th class="num">세대수</th><th class="num">입주</th><th class="num">비례율</th><th>조합원분양가</th><th>일반분양가</th><th>출처·신뢰도</th><th>비고</th></tr></thead>';
+const CASE_THEAD = '<thead><tr><th>참고 구역</th><th>비례율 (사례)</th><th>일반분양가 (사례)</th><th>출처·신뢰도</th></tr></thead>';
 
-/* 항상 표시되는 DB 브라우저 */
-function renderCaseDB() {
-  const region = document.getElementById('dbRegion').value;
-  const status = document.getElementById('dbStatus').value;
-  const q = document.getElementById('dbSearch').value.trim().toLowerCase();
-  const rows = dbEntries().filter(e =>
-    (!region || e.region === region) &&
-    (!status || e.status === status) &&
-    (!q || [e.name, e.city, e.newName, e.note, e.type].join(' ').toLowerCase().includes(q))
-  );
-  document.getElementById('dbTable').innerHTML = DB_THEAD +
-    '<tbody>' + (rows.length ? rows.map(dbRow).join('') : '<tr><td colspan="10" style="color:var(--text-muted)">조건에 맞는 구역이 없습니다.</td></tr>') + '</tbody>';
-  const db = window.DISTRICT_DB || {};
-  document.getElementById('dbMeta').textContent = `(총 ${dbEntries().length}곳 수록 · 표시 ${rows.length}곳 · 데이터 기준 ${db.updated || '-'})`;
-}
-document.addEventListener('DOMContentLoaded', renderCaseDB);
-
-/* 입력 물건과 관련성 높은 구역 선별 */
+/* 입력 물건과 관련성 높은 사례 3곳 선별 — 비례율·분양가 데이터 보유 구역 우선 */
 function findRelatedDistricts(inp) {
   const addr = (inp.addr || '').replace(/\s/g, '');
   const zone = (inp.zone || '').replace(/\s/g, '');
@@ -725,12 +675,19 @@ function findRelatedDistricts(inp) {
     if (zone && (nameKey.includes(zone) || zone.includes(nameKey))) score += 100; // 구역명 일치
     const cityParts = e.city.split(/\s+/); // '성남시 수정구' → 시·구 각각 매칭
     if (addr && cityParts.some(p => addr.includes(p.replace(/(시|구)$/, '')))) score += 30;
-    return { e, score };
-  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
-  if (scored.length) return { list: scored.slice(0, 8).map(x => x.e), matchedByName: scored[0].score >= 100 ? scored[0].e : null };
-  // 매칭 실패 시: 초기 단계 물건이면 진행 구역, 아니면 완료 구역 위주로 참고 제시
-  const fallback = dbEntries().filter(e => STAGE_RISK[inp.stage] >= 3 ? e.status === '진행' : e.status === '완료').slice(0, 6);
-  return { list: fallback, matchedByName: null };
+    const hasData = (e.prorata ? 20 : 0) + (e.genPrice ? 20 : 0); // 예상치 참고 가능 구역 우선
+    return { e, locality: score, rank: score + hasData };
+  });
+  const local = scored.filter(x => x.locality > 0).sort((a, b) => b.rank - a.rank);
+  const matchedByName = local.length && local[0].locality >= 100 ? local[0].e : null;
+  let list = local.map(x => x.e);
+  if (list.length < 3) {
+    // 지역 매칭 부족 시: 데이터가 있는 완료 사례로 보충
+    const fill = scored.filter(x => x.locality === 0 && x.rank > 0 && x.e.status === '완료')
+      .sort((a, b) => b.rank - a.rank).map(x => x.e);
+    list = list.concat(fill);
+  }
+  return { list: list.slice(0, 3), matchedByName };
 }
 
 /* ---------- 메인 분석 ---------- */
@@ -947,10 +904,10 @@ function render(inp, r) {
   // F. AI 투자 의견
   document.getElementById('rAiComment').innerHTML = buildAiComment(inp, r);
 
-  // G. 비교 참고 구역 (DB에서 자동 선별)
+  // G. 주변 사례 기반 예상 비례율·일반분양가 (DB에서 3곳 자동 선별)
   const related = findRelatedDistricts(inp);
-  document.getElementById('rCaseTable').innerHTML = DB_THEAD +
-    '<tbody>' + related.list.map(dbRow).join('') + '</tbody>';
+  document.getElementById('rCaseTable').innerHTML = CASE_THEAD +
+    '<tbody>' + (related.list.length ? related.list.map(caseRow).join('') : '<tr><td colspan="4" style="color:var(--text-muted)">참고할 사례가 없습니다.</td></tr>') + '</tbody>';
   document.getElementById('rCaseComment').innerHTML = buildCaseComment(inp, r, related);
 
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
