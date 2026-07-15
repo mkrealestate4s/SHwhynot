@@ -141,7 +141,8 @@
   /* DB·사례 표: 짧은 값은 줄바꿈 금지, 긴 텍스트 칸(구역명·비고)만 줄바꿈 허용 */
   #dbTable th, #dbTable td, #rCaseTable th, #rCaseTable td { white-space: nowrap; }
   #dbTable td:first-child, #rCaseTable td:first-child { white-space: normal; min-width: 190px; }
-  #dbTable td:last-child, #rCaseTable td:last-child { white-space: normal; min-width: 220px; }
+  #dbTable td:last-child, #rCaseTable td:last-child { white-space: normal; min-width: 200px; }
+  #dbTable td.src-cell, #rCaseTable td.src-cell { white-space: normal; min-width: 200px; }
   /* 결과 표 B·C·D: 금액·평가 셀 줄바꿈 방지 */
   #rProrataTable td, #rProrataTable th, #rBurdenTable td, #rBurdenTable th { white-space: nowrap; }
   #rBizTable td:first-child { white-space: nowrap; }
@@ -568,7 +569,7 @@
   <!-- ============ 사례 데이터베이스 (항상 표시) ============ -->
   <div class="card" id="dbCard">
     <h2><span class="num">DB</span>서울·경기 재개발 사례 데이터베이스</h2>
-    <p class="sub">완료·진행 중인 주요 정비사업 구역 모음. ⚠️ 세대수·단계는 대략적인 참고값(작성 시점 기준)이며, 비례율·분양가는 조합 고시문 확인 후 채워 넣는 항목입니다. <span id="dbMeta"></span></p>
+    <p class="sub">완료·진행 중인 주요 정비사업 구역 모음. ⚠️ 세대수·단계는 대략적인 참고값(작성 시점 기준)입니다. 비례율·분양가는 각 값의 <strong>출처·신뢰도</strong>를 함께 표기했으니 투자 판단 전 원문(고시문·모집공고)을 확인하세요. <span id="dbMeta"></span></p>
     <div class="form-grid" style="margin-bottom:14px">
       <div class="field"><label for="dbRegion">지역</label>
         <select id="dbRegion" onchange="renderCaseDB()">
@@ -639,20 +640,33 @@ const BTYPE_LABEL = { dasedae: '다세대(빌라)', dagagu: '다가구', sangga:
 function dbEntries() {
   return (window.DISTRICT_DB && window.DISTRICT_DB.entries) || [];
 }
+function reliabilityBadge(r) {
+  if (!r) return '';
+  const map = {
+    '공식':   ['badge risk-low',  '공식 자료'],
+    '언론보도': ['badge key',      '언론 보도'],
+    '비공식': ['badge risk-mid',  '비공식'],
+  };
+  const [cls, label] = map[r] || ['badge key', r];
+  return `<span class="${cls}">${label}</span>`;
+}
 function dbRow(e) {
   const dash = v => v && String(v).trim() ? v : '—';
+  const needCheck = v => v && String(v).trim() ? v : '<span style="color:var(--text-muted)">확인 필요</span>';
   return `<tr>
     <td><strong>${e.name}</strong><br><small style="color:var(--text-muted)">${e.region} ${e.city} · ${e.type}</small></td>
     <td>${e.status === '완료' ? '✅ ' : '🔄 '}${e.stage}</td>
     <td>${dash(e.newName)}</td>
     <td class="num">${dash(e.households)}</td>
     <td class="num">${dash(e.moveIn)}</td>
-    <td class="num">${e.prorata ? e.prorata : '확인 필요'}</td>
+    <td class="num">${needCheck(e.prorata)}</td>
+    <td>${dash(e.unionPrice)}</td>
     <td>${dash(e.genPrice)}</td>
+    <td class="src-cell">${e.source ? `${reliabilityBadge(e.reliability)}<br><small style="color:var(--text-muted)">${e.source}</small>` : '—'}</td>
     <td><small>${dash(e.note)}</small></td>
   </tr>`;
 }
-const DB_THEAD = '<thead><tr><th>구역</th><th>상태·단계</th><th>신축 단지명</th><th class="num">세대수</th><th class="num">입주</th><th class="num">비례율</th><th>일반분양가</th><th>비고</th></tr></thead>';
+const DB_THEAD = '<thead><tr><th>구역</th><th>상태·단계</th><th>신축 단지명</th><th class="num">세대수</th><th class="num">입주</th><th class="num">비례율</th><th>조합원분양가</th><th>일반분양가</th><th>출처·신뢰도</th><th>비고</th></tr></thead>';
 
 /* 항상 표시되는 DB 브라우저 */
 function renderCaseDB() {
@@ -665,7 +679,7 @@ function renderCaseDB() {
     (!q || [e.name, e.city, e.newName, e.note, e.type].join(' ').toLowerCase().includes(q))
   );
   document.getElementById('dbTable').innerHTML = DB_THEAD +
-    '<tbody>' + (rows.length ? rows.map(dbRow).join('') : '<tr><td colspan="8" style="color:var(--text-muted)">조건에 맞는 구역이 없습니다.</td></tr>') + '</tbody>';
+    '<tbody>' + (rows.length ? rows.map(dbRow).join('') : '<tr><td colspan="10" style="color:var(--text-muted)">조건에 맞는 구역이 없습니다.</td></tr>') + '</tbody>';
   const db = window.DISTRICT_DB || {};
   document.getElementById('dbMeta').textContent = `(총 ${dbEntries().length}곳 수록 · 표시 ${rows.length}곳 · 데이터 기준 ${db.updated || '-'})`;
 }
