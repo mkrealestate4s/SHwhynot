@@ -550,13 +550,40 @@
     </div>
 
     <div class="card">
-      <h2><span class="num">G</span>성남 주요 구역 사례 비교</h2>
-      <p class="sub">⚠️ 아래 수치는 이해를 돕기 위한 <strong>예시 데이터</strong>이며 실제 사업 수치와 다를 수 있습니다. 최신 정보는 성남시 고시·공고와 각 구역 조합(또는 LH) 공지를 반드시 확인하세요.</p>
+      <h2><span class="num">G</span>비교 참고 구역</h2>
+      <p class="sub">입력하신 주소·구역명과 관련성이 높은 사례를 아래 데이터베이스에서 자동으로 골라 보여줍니다.</p>
       <div class="table-scroll"><table id="rCaseTable"></table></div>
       <div id="rCaseComment" style="font-size:0.92rem; color:var(--text-secondary); margin-top:12px;"></div>
     </div>
 
   </div><!-- /results -->
+
+  <!-- ============ 사례 데이터베이스 (항상 표시) ============ -->
+  <div class="card" id="dbCard">
+    <h2><span class="num">DB</span>서울·경기 재개발 사례 데이터베이스</h2>
+    <p class="sub">완료·진행 중인 주요 정비사업 구역 모음. ⚠️ 세대수·단계는 대략적인 참고값(작성 시점 기준)이며, 비례율·분양가는 조합 고시문 확인 후 채워 넣는 항목입니다. <span id="dbMeta"></span></p>
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="field"><label for="dbRegion">지역</label>
+        <select id="dbRegion" onchange="renderCaseDB()">
+          <option value="">전체</option>
+          <option value="서울">서울</option>
+          <option value="경기">경기</option>
+        </select>
+      </div>
+      <div class="field"><label for="dbStatus">상태</label>
+        <select id="dbStatus" onchange="renderCaseDB()">
+          <option value="">전체</option>
+          <option value="완료">완료·입주</option>
+          <option value="진행">진행 중</option>
+        </select>
+      </div>
+      <div class="field"><label for="dbSearch">검색</label>
+        <input type="text" id="dbSearch" placeholder="구역명·지역·단지명 검색" oninput="renderCaseDB()">
+      </div>
+    </div>
+    <div class="table-scroll"><table id="dbTable"></table></div>
+    <p class="axis-note" style="margin-top:10px">데이터 추가·수정: 저장소의 <code>redevelopment/districts.js</code> 파일을 GitHub에서 편집하고 커밋하면 자동으로 반영됩니다.</p>
+  </div>
 
 </section>
 
@@ -567,6 +594,7 @@
 
 </div><!-- /wrap -->
 
+<script src="districts.js"></script>
 <script>
 /* ---------- 탭 전환 ---------- */
 function switchTab(name) {
@@ -600,13 +628,59 @@ const STAGE_LABEL = { candidate: '후보지', designated: '정비구역 지정',
 const STAGE_RISK  = { candidate: 5, designated: 4, union: 3, approval: 2, management: 1 }; // 1=낮음
 const BTYPE_LABEL = { dasedae: '다세대(빌라)', dagagu: '다가구', sangga: '상가주택', geunsaeng: '근생' };
 
-/* ---------- 성남 사례 예시 데이터 ---------- */
-const SEONGNAM_CASES = [
-  { name: '수진1구역',   type: '공공재개발(LH)', stage: '사업시행 준비',   scale: '약 5,000세대급 (예시)', prorata: '미확정', unionPrice: '미확정', genPrice: '미확정', period: '후보지 지정 후 진행 중', note: '성남 원도심 대규모 공공재개발' },
-  { name: '신흥1구역',   type: '공공재개발(LH)', stage: '정비계획 수립',   scale: '약 4,000세대급 (예시)', prorata: '미확정', unionPrice: '미확정', genPrice: '미확정', period: '후보지 지정 후 진행 중', note: '수진1과 함께 원도심 핵심 구역' },
-  { name: '상대원3구역', type: '공공재개발',      stage: '초기 단계',       scale: '약 5,000세대급 (예시)', prorata: '미확정', unionPrice: '미확정', genPrice: '미확정', period: '구역 지정 추진 중',       note: '중원구 대규모 후보 구역' },
-  { name: '금광2구역',   type: '재개발 추진',     stage: '초기 단계',       scale: '수천 세대급 (예시)',    prorata: '미확정', unionPrice: '미확정', genPrice: '미확정', period: '초기 추진 중',            note: '인근 금광1(준공)의 후속 기대 지역' },
-];
+/* ---------- 사례 데이터베이스 접근 (redevelopment/districts.js) ---------- */
+function dbEntries() {
+  return (window.DISTRICT_DB && window.DISTRICT_DB.entries) || [];
+}
+function dbRow(e) {
+  const dash = v => v && String(v).trim() ? v : '—';
+  return `<tr>
+    <td><strong>${e.name}</strong><br><small style="color:var(--text-muted)">${e.region} ${e.city} · ${e.type}</small></td>
+    <td>${e.status === '완료' ? '✅ ' : '🔄 '}${e.stage}</td>
+    <td>${dash(e.newName)}</td>
+    <td class="num">${dash(e.households)}</td>
+    <td class="num">${dash(e.moveIn)}</td>
+    <td class="num">${e.prorata ? e.prorata : '확인 필요'}</td>
+    <td>${dash(e.genPrice)}</td>
+    <td><small>${dash(e.note)}</small></td>
+  </tr>`;
+}
+const DB_THEAD = '<thead><tr><th>구역</th><th>상태·단계</th><th>신축 단지명</th><th class="num">세대수</th><th class="num">입주</th><th class="num">비례율</th><th>일반분양가</th><th>비고</th></tr></thead>';
+
+/* 항상 표시되는 DB 브라우저 */
+function renderCaseDB() {
+  const region = document.getElementById('dbRegion').value;
+  const status = document.getElementById('dbStatus').value;
+  const q = document.getElementById('dbSearch').value.trim().toLowerCase();
+  const rows = dbEntries().filter(e =>
+    (!region || e.region === region) &&
+    (!status || e.status === status) &&
+    (!q || [e.name, e.city, e.newName, e.note, e.type].join(' ').toLowerCase().includes(q))
+  );
+  document.getElementById('dbTable').innerHTML = DB_THEAD +
+    '<tbody>' + (rows.length ? rows.map(dbRow).join('') : '<tr><td colspan="8" style="color:var(--text-muted)">조건에 맞는 구역이 없습니다.</td></tr>') + '</tbody>';
+  const db = window.DISTRICT_DB || {};
+  document.getElementById('dbMeta').textContent = `(총 ${dbEntries().length}곳 수록 · 표시 ${rows.length}곳 · 데이터 기준 ${db.updated || '-'})`;
+}
+document.addEventListener('DOMContentLoaded', renderCaseDB);
+
+/* 입력 물건과 관련성 높은 구역 선별 */
+function findRelatedDistricts(inp) {
+  const addr = (inp.addr || '').replace(/\s/g, '');
+  const zone = (inp.zone || '').replace(/\s/g, '');
+  const scored = dbEntries().map(e => {
+    let score = 0;
+    const nameKey = e.name.replace(/\s|\(.+?\)/g, '');
+    if (zone && (nameKey.includes(zone) || zone.includes(nameKey))) score += 100; // 구역명 일치
+    const cityParts = e.city.split(/\s+/); // '성남시 수정구' → 시·구 각각 매칭
+    if (addr && cityParts.some(p => addr.includes(p.replace(/(시|구)$/, '')))) score += 30;
+    return { e, score };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+  if (scored.length) return { list: scored.slice(0, 8).map(x => x.e), matchedByName: scored[0].score >= 100 ? scored[0].e : null };
+  // 매칭 실패 시: 초기 단계 물건이면 진행 구역, 아니면 완료 구역 위주로 참고 제시
+  const fallback = dbEntries().filter(e => STAGE_RISK[inp.stage] >= 3 ? e.status === '진행' : e.status === '완료').slice(0, 6);
+  return { list: fallback, matchedByName: null };
+}
 
 /* ---------- 메인 분석 ---------- */
 function analyze() {
@@ -822,13 +896,11 @@ function render(inp, r) {
   // F. AI 투자 의견
   document.getElementById('rAiComment').innerHTML = buildAiComment(inp, r);
 
-  // G. 성남 사례 비교
-  document.getElementById('rCaseTable').innerHTML =
-    '<thead><tr><th>구역</th><th>유형</th><th>단계</th><th>규모</th><th class="num">비례율</th><th>조합원분양가</th><th>일반분양가</th><th>사업 기간</th></tr></thead><tbody>' +
-    SEONGNAM_CASES.map(c =>
-      `<tr><td><strong>${c.name}</strong><br><small style="color:var(--text-muted)">${c.note}</small></td><td>${c.type}</td><td>${c.stage}</td><td>${c.scale}</td><td class="num">${c.prorata}</td><td>${c.unionPrice}</td><td>${c.genPrice}</td><td>${c.period}</td></tr>`
-    ).join('') + '</tbody>';
-  document.getElementById('rCaseComment').innerHTML = buildCaseComment(inp, r);
+  // G. 비교 참고 구역 (DB에서 자동 선별)
+  const related = findRelatedDistricts(inp);
+  document.getElementById('rCaseTable').innerHTML = DB_THEAD +
+    '<tbody>' + related.list.map(dbRow).join('') + '</tbody>';
+  document.getElementById('rCaseComment').innerHTML = buildCaseComment(inp, r, related);
 
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -908,20 +980,21 @@ function buildSummarySentence(inp, r) {
 }
 
 /* ---------- 사례 비교 코멘트 ---------- */
-function buildCaseComment(inp, r) {
-  const zone = inp.zone || '';
-  const matched = SEONGNAM_CASES.find(c => zone && zone.replace(/\s/g, '').includes(c.name.replace('구역', '')));
+function buildCaseComment(inp, r, related) {
   const stageRisk = STAGE_RISK[inp.stage];
   let s = '';
-  if (matched) {
-    s += `입력하신 구역명이 <strong>${matched.name}</strong>과 일치합니다. 이 구역은 현재 「${matched.stage}」 단계(${matched.type})로 파악되는 예시 데이터를 기준으로 비교했습니다. `;
+  if (related.matchedByName) {
+    const m = related.matchedByName;
+    s += `입력하신 구역명이 DB의 <strong>${m.name}</strong>(${m.region} ${m.city})과 일치합니다. 현재 「${m.stage}」 단계로 수록되어 있으며, 이 정보는 작성 시점 기준 참고값이므로 최신 고시를 확인하세요. `;
+  } else if (related.list.length) {
+    s += `입력하신 주소·구역명 기준으로 관련성 높은 구역 ${related.list.length}곳을 선별했습니다. 구역명이 DB에 없다면 <code>redevelopment/districts.js</code>에 직접 추가할 수 있습니다. `;
   }
   if (stageRisk >= 4) {
-    s += `현재 물건은 성남 원도심 공공재개발 후보지들의 <strong>초기 단계와 유사한 위치</strong>에 있습니다. 이 단계의 특징은 ① 매수가가 상대적으로 저렴하고 ② 권리산정기준일 리스크가 가장 크며 ③ 사업 기간이 10년 이상 남았을 수 있다는 점입니다.`;
+    s += `현재 물건은 <strong>초기 단계</strong>로, 위 진행 구역들의 출발점과 유사한 위치입니다. 이 단계의 특징은 ① 매수가가 상대적으로 저렴하고 ② 권리산정기준일 리스크가 가장 크며 ③ 사업 기간이 10년 이상 남았을 수 있다는 점입니다. 완료 사례의 준공까지 걸린 기간을 함께 참고하세요.`;
   } else if (stageRisk === 3) {
-    s += `조합설립 단계는 성남 사례 기준으로 초기 후보지 대비 프리미엄이 상승하기 시작하는 구간입니다. 사업시행인가 시점의 추가 상승 여력과 지연 리스크를 함께 고려하세요.`;
+    s += `조합설립 단계는 초기 대비 프리미엄이 상승하기 시작하는 구간입니다. 유사 규모 완료 사례의 일반분양가와 현재 신축 시세를 비교해 기대수익의 상한을 가늠해 보세요.`;
   } else {
-    s += `사업시행·관리처분 단계는 수치가 구체화되는 구간으로, 위 예시 구역들의 초기 단계보다 안전하지만 기대수익률은 낮아집니다. 확정 고시문의 비례율·분양가와 본 분석의 추정치를 반드시 대조하세요.`;
+    s += `사업시행·관리처분 단계는 수치가 구체화되는 구간으로, 진행 초기 구역들보다 안전하지만 기대수익률은 낮아집니다. 확정 고시문의 비례율·분양가와 본 분석의 추정치를 반드시 대조하세요.`;
   }
   return s;
 }
