@@ -56,7 +56,7 @@
     color: var(--text-primary);
     line-height: 1.6;
   }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 24px 16px 80px; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 24px 20px 80px; }
 
   header.site { padding: 28px 0 20px; }
   header.site h1 { font-size: 1.65rem; font-weight: 700; letter-spacing: -0.01em; }
@@ -135,9 +135,16 @@
   table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
   th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--grid); }
   th { color: var(--text-muted); font-weight: 600; font-size: 0.82rem; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .table-scroll { overflow-x: auto; }
-  .stars { color: var(--warning); letter-spacing: 2px; }
+  .stars { color: var(--warning); letter-spacing: 2px; white-space: nowrap; }
+  /* DB·사례 표: 짧은 값은 줄바꿈 금지, 긴 텍스트 칸(구역명·비고)만 줄바꿈 허용 */
+  #dbTable th, #dbTable td, #rCaseTable th, #rCaseTable td { white-space: nowrap; }
+  #dbTable td:first-child, #rCaseTable td:first-child { white-space: normal; min-width: 190px; }
+  #dbTable td:last-child, #rCaseTable td:last-child { white-space: normal; min-width: 220px; }
+  /* 결과 표 B·C·D: 금액·평가 셀 줄바꿈 방지 */
+  #rProrataTable td, #rProrataTable th, #rBurdenTable td, #rBurdenTable th { white-space: nowrap; }
+  #rBizTable td:first-child { white-space: nowrap; }
   .stars .off { color: var(--grid); }
 
   /* ---- 입력 폼 ---- */
