@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SH 청년 매입임대주택 자격 자가진단 — 2026년 1차</title>
+<style>
+  :root {
+    --bg: #F6F7F9;
+    --surface: #FFFFFF;
+    --surface-2: #EEF0F5;
+    --ink: #1A1E2B;
+    --muted: #5A6072;
+    --line: #E3E6EE;
+    --accent: #2E4A9E;
+    --accent-soft: #E7EBF7;
+    --accent-ink: #2E4A9E;
+    --ok: #1B7F4D;
+    --ok-soft: #E4F2EA;
+    --bad: #BE3A2E;
+    --bad-soft: #F9E9E7;
+    --warn: #A97614;
+    --warn-soft: #F8F0DD;
+    --btn-ink: #FFFFFF;
+    --shadow: 0 1px 2px rgba(26,30,43,.05), 0 8px 24px rgba(26,30,43,.06);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12141C;
+      --surface: #1B1E29;
+      --surface-2: #232736;
+      --ink: #E8EAF2;
+      --muted: #9AA1B5;
+      --line: #2A2E3D;
+      --accent: #8FA3E8;
+      --accent-soft: #232A44;
+      --accent-ink: #A8B8F0;
+      --ok: #4FBF87;
+      --ok-soft: #16301F;
+      --bad: #E0685C;
+      --bad-soft: #3A1F1B;
+      --warn: #D9A83E;
+      --warn-soft: #332A14;
+      --btn-ink: #10131E;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F6F7F9; --surface: #FFFFFF; --surface-2: #EEF0F5;
+    --ink: #1A1E2B; --muted: #5A6072; --line: #E3E6EE;
+    --accent: #2E4A9E; --accent-soft: #E7EBF7; --accent-ink: #2E4A9E;
+    --ok: #1B7F4D; --ok-soft: #E4F2EA;
+    --bad: #BE3A2E; --bad-soft: #F9E9E7;
+    --warn: #A97614; --warn-soft: #F8F0DD;
+    --btn-ink: #FFFFFF;
+    --shadow: 0 1px 2px rgba(26,30,43,.05), 0 8px 24px rgba(26,30,43,.06);
+  }
+  :root[data-theme="dark"] {
+    --bg: #12141C; --surface: #1B1E29; --surface-2: #232736;
+    --ink: #E8EAF2; --muted: #9AA1B5; --line: #2A2E3D;
+    --accent: #8FA3E8; --accent-soft: #232A44; --accent-ink: #A8B8F0;
+    --ok: #4FBF87; --ok-soft: #16301F;
+    --bad: #E0685C; --bad-soft: #3A1F1B;
+    --warn: #D9A83E; --warn-soft: #332A14;
+    --btn-ink: #10131E;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "맑은 고딕", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+    word-break: keep-all;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  /* ---------- header ---------- */
+  .eyebrow {
+    font-size: 13px; font-weight: 600; letter-spacing: .08em;
+    color: var(--accent-ink); text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 3px; background: var(--accent); border-radius: 2px; }
+  h1 {
+    font-size: clamp(24px, 5vw, 32px); font-weight: 800; letter-spacing: -0.02em;
+    line-height: 1.3; margin: 10px 0 6px; text-wrap: balance;
+  }
+  .sub { color: var(--muted); font-size: 15px; }
+  .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .chip {
+    font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line); color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- progress ---------- */
+  .progress { display: flex; gap: 6px; margin: 28px 0 20px; }
+  .progress .seg { flex: 1; text-align: center; }
+  .progress .bar { height: 4px; border-radius: 2px; background: var(--line); margin-bottom: 7px; transition: background .25s; }
+  .progress .seg.done .bar, .progress .seg.now .bar { background: var(--accent); }
+  .progress .lbl { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .progress .seg.now .lbl { color: var(--accent-ink); }
+
+  /* ---------- cards ---------- */
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 28px 26px; margin-bottom: 16px;
+  }
+  @media (max-width: 480px) { .card { padding: 22px 18px; } }
+  .step-tag { font-size: 13px; font-weight: 700; color: var(--accent-ink); letter-spacing: .04em; }
+  .card h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; margin: 6px 0 4px; text-wrap: balance; }
+  .card .desc { color: var(--muted); font-size: 14.5px; margin-bottom: 20px; }
+
+  .q { margin-bottom: 22px; }
+  .q:last-of-type { margin-bottom: 0; }
+  .q-label { font-weight: 700; font-size: 15.5px; margin-bottom: 4px; }
+  .q-help { font-size: 13.5px; color: var(--muted); margin-bottom: 10px; }
+
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opts.row { flex-direction: row; }
+  .opts.row .opt { flex: 1; justify-content: center; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 10px;
+    border: 1.5px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; cursor: pointer; background: var(--surface);
+    transition: border-color .15s, background .15s;
+    font-size: 15px;
+  }
+  .opt:hover { border-color: var(--accent); }
+  .opt input { accent-color: var(--accent); margin-top: 4px; flex-shrink: 0; }
+  .opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .opt .opt-body { display: flex; flex-direction: column; gap: 2px; }
+  .opt .opt-title { font-weight: 600; }
+  .opt .opt-desc { font-size: 13px; color: var(--muted); }
+  .opt:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .num-field { display: flex; align-items: center; gap: 8px; }
+  .num-field input {
+    width: 100%; max-width: 260px; font-size: 16px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px;
+    background: var(--surface); color: var(--ink);
+    font-family: inherit; text-align: right;
+  }
+  .num-field input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .num-field .unit { font-size: 14px; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+  input[type="date"] {
+    font-size: 16px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px;
+    background: var(--surface); color: var(--ink); font-family: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="date"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+
+  .note {
+    font-size: 13.5px; border-radius: 10px; padding: 12px 14px; margin-top: 14px;
+    background: var(--surface-2); color: var(--muted); border: 1px solid var(--line);
+  }
+  .note.accent { background: var(--accent-soft); border-color: transparent; color: var(--accent-ink); }
+  .note.warn { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+  .note b { color: inherit; }
+
+  /* ---------- buttons ---------- */
+  .btns { display: flex; gap: 10px; margin-top: 24px; }
+  button {
+    font-family: inherit; font-size: 15.5px; font-weight: 700; cursor: pointer;
+    border-radius: 10px; padding: 13px 22px; border: none;
+    transition: filter .15s, background .15s;
+  }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn-primary { background: var(--accent); color: var(--btn-ink); flex: 1; }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1.5px solid var(--line); }
+  .btn-ghost:hover { border-color: var(--muted); }
+
+  .err { color: var(--bad); font-size: 13.5px; font-weight: 600; margin-top: 12px; display: none; }
+  .err.show { display: block; }
+
+  /* ---------- result ---------- */
+  .verdict {
+    border-radius: var(--radius); padding: 30px 26px; text-align: center;
+    margin-bottom: 16px; border: 1px solid transparent;
+  }
+  .verdict.ok { background: var(--ok-soft); border-color: var(--ok); }
+  .verdict.bad { background: var(--bad-soft); border-color: var(--bad); }
+  .verdict .badge {
+    display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .06em;
+    padding: 5px 14px; border-radius: 999px; margin-bottom: 12px;
+  }
+  .verdict.ok .badge { background: var(--ok); color: #fff; }
+  .verdict.bad .badge { background: var(--bad); color: #fff; }
+  .verdict h2 { font-size: clamp(22px, 5vw, 28px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.35; text-wrap: balance; }
+  .verdict.ok h2 { color: var(--ok); }
+  .verdict.bad h2 { color: var(--bad); }
+  .verdict .v-sub { margin-top: 8px; font-size: 14.5px; color: var(--muted); }
+
+  .kv { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .kv th, .kv td { text-align: left; padding: 10px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .kv tr:last-child th, .kv tr:last-child td { border-bottom: none; }
+  .kv th { color: var(--muted); font-weight: 600; width: 38%; }
+  .kv td { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kv td.pass { color: var(--ok); }
+  .kv td.fail { color: var(--bad); }
+
+  .doc-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .doc-list li { display: flex; gap: 10px; font-size: 14.5px; align-items: flex-start; }
+  .doc-list li::before { content: "○"; color: var(--accent-ink); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  .score-line { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+  .score-line:last-child { border-bottom: none; }
+  .score-line .pts { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent-ink); flex-shrink: 0; margin-left: 12px; }
+  .score-total { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding: 14px 16px; border-radius: 10px; background: var(--accent-soft); font-weight: 800; font-size: 16px; color: var(--accent-ink); }
+  .score-total .pts { font-size: 22px; font-variant-numeric: tabular-nums; }
+
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item { display: grid; grid-template-columns: 118px 1fr; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-date { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent-ink); }
+  .tl-what { color: var(--ink); }
+  .tl-what small { display: block; color: var(--muted); font-size: 12.5px; }
+
+  .disclaimer { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+  .hidden { display: none !important; }
+
+  details.ref { margin-top: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  details.ref summary { cursor: pointer; font-size: 13.5px; font-weight: 700; color: var(--accent-ink); padding: 11px 14px; list-style: none; }
+  details.ref summary::-webkit-details-marker { display: none; }
+  details.ref summary::before { content: "▸ "; }
+  details.ref[open] summary::before { content: "▾ "; }
+  details.ref .ref-body { padding: 0 14px 14px; font-size: 13.5px; color: var(--muted); overflow-x: auto; }
+  .ref-table { border-collapse: collapse; width: 100%; min-width: 420px; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .ref-table th, .ref-table td { border: 1px solid var(--line); padding: 7px 10px; text-align: center; }
+  .ref-table th { background: var(--surface-2); font-weight: 700; color: var(--ink); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card, .verdict { animation: rise .3s ease-out both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">SH 서울주택도시개발공사 · 2026년 1차</div>
+    <h1>청년 매입임대주택<br>신청 자격 자가진단</h1>
+    <p class="sub">공고문 기준으로 신청 자격과 해당 순위(1·2·3순위)를 단계별로 확인합니다.</p>
+    <div class="meta-chips">
+      <span class="chip">공고일 2026. 6. 26.</span>
+      <span class="chip">총 849호 (신규 490 + 재공급 359)</span>
+      <span class="chip">주택관리번호 2026980105</span>
+    </div>
+  </header>
+
+  <nav class="progress" id="progress" aria-label="진단 진행 단계">
+    <div class="seg" data-step="1"><div class="bar"></div><div class="lbl">기본 자격</div></div>
+    <div class="seg" data-step="2"><div class="bar"></div><div class="lbl">신청 유형</div></div>
+    <div class="seg" data-step="3"><div class="bar"></div><div class="lbl">순위 판정</div></div>
+    <div class="seg" data-step="4"><div class="bar"></div><div class="lbl">가점 · 결과</div></div>
+  </nav>
+
+  <!-- ======================= STEP 0 : 시작 ======================= -->
+  <section class="card" id="s0">
+    <span class="step-tag">시작하기</span>
+    <h2>3분이면 확인할 수 있어요</h2>
+    <p class="desc">모든 자격은 <b>모집공고일(2026. 6. 26.) 현재</b>를 기준으로 판단합니다. 아래 순서로 진행됩니다.</p>
+    <ul class="doc-list">
+      <li>기본 자격 — 무주택·미혼 여부 등 공통 요건</li>
+      <li>신청 유형 — 대학생 / 취업준비생 / 청년 / 이공계 인재</li>
+      <li>순위 판정 — 1순위(수급자 등) 또는 소득·자산 기준으로 2·3순위</li>
+      <li>가점 계산 — 동일 순위 경합 시 적용되는 배점표 합산</li>
+    </ul>
+    <div class="note">이 진단은 공고문을 옮긴 <b>참고용 도구</b>입니다. 실제 자격 심사는 SH공사가 사회보장정보시스템 조회 결과로 판단합니다.</div>
+    <div class="btns"><button class="btn-primary" data-go="s1">진단 시작</button></div>
+  </section>
+
+  <!-- ======================= STEP 1 : 기본 자격 ======================= -->
+  <section class="card hidden" id="s1">
+    <span class="step-tag">1단계 · 기본 자격</span>
+    <h2>공통 요건 확인</h2>
+    <p class="desc">세 가지 모두 충족해야 신청할 수 있습니다.</p>
+
+    <div class="q">
+      <div class="q-label">① 본인 명의의 주택이 없는 무주택자인가요?</div>
+      <div class="q-help">본인 기준으로만 판단합니다(「주택공급에 관한 규칙」 제53조). 부모의 주택 소유 여부는 신청 자격과 무관합니다(가점에만 영향).</div>
+      <div class="opts row" data-name="ownHome">
+        <label class="opt"><input type="radio" name="ownHome" value="yes"><span class="opt-title">예, 무주택입니다</span></label>
+        <label class="opt"><input type="radio" name="ownHome" value="no"><span class="opt-title">아니요, 주택이 있습니다</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-label">② 현재 혼인 상태가 아닌 미혼인가요?</div>
+      <div class="q-help">기혼자는 신청할 수 없습니다.</div>
+      <div class="opts row" data-name="single">
+        <label class="opt"><input type="radio" name="single" value="yes"><span class="opt-title">예, 미혼입니다</span></label>
+        <label class="opt"><input type="radio" name="single" value="no"><span class="opt-title">아니요</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-label">③ 대한민국 국민(내국인)인가요?</div>
+      <div class="q-help">외국인과 재외국민은 신청할 수 없습니다.</div>
+      <div class="opts row" data-name="korean">
+        <label class="opt"><input type="radio" name="korean" value="yes"><span class="opt-title">예</span></label>
+        <label class="opt"><input type="radio" name="korean" value="no"><span class="opt-title">아니요</span></label>
+      </div>
+    </div>
+
+    <p class="err" id="err-s1">모든 항목에 답해 주세요.</p>
+    <div class="btns">
+      <button class="btn-ghost" data-back="s0">이전</button>
+      <button class="btn-primary" data-next="s1">다음</button>
+    </div>
+  </section>
+
+  <!-- ======================= STEP 2 : 신청 유형 ======================= -->
+  <section class="card hidden" id="s2">
+    <span class="step-tag">2단계 · 신청 유형</span>
+    <h2>어떤 유형으로 신청하시나요?</h2>
+    <p class="desc">공고일 현재 본인에게 해당하는 유형 <b>한 가지</b>를 선택합니다. 대학생·취업준비생도 나이 요건이 되면 ‘청년’ 유형으로 신청할 수 있습니다.</p>
+
+    <div class="opts" data-name="type">
+      <label class="opt"><input type="radio" name="type" value="student">
+        <span class="opt-body"><span class="opt-title">대학생</span>
+        <span class="opt-desc">서울특별시 소재 대학 재학 중(복학·입학예정자 포함)</span></span></label>
+      <label class="opt"><input type="radio" name="type" value="jobseeker">
+        <span class="opt-body"><span class="opt-title">취업준비생</span>
+        <span class="opt-desc">대학·고교 졸업(졸업유예 포함) 또는 중퇴 후 2년 이내이며 미재직</span></span></label>
+      <label class="opt"><input type="radio" name="type" value="youth">
+        <span class="opt-body"><span class="opt-title">청년</span>
+        <span class="opt-desc">만 19세 이상 ~ 만 39세 이하 (재직 여부 무관)</span></span></label>
+      <label class="opt"><input type="radio" name="type" value="stem">
+        <span class="opt-body"><span class="opt-title">이공계 인재</span>
+        <span class="opt-desc">만 19~39세 + 서울 소재 대학의 이공계열 전일제 대학원생·박사후연구원</span></span></label>
+    </div>
+
+    <!-- 대학생 세부 -->
+    <div class="q hidden" id="sub-student" style="margin-top:22px">
+      <div class="q-label">서울특별시 소재 대학에 재학 중인가요?</div>
+      <div class="q-help">복학예정자·입학예정자(최종 합격자) 포함. 사내대학·학점은행제·대학원·대학원대학은 제외되며, 졸업유예자와 대학원생은 대학생 유형으로 신청할 수 없습니다(요건 충족 시 취업준비생 가능).</div>
+      <div class="opts row" data-name="stuOk">
+        <label class="opt"><input type="radio" name="stuOk" value="yes"><span class="opt-title">예</span></label>
+        <label class="opt"><input type="radio" name="stuOk" value="no"><span class="opt-title">아니요</span></label>
+      </div>
+    </div>
+
+    <!-- 취업준비생 세부 -->
+    <div class="hidden" id="sub-jobseeker" style="margin-top:22px">
+      <div class="q">
+        <div class="q-label">대학 또는 고등·고등기술학교를 졸업(수료)·중퇴한 지 2년 이내인가요?</div>
+        <div class="q-help">이번 공고는 <b>2024. 6. 27. 이후</b> 졸업(수료)·중퇴자가 해당합니다. 검정고시 등 동등 학력 인정자 포함, 해외 대학·해외 고교는 제외.</div>
+        <div class="opts row" data-name="jsGrad">
+          <label class="opt"><input type="radio" name="jsGrad" value="yes"><span class="opt-title">예</span></label>
+          <label class="opt"><input type="radio" name="jsGrad" value="no"><span class="opt-title">아니요</span></label>
+        </div>
+      </div>
+      <div class="q">
+        <div class="q-label">현재 직장에 재직 중이지 않나요?</div>
+        <div class="q-help">건강보험 자격득실확인서상 ‘직장가입자’가 아니고, 사업자 등록 사실도 없어야 합니다(공고일 기준 휴업·폐업은 사실증명 제출 시 인정).</div>
+        <div class="opts row" data-name="jsNoJob">
+          <label class="opt"><input type="radio" name="jsNoJob" value="yes"><span class="opt-title">예, 미재직입니다</span></label>
+          <label class="opt"><input type="radio" name="jsNoJob" value="no"><span class="opt-title">아니요, 재직 중입니다</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 청년 / 이공계 공통: 생년월일 -->
+    <div class="q hidden" id="sub-birth" style="margin-top:22px">
+      <div class="q-label">생년월일을 입력해 주세요</div>
+      <div class="q-help">공고일 현재 만 19세 이상 ~ 만 39세 이하: <b>1986. 6. 27. ~ 2007. 6. 26. 출생자</b>가 신청할 수 있습니다.</div>
+      <input type="date" id="birth" min="1900-01-01" max="2010-12-31">
+    </div>
+
+    <!-- 이공계 세부 -->
+    <div class="q hidden" id="sub-stem" style="margin-top:22px">
+      <div class="q-label">서울 소재 대학에서 연구 수행 중인 이공계열 전일제 대학원생 또는 박사후연구원인가요?</div>
+      <div class="q-help">자연과학·공학계열만 해당(인문·사회, 예체능, 의학계열 제외). ‘전일제’는 연구·학업에 전념하는 미취업 상태를 뜻합니다. 이공계 인재 유형은 <b>성장주택(마포 삼화에코빌2차)만</b> 신청할 수 있습니다.</div>
+      <div class="opts row" data-name="stemOk">
+        <label class="opt"><input type="radio" name="stemOk" value="yes"><span class="opt-title">예</span></label>
+        <label class="opt"><input type="radio" name="stemOk" value="no"><span class="opt-title">아니요</span></label>
+      </div>
+    </div>
+
+    <p class="err" id="err-s2">선택한 유형의 세부 요건에 모두 답해 주세요.</p>
+    <div class="btns">
+      <button class="btn-ghost" data-back="s1">이전</button>
+      <button class="btn-primary" data-next="s2">다음</button>
+    </div>
+  </section>
+
+  <!-- ======================= STEP 3a : 1순위 ======================= -->
+  <section class="card hidden" id="s3a">
+    <span class="step-tag">3단계 · 순위 판정</span>
+    <h2>1순위 해당 여부</h2>
+    <p class="desc">아래 중 하나라도 해당하면 <b>1순위</b>이며, 별도의 소득·자산 심사를 받지 않습니다.</p>
+
+    <div class="opts" data-name="rank1">
+      <label class="opt"><input type="radio" name="rank1" value="benefit">
+        <span class="opt-body"><span class="opt-title">생계·의료·주거급여 수급자 가구</span>
+        <span class="opt-desc">본인 또는 동일 주민등록등본에 등재된 부모가 수급자인 경우 (보장시설 수급자 포함)</span></span></label>
+      <label class="opt"><input type="radio" name="rank1" value="nearpoor">
+        <span class="opt-body"><span class="opt-title">차상위계층 가구</span>
+        <span class="opt-desc">본인 또는 동일 등본 내 부모가 차상위계층인 경우</span></span></label>
+      <label class="opt"><input type="radio" name="rank1" value="singleparent">
+        <span class="opt-body"><span class="opt-title">지원대상 한부모가족</span>
+        <span class="opt-desc">신청자 본인 명의로 한부모가족증명서 발급이 가능한 경우</span></span></label>
+      <label class="opt"><input type="radio" name="rank1" value="none">
+        <span class="opt-body"><span class="opt-title">해당 없음</span>
+        <span class="opt-desc">소득·자산 기준으로 2·3순위를 확인합니다</span></span></label>
+    </div>
+
+    <p class="err" id="err-s3a">하나를 선택해 주세요.</p>
+    <div class="btns">
+      <button class="btn-ghost" data-back="s2">이전</button>
+      <button class="btn-primary" data-next="s3a">다음</button>
+    </div>
+  </section>
+
+  <!-- ======================= STEP 3b : 부모 범위 ======================= -->
+  <section class="card hidden" id="s3b">
+    <span class="step-tag">3단계 · 순위 판정</span>
+    <h2>부모 상황 확인</h2>
+    <p class="desc">2순위는 <b>본인과 부모</b>의 소득·자산을 합산해 심사합니다(세대 분리 여부 무관). 부모 상황에 따라 검증 대상과 추가 제출 서류가 달라집니다.</p>
+
+    <div class="opts" data-name="parents">
+      <label class="opt"><input type="radio" name="parents" value="both">
+        <span class="opt-body"><span class="opt-title">부모 모두 계심</span>
+        <span class="opt-desc">부모 2인 모두 검증 대상 · 추가 서류 없음</span></span></label>
+      <label class="opt"><input type="radio" name="parents" value="oneDead">
+        <span class="opt-body"><span class="opt-title">부 또는 모 사망</span>
+        <span class="opt-desc">생존한 부/모 1인 검증 · 사망자 말소자초본 제출</span></span></label>
+      <label class="opt"><input type="radio" name="parents" value="bothDead">
+        <span class="opt-body"><span class="opt-title">부모 모두 사망</span>
+        <span class="opt-desc">검증 대상 부모 없음 · 부모 말소자초본 제출</span></span></label>
+      <label class="opt"><input type="radio" name="parents" value="divorced">
+        <span class="opt-body"><span class="opt-title">부모 이혼</span>
+        <span class="opt-desc">등본에 함께 등재된 부/모 1인(모두 세대 분리 시 선택) · 혼인관계증명서 제출</span></span></label>
+      <label class="opt"><input type="radio" name="parents" value="divorcedDead">
+        <span class="opt-body"><span class="opt-title">부모 이혼 후 해당 부/모 사망</span>
+        <span class="opt-desc">부모가 없는 경우로 간주 · 혼인관계증명서, 말소자초본 등 제출</span></span></label>
+      <label class="opt"><input type="radio" name="parents" value="remarried">
+        <span class="opt-body"><span class="opt-title">부모 이혼(사망) 후 재혼</span>
+        <span class="opt-desc">해당 부/모 + 같은 등본에 등재된 계부/계모 · 혼인관계증명서 등 제출</span></span></label>
+      <label class="opt"><input type="radio" name="parents" value="unmarried">
+        <span class="opt-body"><span class="opt-title">부모 비혼</span>
+        <span class="opt-desc">‘부모 이혼’ 기준 적용 · 혼인관계증명서, 제적등본 제출</span></span></label>
+    </div>
+
+    <div class="q hidden" id="sub-remarried" style="margin-top:22px">
+      <div class="q-label">계부 또는 계모가 신청자와 같은 주민등록등본에 등재되어 있나요?</div>
+      <div class="opts row" data-name="stepParent">
+        <label class="opt"><input type="radio" name="stepParent" value="yes"><span class="opt-title">예 (부/모 + 계부/계모 2인 검증)</span></label>
+        <label class="opt"><input type="radio" name="stepParent" value="no"><span class="opt-title">아니요 (부/모 1인만 검증)</span></label>
+      </div>
+    </div>
+
+    <p class="err" id="err-s3b">부모 상황을 선택해 주세요.</p>
+    <div class="btns">
+      <button class="btn-ghost" data-back="s3a">이전</button>
+      <button class="btn-primary" data-next="s3b">다음</button>
+    </div>
+  </section>
+
+  <!-- ======================= STEP 3c : 소득·자산 ======================= -->
+  <section class="card hidden" id="s3c">
+    <span class="step-tag">3단계 · 순위 판정</span>
+    <h2>소득·자산 입력</h2>
+    <p class="desc" id="incomeDesc">세전 금액 기준으로 입력해 주세요. 입력값으로 2순위와 3순위 충족 여부를 함께 판정합니다.</p>
+
+    <div class="q">
+      <div class="q-label">본인 월평균 소득</div>
+      <div class="q-help">근로 + 사업 + 재산 + 기타소득의 월평균 합계. 소득이 없으면 0을 입력하세요.</div>
+      <div class="num-field"><input type="text" inputmode="numeric" id="myIncome" placeholder="0"><span class="unit">원</span></div>
+    </div>
+
+    <div class="q" id="q-parentIncome">
+      <div class="q-label">부모 월평균 소득 (검증 대상 부모 합계)</div>
+      <div class="q-help" id="parentIncomeHelp"></div>
+      <div class="num-field"><input type="text" inputmode="numeric" id="parentIncome" placeholder="0"><span class="unit">원</span></div>
+    </div>
+
+    <div class="q">
+      <div class="q-label">본인 총자산가액</div>
+      <div class="q-help">부동산 + 자동차 + 금융자산(예금·주식 등) + 기타자산 − 부채. <b>만원 단위</b>로 입력 (예: 5,000만원 → 5000)</div>
+      <div class="num-field"><input type="text" inputmode="numeric" id="myAsset" placeholder="0"><span class="unit">만원</span></div>
+    </div>
+
+    <div class="q" id="q-parentAsset">
+      <div class="q-label">부모 총자산가액 (검증 대상 부모 합계)</div>
+      <div class="q-help">만원 단위로 입력하세요.</div>
+      <div class="num-field"><input type="text" inputmode="numeric" id="parentAsset" placeholder="0"><span class="unit">만원</span></div>
+    </div>
+
+    <div class="q">
+      <div class="q-label">보유 자동차 중 가장 비싼 차량 가액</div>
+      <div class="q-help" id="carHelp">본인(및 검증 대상 부모)이 보유한 자동차 중 최고가액. 차량이 없으면 0. 만원 단위로 입력하세요.</div>
+      <div class="num-field"><input type="text" inputmode="numeric" id="carValue" placeholder="0"><span class="unit">만원</span></div>
+    </div>
+
+    <div class="q hidden" id="q-myCar">
+      <div class="q-label">본인 명의 자동차 중 가장 비싼 차량 가액</div>
+      <div class="q-help">3순위 심사는 본인 것만 봅니다. 본인 차량이 없으면 0. 만원 단위.</div>
+      <div class="num-field"><input type="text" inputmode="numeric" id="myCarValue" placeholder="0"><span class="unit">만원</span></div>
+    </div>
+
+    <details class="ref">
+      <summary>순위별 소득·자산 기준표 보기</summary>
+      <div class="ref-body">
+        <table class="ref-table">
+          <thead><tr><th>구분</th><th>2순위 (본인+부모)</th><th>3순위 (본인만)</th></tr></thead>
+          <tbody>
+            <tr><th>월평균 소득</th><td>도시근로자 월평균소득 100% 이하<br>1인 4,576,036 / 2인 6,452,897 / 3인 8,168,429원</td><td>100% 이하 (1인 가구 기준)<br>4,576,036원</td></tr>
+            <tr><th>총자산</th><td>34,500만원 이하</td><td>25,100만원 이하</td></tr>
+            <tr><th>자동차(개별)</th><td>4,542만원 이하</td><td>4,542만원 이하</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <p class="err" id="err-s3c">모든 금액을 입력해 주세요. (없으면 0)</p>
+    <div class="btns">
+      <button class="btn-ghost" data-back="s3b">이전</button>
+      <button class="btn-primary" data-next="s3c">다음</button>
+    </div>
+  </section>
+
+  <!-- ======================= STEP 4 : 가점 ======================= -->
+  <section class="card hidden" id="s4">
+    <span class="step-tag">4단계 · 가점 계산</span>
+    <h2>가점 항목 확인</h2>
+    <p class="desc">동일 순위 안에서 경합하면 아래 배점표 합산 총점이 높은 순으로 선정됩니다. 해당하는 항목을 모두 선택하세요. <b>청약 신청 화면에서도 가점 항목을 직접 선택해야 인정</b>됩니다.</p>
+
+    <div class="q">
+      <div class="q-label">부모가 무주택자인가요? <span style="color:var(--accent-ink)">+2점</span></div>
+      <div class="q-help">사망 등으로 부모가 안 계신 경우에도 인정됩니다.</div>
+      <div class="opts row" data-name="bpNoHome">
+        <label class="opt"><input type="radio" name="bpNoHome" value="yes"><span class="opt-title">예</span></label>
+        <label class="opt"><input type="radio" name="bpNoHome" value="no"><span class="opt-title">아니요 / 모름</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-label">본인이 등록 장애인인가요? <span style="color:var(--accent-ink)">+2점</span></div>
+      <div class="opts row" data-name="bpDisabledMe">
+        <label class="opt"><input type="radio" name="bpDisabledMe" value="yes"><span class="opt-title">예</span></label>
+        <label class="opt"><input type="radio" name="bpDisabledMe" value="no"><span class="opt-title">아니요</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-label">부모 중 등록 장애인이 있나요? <span style="color:var(--accent-ink)">+1점</span></div>
+      <div class="opts row" data-name="bpDisabledParent">
+        <label class="opt"><input type="radio" name="bpDisabledParent" value="yes"><span class="opt-title">예</span></label>
+        <label class="opt"><input type="radio" name="bpDisabledParent" value="no"><span class="opt-title">아니요</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="q-label">청약통장 납입인정회차는 몇 회인가요?</div>
+      <div class="q-help">본인 명의 청약저축·주택청약종합저축·청년주택드림청약통장. 통장 표시 회차가 아닌 <b>순위(가입)확인서의 납입인정회차</b> 기준입니다.</div>
+      <div class="opts" data-name="bpSavings">
+        <label class="opt"><input type="radio" name="bpSavings" value="3"><span class="opt-title">24회 이상 <span style="color:var(--accent-ink)">+3점</span></span></label>
+        <label class="opt"><input type="radio" name="bpSavings" value="2"><span class="opt-title">12회 이상 ~ 24회 미만 <span style="color:var(--accent-ink)">+2점</span></span></label>
+        <label class="opt"><input type="radio" name="bpSavings" value="1"><span class="opt-title">6회 이상 ~ 12회 미만 <span style="color:var(--accent-ink)">+1점</span></span></label>
+        <label class="opt"><input type="radio" name="bpSavings" value="0"><span class="opt-title">6회 미만 또는 통장 없음 <span style="color:var(--muted)">0점</span></span></label>
+      </div>
+    </div>
+
+    <p class="err" id="err-s4">모든 항목에 답해 주세요.</p>
+    <div class="btns">
+      <button class="btn-ghost" data-back-dynamic>이전</button>
+      <button class="btn-primary" data-next="s4">결과 보기</button>
+    </div>
+  </section>
+
+  <!-- ======================= 결과 ======================= -->
+  <section class="hidden" id="result">
+    <div class="verdict" id="verdictBox">
+      <span class="badge" id="verdictBadge"></span>
+      <h2 id="verdictTitle"></h2>
+      <p class="v-sub" id="verdictSub"></p>
+    </div>
+
+    <div class="card" id="detailCard">
+      <h2 style="font-size:17px; margin-bottom:14px">판정 근거</h2>
+      <table class="kv" id="detailTable"></table>
+    </div>
+
+    <div class="card hidden" id="scoreCard">
+      <h2 style="font-size:17px; margin-bottom:14px">가점 합산</h2>
+      <div id="scoreLines"></div>
+      <div class="score-total"><span>총 가점</span><span class="pts" id="scoreTotal"></span></div>
+      <div class="note" style="margin-top:14px">동점일 경우 배점표 항목 ①→⑦ 순서의 점수가 높은 순으로, 그래도 같으면 전산 무작위 추첨으로 선정됩니다.</div>
+    </div>
+
+    <div class="card hidden" id="docsCard">
+      <h2 style="font-size:17px; margin-bottom:14px">준비할 서류 (부모 상황 기준)</h2>
+      <ul class="doc-list" id="docsList"></ul>
+      <div class="note">모든 서류는 <b>‘상세’ · ‘주민등록번호 전체 표기’</b>로 발급해야 합니다. 서류 제출은 서류심사 대상자로 선정된 경우에만 등기우편으로 합니다.</div>
+    </div>
+
+    <div class="card" id="scheduleCard">
+      <h2 style="font-size:17px; margin-bottom:14px">주요 일정</h2>
+      <div class="timeline">
+        <div class="tl-item"><span class="tl-date">7. 13. ~ 7. 15.</span><span class="tl-what">인터넷 청약 신청 <small>i-sh.co.kr/app · 13일 10:00 ~ 15일 17:00 · 공동/민간인증서 필요</small></span></div>
+        <div class="tl-item"><span class="tl-date">7. 20.</span><span class="tl-what">서류심사 대상자 발표 <small>모집호수의 3~6배수 선정</small></span></div>
+        <div class="tl-item"><span class="tl-date">7. 21. ~ 7. 27.</span><span class="tl-what">서류 제출 <small>대상자에 한해 등기우편</small></span></div>
+        <div class="tl-item"><span class="tl-date">11. 20.</span><span class="tl-what">당첨자 및 예비자 발표 <small>16:00</small></span></div>
+        <div class="tl-item"><span class="tl-date">12. 7. ~ 12. 10.</span><span class="tl-what">계약 체결 <small>입주는 12. 28. ~ 2027. 2. 25. 예정</small></span></div>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="btn-ghost" id="restartBtn" style="flex:1">처음부터 다시 확인하기</button>
+    </div>
+
+    <p class="disclaimer">
+      본 도구는 「2026년 1차 청년 매입임대주택 입주자 모집공고」(공고일 2026. 6. 26., 주택관리번호 2026980105)와
+      별첨 ‘부모 범위 기준’을 옮긴 참고용 자가진단이며 법적 효력이 없습니다. 실제 입주 자격은 SH공사가
+      국토교통부 주택소유확인시스템·사회보장정보시스템 조회 결과로 판단하며, 조회 금액은 본인이 아는 금액과 다를 수 있습니다.
+      1인 신청 1주택 원칙(중복 신청 시 전부 무효), 신청 후 수정 불가에 유의하세요. 자세한 내용은 반드시 공고문 원문을 확인하세요.
+    </p>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+
+/* ---------- 공고 기준값 ---------- */
+const LIMITS = {
+  income100: { 1: 4576036, 2: 6452897, 3: 8168429 },  // 전년도 도시근로자 월평균소득 100% (1인 +20%p, 2인 +10%p)
+  income50:  { 1: 2669354, 2: 3519762, 3: 4084215 },
+  rank2Asset: 34500,   // 만원
+  rank3Asset: 25100,   // 만원
+  car: 4542            // 만원
+};
+
+const PARENT_INFO = {
+  both:         { count: 2, label: "부모 모두 계심", docs: [] },
+  oneDead:      { count: 1, label: "부 또는 모 사망", docs: ["사망한 부/모의 말소자초본"] },
+  bothDead:     { count: 0, label: "부모 모두 사망", docs: ["부모 말소자초본"] },
+  divorced:     { count: 1, label: "부모 이혼", docs: ["혼인관계증명서(이혼 내역 기재, 부 또는 모 기준)"] },
+  divorcedDead: { count: 0, label: "부모 이혼 후 해당 부/모 사망 (부모 없음 간주)", docs: [
+    "혼인관계증명서(이혼 내역 기재, 부 또는 모 기준)",
+    "사망한 부/모의 말소자초본",
+    "사망하지 않은 부/모의 주민등록초본(주소 변동 이력 포함)",
+    "본인의 주민등록초본(주소 변동 이력 포함)"
+  ]},
+  remarried:    { count: 1, label: "부모 이혼(사망) 후 재혼", docs: [
+    "혼인관계증명서(이혼 및 재혼 내역 기재, 부 또는 모 기준)",
+    "부 또는 모의 말소자초본(사망 시)"
+  ]},
+  unmarried:    { count: 1, label: "부모 비혼 (이혼 기준 적용)", docs: [
+    "혼인관계증명서(부 또는 모 기준)",
+    "제적등본(신청자 본인 기준)"
+  ]}
+};
+
+const TYPE_LABEL = { student: "대학생", jobseeker: "취업준비생", youth: "청년", stem: "이공계 인재" };
+
+/* ---------- 상태 ---------- */
+const state = {};
+let historyStack = [];
+
+/* ---------- 유틸 ---------- */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+const fmt = (n) => n.toLocaleString("ko-KR");
+const radioVal = (name) => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : null; };
+
+function parseNum(id) {
+  const raw = $("#" + id).value.replace(/[^0-9]/g, "");
+  return raw === "" ? null : parseInt(raw, 10);
+}
+
+/* 라디오 카드 선택 하이라이트 */
+document.addEventListener("change", (e) => {
+  if (e.target.matches('input[type="radio"]')) {
+    $$(`input[name="${e.target.name}"]`).forEach(r => r.closest(".opt").classList.toggle("sel", r.checked));
+    if (e.target.name === "type") showTypeSub(e.target.value);
+    if (e.target.name === "parents") $("#sub-remarried").classList.toggle("hidden", e.target.value !== "remarried");
+  }
+});
+
+/* 숫자 입력 콤마 포맷 */
+$$('input[inputmode="numeric"]').forEach(inp => {
+  inp.addEventListener("input", () => {
+    const raw = inp.value.replace(/[^0-9]/g, "");
+    inp.value = raw === "" ? "" : parseInt(raw, 10).toLocaleString("ko-KR");
+  });
+});
+
+/* ---------- 화면 전환 ---------- */
+const STEP_OF = { s0: 0, s1: 1, s2: 2, s3a: 3, s3b: 3, s3c: 3, s4: 4, result: 4 };
+
+function show(id) {
+  $$("section").forEach(s => s.classList.add("hidden"));
+  $("#" + id).classList.remove("hidden");
+  const step = STEP_OF[id];
+  $$("#progress .seg").forEach(seg => {
+    const n = parseInt(seg.dataset.step, 10);
+    seg.classList.toggle("done", n < step);
+    seg.classList.toggle("now", n === step);
+  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function go(id) { historyStack.push(currentSection()); show(id); }
+function currentSection() { return $$("section").find(s => !s.classList.contains("hidden")).id; }
+
+document.addEventListener("click", (e) => {
+  const goBtn = e.target.closest("[data-go]");
+  if (goBtn) { go(goBtn.dataset.go); return; }
+  const backBtn = e.target.closest("[data-back]");
+  if (backBtn) { historyStack.pop(); show(backBtn.dataset.back); return; }
+  const dynBack = e.target.closest("[data-back-dynamic]");
+  if (dynBack) { const prev = historyStack.pop() || "s0"; show(prev); return; }
+  const nextBtn = e.target.closest("[data-next]");
+  if (nextBtn) handleNext(nextBtn.dataset.next);
+});
+
+$("#restartBtn").addEventListener("click", () => location.reload());
+
+/* ---------- 유형별 세부질문 표시 ---------- */
+function showTypeSub(type) {
+  $("#sub-student").classList.toggle("hidden", type !== "student");
+  $("#sub-jobseeker").classList.toggle("hidden", type !== "jobseeker");
+  $("#sub-birth").classList.toggle("hidden", type !== "youth" && type !== "stem");
+  $("#sub-stem").classList.toggle("hidden", type !== "stem");
+}
+
+/* ---------- 단계별 검증 및 분기 ---------- */
+function handleNext(fromId) {
+  const err = $("#err-" + fromId);
+  if (err) err.classList.remove("show");
+
+  if (fromId === "s1") {
+    const a = radioVal("ownHome"), b = radioVal("single"), c = radioVal("korean");
+    if (!a || !b || !c) { err.classList.add("show"); return; }
+    if (a === "no") return failResult("본인 명의 주택 보유", "청년 매입임대주택은 공고일 현재 본인이 무주택자여야 신청할 수 있습니다.");
+    if (b === "no") return failResult("기혼(현재 혼인 상태)", "미혼(현재 혼인 상태가 아님)인 경우에만 신청할 수 있습니다.");
+    if (c === "no") return failResult("외국인 · 재외국민", "이번 공고는 외국인과 재외국민은 신청할 수 없습니다.");
+    go("s2"); return;
+  }
+
+  if (fromId === "s2") {
+    const type = radioVal("type");
+    if (!type) { err.classList.add("show"); return; }
+    state.type = type;
+
+    if (type === "student") {
+      const v = radioVal("stuOk");
+      if (!v) { err.classList.add("show"); return; }
+      if (v === "no") return failResult("대학생 유형 요건 미충족",
+        "서울 소재 대학 재학생(복학·입학예정 포함)만 대학생 유형으로 신청할 수 있습니다. 졸업유예자·수료자는 취업준비생, 만 19~39세라면 청년 유형을 검토해 보세요.");
+    }
+    if (type === "jobseeker") {
+      const g = radioVal("jsGrad"), n = radioVal("jsNoJob");
+      if (!g || !n) { err.classList.add("show"); return; }
+      if (g === "no") return failResult("취업준비생 유형 요건 미충족",
+        "이번 공고는 2024. 6. 27. 이후 졸업(수료)·중퇴자만 취업준비생으로 신청할 수 있습니다. 만 19~39세라면 청년 유형을 검토해 보세요.");
+      if (n === "no") return failResult("취업준비생 유형 요건 미충족",
+        "직장 재직 중(건강보험 직장가입자 또는 사업자등록 보유)에는 취업준비생으로 신청할 수 없습니다. 만 19~39세라면 재직 여부와 무관한 청년 유형을 검토해 보세요.");
+    }
+    if (type === "youth" || type === "stem") {
+      const bd = $("#birth").value;
+      if (!bd) { err.classList.add("show"); return; }
+      state.birth = bd;
+      if (bd < "1986-06-27" || bd > "2007-06-26") {
+        return failResult("나이 요건 미충족",
+          `${TYPE_LABEL[type]} 유형은 공고일 현재 만 19세 이상 ~ 만 39세 이하(1986. 6. 27. ~ 2007. 6. 26. 출생)만 신청할 수 있습니다.`);
+      }
+      if (type === "stem") {
+        const sv = radioVal("stemOk");
+        if (!sv) { err.classList.add("show"); return; }
+        if (sv === "no") return failResult("이공계 인재 유형 요건 미충족",
+          "서울 소재 대학의 이공계열 전일제 대학원생 또는 박사후연구원만 해당합니다. 만 19~39세라면 청년 유형으로 신청을 검토해 보세요.");
+      }
+    }
+    go("s3a"); return;
+  }
+
+  if (fromId === "s3a") {
+    const v = radioVal("rank1");
+    if (!v) { err.classList.add("show"); return; }
+    state.rank1 = v;
+    if (v !== "none") { state.rank = 1; go("s4"); return; }
+    go("s3b"); return;
+  }
+
+  if (fromId === "s3b") {
+    const v = radioVal("parents");
+    if (!v) { err.classList.add("show"); return; }
+    if (v === "remarried" && !radioVal("stepParent")) { err.classList.add("show"); return; }
+    state.parents = v;
+    state.parentCount = v === "remarried"
+      ? (radioVal("stepParent") === "yes" ? 2 : 1)
+      : PARENT_INFO[v].count;
+    prepareIncomeStep();
+    go("s3c"); return;
+  }
+
+  if (fromId === "s3c") {
+    const my = parseNum("myIncome"), myA = parseNum("myAsset"), car = parseNum("carValue");
+    const needParent = state.parentCount > 0;
+    const pi = needParent ? parseNum("parentIncome") : 0;
+    const pa = needParent ? parseNum("parentAsset") : 0;
+    const myCar = needParent ? parseNum("myCarValue") : car;
+    if ([my, myA, car, pi, pa, myCar].some(x => x === null)) { err.classList.add("show"); return; }
+    Object.assign(state, { myIncome: my, parentIncome: pi, myAsset: myA, parentAsset: pa, carValue: car, myCarValue: myCar });
+    judgeRank();
+    if (state.rank === 0) return failResultIncome();
+    go("s4"); return;
+  }
+
+  if (fromId === "s4") {
+    const a = radioVal("bpNoHome"), b = radioVal("bpDisabledMe"), c = radioVal("bpDisabledParent"), d = radioVal("bpSavings");
+    if (!a || !b || !c || !d) { err.classList.add("show"); return; }
+    state.bpNoHome = a === "yes"; state.bpDisabledMe = b === "yes";
+    state.bpDisabledParent = c === "yes"; state.bpSavings = parseInt(d, 10);
+    renderResult(); go("result"); return;
+  }
+}
+
+/* 소득·자산 입력 화면 준비 */
+function prepareIncomeStep() {
+  const n = state.parentCount;
+  const needParent = n > 0;
+  $("#q-parentIncome").classList.toggle("hidden", !needParent);
+  $("#q-parentAsset").classList.toggle("hidden", !needParent);
+  $("#q-myCar").classList.toggle("hidden", !needParent);
+  const hh = 1 + n;
+  $("#parentIncomeHelp").textContent =
+    `검증 대상 부모 ${n}인의 월평균 소득 합계. 2순위는 본인+부모 ${hh}인 가구 기준(월 ${fmt(LIMITS.income100[hh])}원 이하)으로 심사합니다.`;
+  $("#carHelp").textContent = needParent
+    ? "본인과 검증 대상 부모가 보유한 모든 자동차 중 최고가액. 차량이 없으면 0. 만원 단위로 입력하세요."
+    : "본인이 보유한 자동차 중 최고가액. 차량이 없으면 0. 만원 단위로 입력하세요.";
+}
+
+/* 순위 판정 */
+function judgeRank() {
+  const hh = 1 + state.parentCount;
+  const totalIncome = state.myIncome + state.parentIncome;
+  const totalAsset = state.myAsset + state.parentAsset;
+
+  state.rank2 = {
+    hh,
+    income: { v: totalIncome, limit: LIMITS.income100[hh], ok: totalIncome <= LIMITS.income100[hh] },
+    asset:  { v: totalAsset, limit: LIMITS.rank2Asset, ok: totalAsset <= LIMITS.rank2Asset },
+    car:    { v: state.carValue, limit: LIMITS.car, ok: state.carValue <= LIMITS.car }
+  };
+  state.rank3 = {
+    income: { v: state.myIncome, limit: LIMITS.income100[1], ok: state.myIncome <= LIMITS.income100[1] },
+    asset:  { v: state.myAsset, limit: LIMITS.rank3Asset, ok: state.myAsset <= LIMITS.rank3Asset },
+    car:    { v: state.myCarValue, limit: LIMITS.car, ok: state.myCarValue <= LIMITS.car }
+  };
+
+  const r2 = state.rank2, r3 = state.rank3;
+  if (r2.income.ok && r2.asset.ok && r2.car.ok) state.rank = 2;
+  else if (r3.income.ok && r3.asset.ok && r3.car.ok) state.rank = 3;
+  else state.rank = 0;
+
+  // 가점 ⑥ 소득기준 50% 이하 (2·3순위만)
+  state.income50 = state.rank === 2 ? totalIncome <= LIMITS.income50[hh]
+                 : state.rank === 3 ? state.myIncome <= LIMITS.income50[1]
+                 : false;
+}
+
+/* ---------- 결과 화면 ---------- */
+function failResult(reason, detail) {
+  show("result");
+  historyStack = [];
+  const box = $("#verdictBox");
+  box.className = "verdict bad";
+  $("#verdictBadge").textContent = "신청 불가";
+  $("#verdictTitle").textContent = "아쉽지만 이번 공고에는 신청할 수 없어요";
+  $("#verdictSub").textContent = detail;
+  $("#detailCard").classList.remove("hidden");
+  $("#detailTable").innerHTML = `<tr><th>미충족 사유</th><td class="fail">${reason}</td></tr>`;
+  $("#scoreCard").classList.add("hidden");
+  $("#docsCard").classList.add("hidden");
+}
+
+function failResultIncome() {
+  show("result");
+  historyStack = [];
+  const box = $("#verdictBox");
+  box.className = "verdict bad";
+  $("#verdictBadge").textContent = "신청 불가";
+  $("#verdictTitle").textContent = "소득·자산 기준을 충족하지 않아요";
+  $("#verdictSub").textContent = "입력하신 금액 기준으로 2순위와 3순위 요건을 모두 충족하지 못했습니다.";
+  $("#detailCard").classList.remove("hidden");
+  $("#detailTable").innerHTML = buildIncomeRows();
+  $("#scoreCard").classList.add("hidden");
+  $("#docsCard").classList.add("hidden");
+}
+
+function buildIncomeRows() {
+  const r2 = state.rank2, r3 = state.rank3;
+  const row = (th, val, limit, ok, unit) =>
+    `<tr><th>${th}</th><td class="${ok ? "pass" : "fail"}">${fmt(val)}${unit} / 기준 ${fmt(limit)}${unit} ${ok ? "충족" : "초과"}</td></tr>`;
+  return `
+    <tr><th colspan="2" style="font-weight:800;color:var(--ink)">2순위 (본인+부모 ${r2.hh}인 가구)</th></tr>
+    ${row("월평균 소득 합계", r2.income.v, r2.income.limit, r2.income.ok, "원")}
+    ${row("총자산 합계", r2.asset.v, r2.asset.limit, r2.asset.ok, "만원")}
+    ${row("자동차 최고가액", r2.car.v, r2.car.limit, r2.car.ok, "만원")}
+    <tr><th colspan="2" style="font-weight:800;color:var(--ink)">3순위 (본인 1인 기준)</th></tr>
+    ${row("본인 월평균 소득", r3.income.v, r3.income.limit, r3.income.ok, "원")}
+    ${row("본인 총자산", r3.asset.v, r3.asset.limit, r3.asset.ok, "만원")}
+    ${row("본인 자동차 최고가액", r3.car.v, r3.car.limit, r3.car.ok, "만원")}`;
+}
+
+const RANK1_LABEL = { benefit: "생계·의료·주거급여 수급자 가구", nearpoor: "차상위계층 가구", singleparent: "지원대상 한부모가족" };
+
+function renderResult() {
+  const box = $("#verdictBox");
+  box.className = "verdict ok";
+  $("#verdictBadge").textContent = "신청 가능";
+  $("#verdictTitle").textContent = `${state.rank}순위로 신청할 수 있어요`;
+  $("#verdictSub").textContent =
+    state.rank === 1 ? "1순위는 별도의 소득·자산 심사 없이 순위 자격 입증 서류로 심사합니다."
+    : state.rank === 2 ? "본인과 부모의 소득·자산 기준을 충족했습니다. 실제 심사는 사회보장정보시스템 조회 금액 기준입니다."
+    : "본인 1인 가구 기준 소득·자산 요건을 충족했습니다. 실제 심사는 사회보장정보시스템 조회 금액 기준입니다.";
+
+  /* 판정 근거 */
+  let rows = `<tr><th>신청 유형</th><td>${TYPE_LABEL[state.type]}${state.type === "stem" ? " (성장주택 ‘삼화에코빌2차’만 신청 가능)" : ""}</td></tr>`;
+  if (state.rank === 1) {
+    rows += `<tr><th>1순위 자격</th><td class="pass">${RANK1_LABEL[state.rank1]}</td></tr>
+             <tr><th>소득·자산 심사</th><td>불필요 (순위 자격 입증 시)</td></tr>`;
+  } else {
+    rows += `<tr><th>부모 상황</th><td>${PARENT_INFO[state.parents].label} · 검증 대상 부모 ${state.parentCount}인</td></tr>`;
+    rows += buildIncomeRows();
+  }
+  $("#detailCard").classList.remove("hidden");
+  $("#detailTable").innerHTML = rows;
+
+  /* 가점 */
+  const lines = [];
+  if (state.rank === 1) {
+    if (state.rank1 === "benefit") lines.push(["① 생계·의료·주거급여 수급자", 3]);
+    if (state.rank1 === "singleparent") lines.push(["② 지원대상 한부모가족", 3]);
+    if (state.rank1 === "nearpoor") lines.push(["차상위계층 (①·② 배점 항목 아님)", 0]);
+  }
+  if (state.bpNoHome) lines.push(["③ 부모 무주택", 2]);
+  if (state.bpDisabledMe) lines.push(["④ 장애인 (본인)", 2]);
+  if (state.bpDisabledParent) lines.push(["⑤ 장애인 (부모)", 1]);
+  if (state.rank !== 1 && state.income50) lines.push(["⑥ 소득이 해당 순위 기준의 50% 이하", 3]);
+  if (state.bpSavings > 0) {
+    const label = state.bpSavings === 3 ? "24회 이상" : state.bpSavings === 2 ? "12회 이상" : "6회 이상";
+    lines.push([`⑦ 청약통장 납입 ${label}`, state.bpSavings]);
+  }
+  const total = lines.reduce((s, [, p]) => s + p, 0);
+  $("#scoreLines").innerHTML = lines.length
+    ? lines.map(([t, p]) => `<div class="score-line"><span>${t}</span><span class="pts">${p > 0 ? "+" + p : p}점</span></div>`).join("")
+    : `<div class="score-line"><span>해당하는 가점 항목 없음</span><span class="pts">0점</span></div>`;
+  $("#scoreTotal").textContent = total + "점";
+  $("#scoreCard").classList.remove("hidden");
+
+  /* 서류 */
+  const docs = [];
+  if (state.rank === 1) {
+    if (state.rank1 === "benefit") docs.push("수급자 증명서 (생계·의료·주거급여)");
+    if (state.rank1 === "nearpoor") docs.push("차상위계층 확인서");
+    if (state.rank1 === "singleparent") docs.push("한부모가족증명서 (본인 명의 발급)");
+  }
+  docs.push("주민등록등본 (상세, 주민등록번호 전체 표기)");
+  docs.push("금융정보 등 제공 동의서 (소득·자산 조회 대상 가구원 전원 서명)");
+  if (state.rank !== 1 && state.parents) PARENT_INFO[state.parents].docs.forEach(d => docs.push(d));
+  if (state.parents === "remarried" && state.parentCount === 2) docs.push("계부/계모가 함께 등재된 주민등록등본");
+  if (state.type === "student") docs.push("재학증명서 (복학·입학예정자는 휴학·입학증명서 + 각서)");
+  if (state.type === "jobseeker") docs.push("졸업(수료)·중퇴 증명서, 건강보험 자격득실확인서, 사실증명(사업자등록 없음)");
+  if (state.type === "stem") docs.push("재학(연구) 증빙 — 이공계 적합 여부는 서울시 대학협력과에서 심사");
+  if (state.bpSavings > 0) docs.push("청약통장 순위(가입)확인서 — 주택관리번호 2026980105로 발급");
+  if (state.bpDisabledMe || state.bpDisabledParent) docs.push("장애인등록증 사본 또는 장애인증명서");
+  $("#docsList").innerHTML = docs.map(d => `<li>${d}</li>`).join("");
+  $("#docsCard").classList.remove("hidden");
+}
+</script>
+</body>
+</html>
