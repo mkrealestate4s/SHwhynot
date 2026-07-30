@@ -18,6 +18,8 @@
     --accent-soft: #cde2fb;
     --green-soft: #e4f2ea;
     --green-ink: #1b7f4d;
+    --teal-soft: #e2f1ee;
+    --teal-ink: #0e7a6b;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -33,6 +35,8 @@
       --accent-soft: #184f95;
       --green-soft: #16301f;
       --green-ink: #4fbf87;
+      --teal-soft: #1d3a35;
+      --teal-ink: #63c2b2;
     }
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -63,6 +67,7 @@
   }
   .card.blue .tag { background: var(--accent-soft); color: var(--accent-strong); }
   .card.green .tag { background: var(--green-soft); color: var(--green-ink); }
+  .card.teal .tag { background: var(--teal-soft); color: var(--teal-ink); }
   .card .go { display: block; margin-top: 16px; font-weight: 700; color: var(--accent); font-size: 0.95rem; }
 
   footer { text-align: center; margin-top: 36px; font-size: 0.78rem; color: var(--text-muted); }
@@ -81,6 +86,14 @@
       <h2>SH 청년 매입임대주택 자격 자가진단</h2>
       <p>2026년 1차 모집공고 기준으로 신청 자격과 순위(1·2·3순위), 가점을 단계별로 확인합니다.</p>
       <span class="tag">청년 · 공공임대</span>
+      <span class="go">진단 시작 →</span>
+    </a>
+
+    <a class="card teal" href="redev-rental/">
+      <div class="icon">🏘️</div>
+      <h2>SH 재개발임대주택 자격 자가진단</h2>
+      <p>2026년 모집공고 기준으로 신청 자격과 순위(1·2순위), 가점을 단계별로 확인합니다. 출생자녀 소득·자산 가산 자동 반영.</p>
+      <span class="tag">저소득층 · 공공임대</span>
       <span class="go">진단 시작 →</span>
     </a>
 
