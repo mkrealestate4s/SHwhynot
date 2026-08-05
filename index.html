@@ -1,1020 +1,120 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="light">
+<html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>2026 세제개편 부동산 세금 계산기 | 우리 집은 얼마나 오를까</title>
-<meta name="description" content="2026년 8월 3일 발표된 세제개편안을 적용해 아파트 가격별 종부세·재산세·양도세 변화를 연도별로 계산합니다.">
-<meta property="og:title" content="2026 세제개편 부동산 세금 계산기">
-<meta property="og:description" content="우리 집 시세만 넣으면 2027·2028·2029년 보유세가 얼마나 오르는지 바로 확인.">
-<meta property="og:type" content="website">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부동산 분석 도구 모음</title>
 <style>
-/* ============ tokens ============ */
-:root{
-  color-scheme: light;
-  --surface-0:#f5f5f3; --surface-1:#fcfcfb; --surface-2:#f0efec;
-  --border:#e2e1dc; --border-strong:#cfcec7;
-  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#7d7c76;
-  --series-1:#2a78d6;   /* 재산세 */
-  --series-2:#eb6834;   /* 종부세 */
-  --accent:#2a78d6;
-  --up:#c8342f; --down:#0f7a52;
-  --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px -12px rgba(0,0,0,.14);
-  --r:14px;
-}
-@media (prefers-color-scheme: dark){
-  :root:where(:not([data-theme="light"])){
-    color-scheme: dark;
-    --surface-0:#121211; --surface-1:#1a1a19; --surface-2:#232322;
-    --border:#33332f; --border-strong:#4a4a45;
-    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#96958c;
-    --series-1:#3987e5; --series-2:#d95926;
-    --accent:#3987e5;
-    --up:#e66767; --down:#3fb98a;
-    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  :root {
+    color-scheme: light;
+    --page: #f9f9f7;
+    --surface: #fcfcfb;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --border: rgba(11,11,11,0.10);
+    --accent: #2a78d6;
+    --accent-strong: #1c5cab;
+    --accent-soft: #cde2fb;
+    --green-soft: #e4f2ea;
+    --green-ink: #1b7f4d;
+    --teal-soft: #e2f1ee;
+    --teal-ink: #0e7a6b;
   }
-}
-:root[data-theme="dark"]{
-  color-scheme: dark;
-  --surface-0:#121211; --surface-1:#1a1a19; --surface-2:#232322;
-  --border:#33332f; --border-strong:#4a4a45;
-  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#96958c;
-  --series-1:#3987e5; --series-2:#d95926;
-  --accent:#3987e5;
-  --up:#e66767; --down:#3fb98a;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
-}
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d;
+      --surface: #1a1a19;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #898781;
+      --border: rgba(255,255,255,0.10);
+      --accent: #3987e5;
+      --accent-strong: #6da7ec;
+      --accent-soft: #184f95;
+      --green-soft: #16301f;
+      --green-ink: #4fbf87;
+      --teal-soft: #1d3a35;
+      --teal-ink: #63c2b2;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    background: var(--page); color: var(--text-primary); line-height: 1.6;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 24px 16px;
+  }
+  .wrap { max-width: 860px; width: 100%; }
+  header { text-align: center; margin-bottom: 36px; }
+  header h1 { font-size: 1.8rem; letter-spacing: -0.01em; }
+  header p { color: var(--text-secondary); margin-top: 8px; }
 
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{-webkit-text-size-adjust:100%}
-body{
-  margin:0; background:var(--surface-0); color:var(--text-primary);
-  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",
-    "Malgun Gothic",system-ui,sans-serif;
-  font-size:15px; line-height:1.6;
-  font-feature-settings:"tnum" 1;
-}
-.wrap{max-width:760px;margin:0 auto;padding:0 16px 72px}
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  a.card {
+    display: block; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 26px; text-decoration: none; color: inherit;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  a.card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+  .card .icon { font-size: 2.2rem; }
+  .card h2 { font-size: 1.2rem; margin: 12px 0 6px; }
+  .card p { font-size: 0.92rem; color: var(--text-secondary); }
+  .card .tag {
+    display: inline-block; margin-top: 14px; font-size: 0.78rem; font-weight: 700;
+    padding: 3px 12px; border-radius: 999px;
+  }
+  .card.blue .tag { background: var(--accent-soft); color: var(--accent-strong); }
+  .card.green .tag { background: var(--green-soft); color: var(--green-ink); }
+  .card.teal .tag { background: var(--teal-soft); color: var(--teal-ink); }
+  .card.amber .tag { background: #fbe8d6; color: #a8501b; }
+  .card .go { display: block; margin-top: 16px; font-weight: 700; color: var(--accent); font-size: 0.95rem; }
 
-/* ============ hub nav ============ */
-.hubnav{
-  display:inline-block;margin-top:22px;font-size:0.85rem;
-  color:var(--text-muted);text-decoration:none
-}
-.hubnav:hover{color:var(--text-secondary)}
-
-/* ============ header ============ */
-header{padding:6px 0 18px}
-.eyebrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--text-muted);margin-bottom:10px}
-.badge{
-  display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;
-  background:var(--surface-2);border:1px solid var(--border);font-weight:600;font-size:11.5px;
-  color:var(--text-secondary);letter-spacing:-.01em
-}
-.badge.warn{color:var(--up);border-color:color-mix(in srgb,var(--up) 35%,var(--border))}
-h1{font-size:26px;line-height:1.28;margin:0 0 8px;letter-spacing:-.03em;font-weight:800}
-h1 em{font-style:normal;color:var(--accent)}
-.sub{color:var(--text-secondary);font-size:14px;margin:0}
-.theme-btn{
-  position:absolute;top:24px;right:16px;width:34px;height:34px;border-radius:10px;
-  border:1px solid var(--border);background:var(--surface-1);color:var(--text-secondary);
-  cursor:pointer;font-size:15px;line-height:1;display:grid;place-items:center
-}
-
-/* ============ card ============ */
-.card{
-  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r);
-  padding:18px;margin-bottom:14px;box-shadow:var(--shadow)
-}
-.card h2{font-size:15px;margin:0 0 14px;letter-spacing:-.02em;font-weight:700;display:flex;align-items:center;gap:8px}
-.card h2 .n{
-  width:19px;height:19px;border-radius:6px;background:var(--accent);color:#fff;
-  font-size:11px;display:grid;place-items:center;font-weight:700;flex:none
-}
-
-/* ============ tabs ============ */
-.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:11px;margin-bottom:16px}
-.tabs button{
-  flex:1;padding:9px 8px;border:0;border-radius:8px;background:transparent;
-  color:var(--text-secondary);font-size:13.5px;font-weight:600;cursor:pointer;
-  font-family:inherit;transition:background .15s,color .15s;letter-spacing:-.01em
-}
-.tabs button[aria-selected="true"]{background:var(--surface-1);color:var(--text-primary);box-shadow:var(--shadow)}
-
-/* ============ fields ============ */
-.field{margin-bottom:16px}
-.field:last-child{margin-bottom:0}
-.field > label,.flabel{
-  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
-  font-size:12.5px;color:var(--text-secondary);font-weight:600;margin-bottom:7px;letter-spacing:-.01em
-}
-.hint{font-size:11.5px;color:var(--text-muted);font-weight:400;letter-spacing:-.01em}
-.num-row{display:flex;align-items:center;gap:8px}
-input[type=number],input[type=text]{
-  flex:1;min-width:0;padding:11px 12px;border:1px solid var(--border-strong);border-radius:10px;
-  background:var(--surface-0);color:var(--text-primary);font-size:16px;font-family:inherit;
-  font-weight:600;text-align:right;font-feature-settings:"tnum" 1
-}
-input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
-.unit{font-size:13px;color:var(--text-secondary);font-weight:600;flex:none}
-input[type=range]{
-  width:100%;margin:10px 0 0;accent-color:var(--accent);height:22px
-}
-select{
-  width:100%;padding:11px 12px;border:1px solid var(--border-strong);border-radius:10px;
-  background:var(--surface-0);color:var(--text-primary);font-size:16px;font-family:inherit;font-weight:600
-}
-select:focus{outline:2px solid var(--accent);outline-offset:1px}
-.seg{display:flex;gap:6px;flex-wrap:wrap}
-.seg button{
-  flex:1;min-width:64px;padding:9px 6px;border:1px solid var(--border-strong);border-radius:9px;
-  background:var(--surface-0);color:var(--text-secondary);font-size:13px;font-weight:600;
-  cursor:pointer;font-family:inherit;letter-spacing:-.01em
-}
-.seg button[aria-pressed="true"]{
-  background:var(--accent);border-color:var(--accent);color:#fff
-}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:420px){.grid2{grid-template-columns:1fr}}
-
-details.adv{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
-details.adv summary{
-  cursor:pointer;font-size:12.5px;color:var(--text-secondary);font-weight:600;
-  list-style:none;display:flex;align-items:center;gap:6px;user-select:none
-}
-details.adv summary::-webkit-details-marker{display:none}
-details.adv summary::before{content:"▸";transition:transform .15s;display:inline-block}
-details.adv[open] summary::before{transform:rotate(90deg)}
-details.adv .body{padding-top:14px}
-
-/* ============ hero result ============ */
-.hero{
-  background:var(--surface-1);border:1px solid var(--border);border-radius:var(--r);
-  padding:20px 18px;margin-bottom:14px;box-shadow:var(--shadow)
-}
-.hero .cap{font-size:12.5px;color:var(--text-secondary);font-weight:600;margin-bottom:2px}
-.hero .big{
-  font-size:38px;font-weight:800;letter-spacing:-.035em;line-height:1.1;margin:4px 0 2px;
-  font-variant-numeric:tabular-nums
-}
-.hero .big.up{color:var(--up)} .hero .big.down{color:var(--down)}
-.hero .note{font-size:13px;color:var(--text-secondary);margin-top:6px}
-.hero .note b{color:var(--text-primary);font-weight:700}
-.pillrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
-@media (max-width:520px){.pillrow{grid-template-columns:repeat(2,1fr)}}
-.pill{
-  background:var(--surface-2);border:1px solid var(--border);
-  border-radius:10px;padding:9px 11px;min-width:0
-}
-.pill .k{font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:-.01em}
-.pill .v{font-size:16px;font-weight:800;letter-spacing:-.025em;margin-top:1px;font-variant-numeric:tabular-nums}
-
-/* ============ 변화 분해 ============ */
-#h_split{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
-.splittitle{font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:9px}
-.splitrow{display:grid;grid-template-columns:88px 1fr;gap:2px 10px;align-items:baseline;margin-bottom:10px}
-.splitrow .sl{font-size:12px;color:var(--text-secondary);font-weight:600;white-space:nowrap}
-.splitrow .sv{font-size:17px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.splitrow .sv.up{color:var(--up)} .splitrow .sv.down{color:var(--down)}
-.splitrow .sw{grid-column:2;font-size:11.5px;color:var(--text-muted)}
-.splitfoot{font-size:11.5px;color:var(--text-secondary);line-height:1.55;margin-top:10px}
-
-/* ============ chart ============ */
-.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:2px}
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 10px;font-size:12px;color:var(--text-secondary)}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.swatch{width:11px;height:11px;border-radius:3px;flex:none}
-svg.chart{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
-.gridline{stroke:var(--border);stroke-width:1}
-.axis-txt{fill:var(--text-muted);font-size:11px;font-weight:500}
-.bar-lab{fill:var(--text-primary);font-size:11.5px;font-weight:700}
-.bar-lab.mut{fill:var(--text-secondary);font-weight:600;font-size:10.5px}
-.hit{fill:transparent;cursor:pointer}
-.tip{
-  position:absolute;pointer-events:none;z-index:20;background:var(--surface-1);
-  border:1px solid var(--border-strong);border-radius:10px;padding:9px 11px;
-  box-shadow:var(--shadow);font-size:12.5px;min-width:150px;opacity:0;transition:opacity .1s;
-  transform:translate(-50%,-100%)
-}
-.tip.on{opacity:1}
-.tip .t{font-weight:800;margin-bottom:5px;font-size:13px}
-.tip .r{display:flex;justify-content:space-between;gap:14px;color:var(--text-secondary)}
-.tip .r b{color:var(--text-primary);font-variant-numeric:tabular-nums}
-.tip .r.tot{border-top:1px solid var(--border);margin-top:5px;padding-top:5px}
-.chart-wrap{position:relative}
-
-/* ============ table ============ */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -18px;padding:0 18px}
-table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:430px}
-th,td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
-th{color:var(--text-muted);font-weight:600;font-size:11.5px}
-th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--surface-1)}
-td{font-variant-numeric:tabular-nums;font-weight:600}
-tr.hl td{background:color-mix(in srgb,var(--accent) 7%,var(--surface-1))}
-tr.hl td:first-child{background:color-mix(in srgb,var(--accent) 7%,var(--surface-1))}
-.delta.up{color:var(--up)} .delta.down{color:var(--down)}
-
-/* ============ misc ============ */
-.notice{
-  font-size:12.5px;color:var(--text-secondary);background:var(--surface-2);
-  border:1px solid var(--border);border-radius:10px;padding:11px 13px;line-height:1.55
-}
-.notice b{color:var(--text-primary)}
-.foot{font-size:11.5px;color:var(--text-muted);line-height:1.7;margin-top:22px}
-.foot h3{font-size:12.5px;color:var(--text-secondary);margin:0 0 6px}
-.foot ul{margin:0 0 12px;padding-left:16px}
-.foot a{color:var(--text-secondary)}
-.zero{color:var(--text-muted);font-weight:500}
-.hidden{display:none !important}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  footer { text-align: center; margin-top: 36px; font-size: 0.78rem; color: var(--text-muted); }
 </style>
 </head>
 <body>
-<button class="theme-btn" id="themeBtn" aria-label="다크모드 전환">◐</button>
 <div class="wrap">
+  <header>
+    <h1>🏠 부동산 분석 도구 모음</h1>
+    <p>공공임대 자격 진단부터 재개발 사업성 분석까지</p>
+  </header>
 
-<a class="hubnav" href="../">← 홈으로</a>
+  <div class="cards">
+    <a class="card green" href="sh-rental/">
+      <div class="icon">🏢</div>
+      <h2>SH 청년 매입임대주택 자격 자가진단</h2>
+      <p>2026년 1차 모집공고 기준으로 신청 자격과 순위(1·2·3순위), 가점을 단계별로 확인합니다.</p>
+      <span class="tag">청년 · 공공임대</span>
+      <span class="go">진단 시작 →</span>
+    </a>
 
-<header>
-  <div class="eyebrow">
-    <span class="badge">2026.8.3 발표</span>
-    <span class="badge warn">국회 미통과 정부안</span>
+    <a class="card teal" href="redev-rental/">
+      <div class="icon">🏘️</div>
+      <h2>SH 재개발임대주택 자격 자가진단</h2>
+      <p>2026년 모집공고 기준으로 신청 자격과 순위(1·2순위), 가점을 단계별로 확인합니다. 출생자녀 소득·자산 가산 자동 반영.</p>
+      <span class="tag">저소득층 · 공공임대</span>
+      <span class="go">진단 시작 →</span>
+    </a>
+
+    <a class="card blue" href="redevelopment/">
+      <div class="icon">🏗️</div>
+      <h2>재개발 사업성 분석 플랫폼</h2>
+      <p>재개발 절차 개념 정리와 함께, 건축물대장·매매가를 입력해 권리가액·추가분담금·투자점수를 계산합니다.</p>
+      <span class="tag">재개발 · 투자 분석</span>
+      <span class="go">분석 시작 →</span>
+    </a>
+    <a class="card amber" href="tax-2026/">
+      <div class="icon">🧾</div>
+      <h2>2026 세제개편 부동산 세금 계산기</h2>
+      <p>8·3 세제개편안 기준으로 우리 집 종부세·재산세·양도세가 2027~2029년 얼마나 달라지는지 연도별로 계산합니다.</p>
+      <span class="tag">보유세 · 양도세</span>
+      <span class="go">계산 시작 →</span>
+    </a>
   </div>
-  <h1>우리 집 세금,<br><em>얼마나 오를까?</em></h1>
-  <p class="sub">2026년 세제개편안을 적용해 <b>2027 · 2028 · 2029년</b> 보유세와 양도세를 연도별로 계산합니다.</p>
-</header>
 
-<div class="tabs" role="tablist">
-  <button role="tab" aria-selected="true"  data-tab="hold">보유세 (재산세·종부세)</button>
-  <button role="tab" aria-selected="false" data-tab="cgt">양도세</button>
+  <footer>모든 결과는 참고용 추정치이며 법적 효력이 없습니다. 반드시 공고문·고시문 원문과 전문가 검토를 거치세요.</footer>
 </div>
-
-<!-- ══════════════ 간편 ══════════════ -->
-<section id="panel-hold">
-  <div class="card">
-    <h2><span class="n">1</span>우리 집 정보</h2>
-
-    <div class="field">
-      <label for="s_price">현재 시세
-        <span class="hint">실거래가 기준</span>
-      </label>
-      <div class="num-row">
-        <input type="number" id="s_price" value="20" min="1" max="200" step="0.5" inputmode="decimal">
-        <span class="unit">억원</span>
-      </div>
-      <input type="range" id="s_price_r" value="20" min="3" max="100" step="0.5" aria-label="시세 슬라이더">
-    </div>
-
-    <div class="field">
-      <div class="flabel">공동주택 공시가격
-        <span class="hint" id="s_pub_hint">알면 넣으세요 · 모르면 비워두면 추정</span>
-      </div>
-      <div class="grid2">
-        <div>
-          <div class="flabel" style="font-size:11.5px;margin-bottom:5px">올해 (2026.1.1)</div>
-          <div class="num-row">
-            <input type="number" id="s_pub" value="0" min="0" max="500" step="0.01" inputmode="decimal" placeholder="모르면 0">
-            <span class="unit">억</span>
-          </div>
-        </div>
-        <div>
-          <div class="flabel" style="font-size:11.5px;margin-bottom:5px">작년 (2025.1.1)</div>
-          <div class="num-row">
-            <input type="number" id="s_prev" value="0" min="0" max="500" step="0.01" inputmode="decimal" placeholder="모르면 0">
-            <span class="unit">억</span>
-          </div>
-        </div>
-      </div>
-      <p class="notice" style="margin-top:9px">
-        <a href="https://www.realtyprice.kr" target="_blank" rel="noopener" style="color:var(--accent)"><b>부동산공시가격알리미</b></a>에서
-        동·호수까지 넣으면 <b>연도별로 한 번에</b> 나옵니다. 두 칸 채우면 이 계산기가 가장 정확해집니다.
-        비워두면 아래 시세와 지역 평균으로 추정합니다.
-      </p>
-    </div>
-
-    <div class="notice" id="s_readout" style="margin-bottom:16px"></div>
-
-    <div class="field">
-      <div class="flabel">보유 주택 수</div>
-      <div class="seg" id="s_houses">
-        <button data-v="1" aria-pressed="true">1주택</button>
-        <button data-v="2" aria-pressed="false">2주택</button>
-        <button data-v="3" aria-pressed="false">3주택 이상</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <div class="flabel">실거주 여부
-        <span class="hint">개편안의 핵심 갈림길</span>
-      </div>
-      <div class="seg" id="s_resident">
-        <button data-v="1" aria-pressed="true">실거주 중</button>
-        <button data-v="0" aria-pressed="false">비거주(임대·공실)</button>
-      </div>
-    </div>
-
-    <div class="field" id="s_share_field" style="display:none">
-      <div class="flabel">거주 주택 공시가격 비중
-        <span class="hint">다주택 기본공제 = 4억 + 5억 × 비중</span>
-      </div>
-      <div class="num-row"><input type="number" id="s_share" value="33" min="0" max="100" step="1" inputmode="numeric"><span class="unit">%</span></div>
-    </div>
-
-    <div class="grid2">
-      <div class="field">
-        <div class="flabel">보유 기간 <span class="hint">세액공제</span></div>
-        <div class="num-row"><input type="number" id="s_hold" value="10" min="0" max="50" inputmode="numeric"><span class="unit">년</span></div>
-      </div>
-      <div class="field">
-        <div class="flabel">거주 기간 <span class="hint">개편안의 핵심</span></div>
-        <div class="num-row"><input type="number" id="s_live" value="10" min="0" max="50" inputmode="numeric"><span class="unit">년</span></div>
-      </div>
-    </div>
-    <p class="hint hidden" id="s_livewarn" style="color:var(--up);margin:-8px 0 12px"></p>
-    <p class="notice">보유·거주 기간은 세액공제를 <b>최대 80%</b>까지 좌우합니다. 5년 미만이면 공제가 아예 없어서 세금이 두 배 가까이 뜁니다. 대충 넣지 마세요.</p>
-
-    <details class="adv">
-      <summary>세부 조건 (나이 · 추정에 쓰는 값)</summary>
-      <div class="body">
-        <div class="field">
-          <div class="flabel">만 나이 <span class="hint">60세부터 세액공제</span></div>
-          <div class="num-row"><input type="number" id="s_age" value="55" min="19" max="100" inputmode="numeric"><span class="unit">세</span></div>
-        </div>
-        <p class="notice" style="margin-bottom:14px">아래 두 값은 <b>공시가격을 비워뒀을 때만</b> 씁니다. 위에 공시가격을 넣으셨다면 무시됩니다.</p>
-        <div class="field">
-          <div class="flabel">지역 <span class="hint">올해 공시가격 상승률</span></div>
-          <select id="s_region"></select>
-          <div class="num-row" style="margin-top:8px">
-            <span class="unit" style="flex:1;font-weight:500;color:var(--text-muted)">상승률</span>
-            <input type="number" id="s_rise" value="18.6" min="-30" max="200" step="0.1" inputmode="decimal" style="max-width:110px">
-            <span class="unit">%</span>
-          </div>
-          <p class="notice" style="margin-top:9px">2026년 국토부 발표 <b>시도 평균</b>(전국 9.13%, 서울 18.60%). 작년 공시가격을 역산해 재산세 과세표준상한을 잡는 데 씁니다.</p>
-        </div>
-        <div class="field">
-          <div class="flabel">공시가격 현실화율</div>
-          <div class="num-row"><input type="number" id="s_ratio" value="69" min="40" max="100" step="1" inputmode="numeric"><span class="unit">%</span></div>
-          <p class="notice" style="margin-top:9px">공시가격 = 시세 × 현실화율. 2026년 정부 동결값은 <b>69%</b>입니다.</p>
-        </div>
-      </div>
-    </details>
-  </div>
-</section>
-
-<!-- ══════════════ 계산 기준 (공통) ══════════════ -->
-<div class="card" id="mode-card">
-  <h2><span class="n">⚙</span>계산 기준</h2>
-  <div class="seg" id="g_mode">
-    <button data-v="strict" aria-pressed="true">실제 고지 기준</button>
-    <button data-v="gov" aria-pressed="false">정부 발표 기준</button>
-  </div>
-  <p class="notice" style="margin-top:9px" id="g_mode_note"></p>
-</div>
-
-<!-- ══════════════ 보유세 결과 ══════════════ -->
-<div id="holding-result">
-  <div class="hero">
-    <div class="cap" id="h_cap">2028년 기준 보유세 변화</div>
-    <div class="big" id="h_big">–</div>
-    <div class="note" id="h_note"></div>
-    <div class="pillrow" id="h_pills"></div>
-    <div id="h_split" class="hidden"></div>
-  </div>
-
-  <div class="card">
-    <div class="chart-head">
-      <h2 style="margin:0"><span class="n">2</span>연도별 보유세</h2>
-    </div>
-    <div class="legend">
-      <span><i class="swatch" style="background:var(--series-1)"></i>재산세</span>
-      <span><i class="swatch" style="background:var(--series-2)"></i>종합부동산세</span>
-    </div>
-    <div class="chart-wrap">
-      <svg class="chart" id="chart" viewBox="0 0 660 300" role="img" aria-labelledby="chartTitle"></svg>
-      <div class="tip" id="tip"></div>
-    </div>
-    <p class="hint" style="margin:10px 0 0">막대를 누르면 세부 내역이 나옵니다.</p>
-    <p class="notice" style="margin-top:12px" id="halfnote"></p>
-  </div>
-
-  <div class="card">
-    <h2><span class="n">3</span>연도별 상세</h2>
-    <div class="tbl-wrap">
-      <table id="tbl">
-        <thead><tr>
-          <th>연도</th><th>기본공제</th><th>공정비율</th><th>과세표준</th>
-          <th>종부세<br><span class="hint">12월 고지</span></th>
-          <th>재산세<br><span class="hint">7·9월 반씩</span></th>
-          <th>보유세 합계</th><th>현행 대비</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════ 양도세 ══════════════ -->
-<section id="panel-cgt" class="hidden">
-  <div class="card">
-    <h2><span class="n">1</span>양도 조건</h2>
-    <div class="grid2">
-      <div class="field">
-        <div class="flabel">취득가액</div>
-        <div class="num-row"><input type="number" id="c_buy" value="10" min="0" step="0.1" inputmode="decimal"><span class="unit">억원</span></div>
-      </div>
-      <div class="field">
-        <div class="flabel">양도가액</div>
-        <div class="num-row"><input type="number" id="c_sell" value="25" min="0" step="0.1" inputmode="decimal"><span class="unit">억원</span></div>
-      </div>
-      <div class="field">
-        <div class="flabel">보유 기간</div>
-        <div class="num-row"><input type="number" id="c_hold" value="12" min="0" max="50" inputmode="numeric"><span class="unit">년</span></div>
-      </div>
-      <div class="field">
-        <div class="flabel">거주 기간</div>
-        <div class="num-row"><input type="number" id="c_live" value="12" min="0" max="50" inputmode="numeric"><span class="unit">년</span></div>
-        <p class="hint hidden" id="c_livewarn" style="color:var(--up);margin-top:6px"></p>
-      </div>
-      <div class="field">
-        <div class="flabel">필요경비 <span class="hint">취득세·중개비 등</span></div>
-        <div class="num-row"><input type="number" id="c_exp" value="0" min="0" step="0.1" inputmode="decimal"><span class="unit">억원</span></div>
-      </div>
-      <div class="field">
-        <div class="flabel">보유 주택 수</div>
-        <div class="num-row"><input type="number" id="c_houses" value="1" min="1" max="20" inputmode="numeric"><span class="unit">채</span></div>
-      </div>
-    </div>
-    <div class="field">
-      <div class="flabel">조정대상지역 <span class="hint">다주택 중과 적용 여부</span></div>
-      <div class="seg" id="c_adj">
-        <button data-v="0" aria-pressed="true">해당 없음</button>
-        <button data-v="1" aria-pressed="false">조정대상지역</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero">
-    <div class="cap" id="c_cap">2029년 양도 시 세부담 변화</div>
-    <div class="big" id="c_big">–</div>
-    <div class="note" id="c_note"></div>
-  </div>
-
-  <div class="card">
-    <h2><span class="n">2</span>양도 시점별 세액</h2>
-    <div class="tbl-wrap">
-      <table id="ctbl">
-        <thead><tr>
-          <th>양도 연도</th><th>과세대상 양도차익</th><th>장특공제율</th><th>장특공제액</th>
-          <th>과세표준</th><th>총 세액</th><th>실수령</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <p class="notice" style="margin-top:12px">
-      <b>핵심:</b> 1세대 1주택 장기보유특별공제가 <b>보유 기준에서 거주 기준</b>으로 바뀌고,
-      공제 <b>금액</b>에 2028년 20억 · 2029년 10억 한도가 새로 생깁니다(인별·물건별).
-      거주하지 않은 집일수록 타격이 큽니다.
-    </p>
-  </div>
-</section>
-
-<!-- ══════════════ 참고 ══════════════ -->
-<div class="card" id="gov-example">
-  <h2><span class="n">＊</span>정부 발표 예시 — 종부세 (실거주 1주택 · 60세 · 10년 거주)</h2>
-  <div class="tbl-wrap">
-    <table>
-      <thead><tr><th>시가</th><th>현행(2026)</th><th>2027년</th><th>2028년 이후</th><th>증감</th></tr></thead>
-      <tbody>
-        <tr><td>20억</td><td>28만</td><td>–</td><td>11만</td><td class="delta down">−17만</td></tr>
-        <tr><td>25억</td><td>46만</td><td>–</td><td>32만</td><td class="delta down">−14만</td></tr>
-        <tr><td>30억</td><td>91만</td><td>–</td><td>76만</td><td class="delta down">−15만</td></tr>
-        <tr class="hl"><td>35억</td><td>192만</td><td>–</td><td>212만</td><td class="delta up">+21만</td></tr>
-        <tr><td>40억</td><td>263만</td><td>–</td><td>325만</td><td class="delta up">+63만</td></tr>
-        <tr><td>50억</td><td>454만</td><td>615만</td><td>979만</td><td class="delta up">+525만</td></tr>
-        <tr><td>60억</td><td>615만</td><td>1,131만</td><td>1,743만</td><td class="delta up">+1,128만</td></tr>
-        <tr><td>70억</td><td>938만</td><td>2,252만</td><td>3,296만</td><td class="delta up">+2,358만</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="notice" style="margin-top:12px">
-    <b>시세 30억까지는 오히려 감세, 35억부터 증세</b>로 돌아섭니다. 정부 추계 기준 세부담이 늘어나는 가구는
-    전체 주택 보유자 약 1,598만 명 중 <b>8만~17만 명(0.5~1%)</b> 수준입니다.
-    위 표는 종부세만이며 재산세는 빠져 있습니다. 공시가격 현실화율 69% 가정.
-  </p>
-</div>
-
-<div class="card">
-  <h2><span class="n">＊</span>무엇이 바뀌나 — 3줄 요약</h2>
-  <div class="notice" style="margin-bottom:9px"><b>1. 주택 수 → 주택 가액.</b> 2028년부터 몇 채인지가 아니라 다 합쳐서 얼마인지로 과세합니다(단일세율 0.5~5.0%).</div>
-  <div class="notice" style="margin-bottom:9px"><b>2. 보유 → 거주.</b> 종부세 세액공제와 양도세 장특공제 모두 보유기간 공제가 사라지고 거주기간 공제만 남습니다.</div>
-  <div class="notice"><b>3. 기본공제 갈림길.</b> 실거주 1주택 14억(↑2억) / 비거주 1주택 9억(↓3억). 같은 1주택이라도 사느냐 마느냐로 세금이 갈립니다.</div>
-</div>
-
-<div class="foot">
-  <h3>계산 근거와 한계</h3>
-  <ul>
-    <li>2026년 8월 3일 재정경제부 「2026년 세제개편안」 정부안 기준입니다. <b>국회를 통과하지 않았고</b>(2026.9.3 국회 제출 예정), 심의 과정에서 바뀔 수 있습니다.</li>
-    <li>공정시장가액비율(2027년 70%, 2028년 다주택 80%)은 <b>법률이 아닌 시행령</b> 사항이라 정부가 다시 조정할 수 있습니다.</li>
-    <li>종부세 세액공제는 공제율 한도 80%와 금액 한도(2027년 800만원 / 2028년 이후 600만원)가 <b>동시에</b> 적용됩니다.</li>
-    <li>「정부 발표 기준」은 재산세 중복분 공제와 농어촌특별세를 뺀 값으로, 언론에 보도된 정부 시뮬레이션 수치를 재현합니다. 「실제 고지 기준」은 재산세 상당액 공제와 농특세 20%를 반영한 값입니다.</li>
-    <li>정부 시뮬레이션의 세부 전제(구간별 공시가격, 재산세 상당액 공제 처리)가 공개되지 않아 <b>발표 예시와 ±5~20% 차이</b>가 날 수 있습니다. 시세 35억 이상 구간이 가장 잘 맞습니다.</li>
-    <li>재산세는 지방세로 이번 개편안 대상이 아니며 2026년 기준(1주택 공정비율 43~45%, 공시 9억 이하 특례세율)으로 고정 계산했습니다. 공시가격 자체의 변동은 반영하지 않았습니다.</li>
-    <li><b>재산세 과세표준상한제</b>(2024년 도입, 지방세법 110조의2)를 반영했습니다. 작년 공시가격을 넣으면 정확하고, 비워두면 지역 평균 상승률로 역산합니다. 향후 연도는 <b>공시가격 불변</b>을 가정해 상한선을 연쇄 적용했습니다 — 실제로 공시가격이 더 오르면 재산세는 이 계산보다 높아집니다.</li>
-    <li>도시지역분 재산세는 표준세율 0.14%로 계산했으나 <b>지자체 조례로 최대 0.23%까지</b> 다를 수 있고, 도시지역 밖이면 아예 붙지 않습니다. 자치구 탄력세율 인하 조례도 반영하지 않았습니다.</li>
-    <li><b>부부 공동명의</b>는 반영하지 않았습니다. 종부세를 지분별로 나눠 계산하므로 실제 고지액이 크게 줄거나 0원일 수 있습니다.</li>
-    <li>세부담상한(현행 150% → 개정 200%), 임대주택 합산배제, 상속 특례, 지역자원시설세 등은 반영하지 않았습니다.</li>
-  </ul>
-  <p><b>모든 결과는 참고용 추정치이며 법적 효력이 없습니다.</b> 실제 세액은 개별 공시가격·감면·특례에 따라 달라지므로, 신고·의사결정 전에는 반드시 세무 전문가와 상담하세요.</p>
-</div>
-
-</div><!-- /wrap -->
-
-<script>
-/* ═══════════════ 엔진 ═══════════════ */
-const EOK=1e8, MAN=1e4;
-
-const JBS={
- 2026:{normal:[[3,.5],[6,.7],[12,1.0],[25,1.3],[50,1.5],[94,2.0],[Infinity,2.7]],
-       heavy: [[3,.5],[6,.7],[12,1.0],[25,2.0],[50,3.0],[94,4.0],[Infinity,5.0]]},
- 2027:{normal:[[3,.5],[6,.7],[12,1.3],[25,1.5],[50,2.0],[94,2.7],[Infinity,3.5]],
-       heavy: [[3,.5],[6,.7],[12,1.3],[25,2.0],[50,3.0],[94,4.0],[Infinity,5.0]]},
- 2028:{normal:[[3,.5],[6,.7],[12,1.3],[25,2.0],[50,3.0],[94,4.0],[Infinity,5.0]],
-       heavy: [[3,.5],[6,.7],[12,1.3],[25,2.0],[50,3.0],[94,4.0],[Infinity,5.0]]}
-};
-JBS[2029]=JBS[2028];
-
-const fairRatio=(y,h)=> y<=2026?.60 : y===2027?.70 : (h>=3?.80:.70);
-
-function jbsDeduct(y,h,res,share){
-  if(y<=2026) return (h===1?12:9)*EOK;
-  if(h===1)   return (res?14:9)*EOK;
-  const s=res?Math.max(0,Math.min(1,share||0)):0;
-  return Math.min(9*EOK, 4*EOK+5*EOK*s);
-}
-const tier=(v,t)=>{for(const[f,r]of t) if(v>=f) return r; return 0;};
-const AGE=[[70,.40],[65,.30],[60,.20]];
-const HOLD26=[[15,.50],[10,.40],[5,.20]], HOLD27=[[15,.25],[10,.20],[5,.10]], LIVE=[[15,.50],[10,.40],[5,.20]];
-
-function jbsCredit(y,age,hold,live){
-  const a=tier(age,AGE); let p, cap=null;
-  if(y<=2026){ p=tier(hold,HOLD26); }
-  else if(y===2027){ p=Math.max(tier(hold,HOLD27),tier(live,LIVE)); cap=800*MAN; }
-  else { p=tier(live,LIVE); cap=600*MAN; }
-  return {rate:Math.min(.80,a+p), cap};
-}
-function prog(base,t){let x=0,prev=0;for(const[c,r]of t){const cap=c===Infinity?Infinity:c*EOK;
-  if(base<=prev)break; x+=(Math.min(base,cap)-prev)*(r/100); prev=cap;} return x;}
-
-const PSTD=[[.6,.10,0],[1.5,.15,3],[3,.25,18],[Infinity,.40,63]];
-const PSPC=[[.6,.05,0],[1.5,.10,3],[3,.20,18],[Infinity,.35,63]];
-const pFair=(pub,h)=> h>=2?.60 : pub<=3*EOK?.43 : pub<=6*EOK?.44 : .45;
-
-/* 과세표준상한제 (지방세법 110조의2, 2024년 도입)
-   과표상한액 = 직전연도 과세표준 + (올해 과세표준 × 5%)
-   n = 올해로부터 몇 해 뒤인지 (0 = 현행연도). 공시가격은 불변 가정으로 연쇄 적용. */
-function cappedBase(pub,prevPub,h,n){
-  const raw=pub*pFair(pub,h);
-  if(!prevPub||prevPub<=0) return {base:raw,raw,capped:false};
-  let b=prevPub*pFair(prevPub,h);
-  for(let i=0;i<=(n||0);i++) b=Math.min(raw,b+raw*0.05);
-  return {base:b,raw,capped:b<raw-1};
-}
-
-function propertyTax(pub,h,baseIn){
-  const spc=(h===1&&pub<=9*EOK), t=spc?PSPC:PSTD;
-  const base = baseIn!=null ? baseIn : pub*pFair(pub,h);
-  let main=0;
-  for(const[c,r,d] of t){const cap=c===Infinity?Infinity:c*EOK; if(base<=cap){main=base*(r/100)-d*MAN;break;}}
-  main=Math.max(0,main);
-  return {base,main,urban:base*.0014,edu:main*.20,total:main+base*.0014+main*.20};
-}
-
-function jongbuse(o){
-  const rates=(JBS[o.year]||JBS[2028])[o.houses>=3?'heavy':'normal'];
-  const deduction=jbsDeduct(o.year,o.houses,o.isResident,o.share);
-  const fair=fairRatio(o.year,o.houses);
-  const taxBase=Math.max(0,o.pub-deduction)*fair;
-  const gross=prog(taxBase,rates);
-  let overlap=0;
-  if(o.mode==='strict'&&taxBase>0){
-    const per=o.pub/o.houses;
-    overlap=taxBase*pFair(per,o.houses)*((o.houses===1&&per<=9*EOK)?.0035:.004);
-  }
-  const afterProp=Math.max(0,gross-overlap);
-  let credit=0, cr={rate:0,cap:null};
-  if(o.houses===1){
-    cr=jbsCredit(o.year,o.age,o.hold,o.live);
-    credit=afterProp*cr.rate;
-    if(cr.cap!==null) credit=Math.min(credit,cr.cap);
-  }
-  const main=Math.max(0,afterProp-credit);
-  const farm=o.mode==='strict'?main*.20:0;
-  return {deduction,fair,taxBase,gross,overlap,creditRate:cr.rate,creditCap:cr.cap,credit,main,farm,total:main+farm};
-}
-function holdingTax(o){
-  const per=o.pub/o.houses;
-  const prevPer=o.prevPub? o.prevPub/o.houses : 0;
-  const cb=cappedBase(per,prevPer,o.houses,o.yearIdx||0);
-  const p=propertyTax(per,o.houses,cb.base), prop=p.total*o.houses, j=jongbuse(o);
-  return {property:prop,pd:p,cap:cb,j,total:prop+j.total};
-}
-
-/* 양도세 */
-const CGT=[[1400*MAN,.06,0],[5000*MAN,.15,126*MAN],[8800*MAN,.24,576*MAN],[1.5*EOK,.35,1544*MAN],
-           [3*EOK,.38,1994*MAN],[5*EOK,.40,2594*MAN],[10*EOK,.42,3594*MAN],[Infinity,.45,6594*MAN]];
-function ltRate(y,h,hold,live){
-  if(h===1&&live>=2){
-    if(y<=2027) return {rate:Math.min(.40,hold*.04)+Math.min(.40,live*.04),cap:null};
-    if(y===2028) return {rate:Math.min(.20,hold*.02)+Math.min(.60,live*.06),cap:20*EOK};
-    return {rate:Math.min(.80,live*.08),cap:10*EOK};
-  }
-  if(y<=2027) return {rate:Math.min(.30,hold*.02),cap:null};
-  if(y===2028) return {rate:Math.min(.15,hold*.01)+Math.min(.30,live*.02),cap:20*EOK};
-  return {rate:Math.min(.30,live*.02),cap:10*EOK};
-}
-function surcharge(y,h,adj){
-  if(!adj||h<2) return 0;
-  const t={2026:[20,30],2027:[5,10],2028:[10,15],2029:[20,30]}[Math.min(y,2029)]||[20,30];
-  return (h>=3?t[1]:t[0])/100;
-}
-function cgtCalc(o){
-  const gain=Math.max(0,o.sell-o.buy-(o.exp||0));
-  const one=o.houses===1;
-  const taxable = one ? (o.sell>12*EOK ? gain*(o.sell-12*EOK)/o.sell : 0) : gain;
-  const lt=ltRate(o.year,o.houses,o.hold,o.live);
-  let ltAmt=taxable*lt.rate; if(lt.cap!==null) ltAmt=Math.min(ltAmt,lt.cap);
-  const income=Math.max(0,taxable-ltAmt);
-  const basic=(one&&o.sell<=30*EOK&&o.live>=10&&o.year>=2027)?2500*MAN:250*MAN;
-  const base=Math.max(0,income-basic);
-  let r=0,q=0; for(const[c,rr,qq] of CGT){ if(base<=c){r=rr;q=qq;break;} }
-  const sur=surcharge(o.year,o.houses,o.adj);
-  const nat=Math.max(0,base*(r+sur)-q);
-  return {gain,taxable,ltRate:lt.rate,ltCap:lt.cap,ltAmt,income,base,rate:r,sur,total:nat+nat*.10};
-}
-
-/* ═══════════════ 포맷 ═══════════════ */
-function fmtKRW(w){
-  if(w<1000) return '0원';
-  const eok=Math.floor(w/EOK), man=Math.round((w-eok*EOK)/MAN);
-  if(eok>0) return eok+'억' + (man>0? ' '+man.toLocaleString()+'만':'') + '원';
-  return man.toLocaleString()+'만원';
-}
-const fmtMan = w => Math.round(w/MAN).toLocaleString()+'만';
-const fmtSigned = w => (w>=0?'+':'−')+fmtKRW(Math.abs(w));
-
-/* ═══════════════ 상태 ═══════════════ */
-const S={
-  tab:'hold',
-  mode:'strict',
-  s:{price:20,pub:0,prev:0,rise:18.6,houses:1,res:1,share:33,age:55,hold:10,live:10,ratio:69},
-  c:{buy:10,sell:25,hold:12,live:12,exp:0,houses:1,adj:0}
-};
-const $=id=>document.getElementById(id);
-const YEARS=[2026,2027,2028,2029];
-
-function inputs(){
-  const s=S.s;
-  // 공시가격을 직접 넣었으면 그대로, 아니면 시세×현실화율로 추정
-  const est = s.price*EOK*(s.ratio/100);
-  const pubGiven = s.pub>0;
-  const pub = pubGiven ? s.pub*EOK : est;
-  // 작년 공시가격도 직접 넣었으면 그대로, 아니면 지역 상승률로 역산
-  const rise=(s.rise||0)/100;
-  const prevGiven = s.prev>0;
-  const prevPub = prevGiven ? s.prev*EOK : (rise>-0.99 ? pub/(1+rise) : 0);
-  return {pub,prevPub,pubGiven,prevGiven,est,
-          houses:Math.max(1,s.houses),isResident:!!s.res,share:(s.share||0)/100,
-          age:s.age,hold:s.hold,live:s.live,mode:S.mode};
-}
-
-/* ═══════════════ 렌더: 보유세 ═══════════════ */
-let rows=[];
-function renderHolding(){
-  const inp=inputs();
-  rows=YEARS.map((y,i)=>{
-    const r=holdingTax(Object.assign({},inp,{year:y,yearIdx:i}));
-    return {year:y,prop:r.property,jbs:r.j.total,total:r.total,d:r.j,cap:r.cap};
-  });
-  const cur=rows[0], y28=rows[2];
-  const diff=y28.total-cur.total;
-  const pct = cur.total>0 ? (diff/cur.total*100) : (y28.total>0?Infinity:0);
-
-  $('h_cap').textContent = '2028년 기준 보유세 변화 (재산세+종부세)';
-  const big=$('h_big');
-  big.textContent = diff===0 ? '변화 없음' : fmtSigned(diff);
-  big.className='big '+(diff>0?'up':diff<0?'down':'');
-
-  let note;
-  if(diff>0){
-    note = `현행 <b>${fmtKRW(cur.total)}</b> → 2028년 <b>${fmtKRW(y28.total)}</b>`
-         + (isFinite(pct)&&cur.total>0 ? ` (<b>${pct>=100?(y28.total/cur.total).toFixed(1)+'배':'+'+pct.toFixed(0)+'%'}</b>)` : '');
-  } else if(diff<0){
-    note = `현행 <b>${fmtKRW(cur.total)}</b> → 2028년 <b>${fmtKRW(y28.total)}</b>로 <b>줄어듭니다</b>.`;
-  } else {
-    note = '현행과 동일합니다.';
-  }
-  if(y28.jbs===0 && cur.jbs===0) note += ' 종부세 과세 대상이 아닙니다.';
-  $('h_note').innerHTML=note;
-
-  /* 변화를 두 갈래로 분해 — 공시가격 상승분 vs 세제개편 효과.
-     방향이 반대라서 합쳐 보면 모순처럼 읽힌다. */
-  const split=$('h_split');
-  if(inp.prevPub>0){
-    const last=holdingTax(Object.assign({},inp,{pub:inp.prevPub,year:2026,yearIdx:0,prevPub:0}));
-    const dPrice=cur.total-last.total;          // 작년 → 올해 (공시가격)
-    const dReform=rows[1].total-cur.total;      // 올해 → 2027 (개편안)
-    const line=(lab,v,why)=>`<div class="splitrow">
-        <span class="sl">${lab}</span>
-        <span class="sv ${v>0?'up':v<0?'down':''}">${v===0?'변화 없음':(v>0?'+':'−')+fmtMan(Math.abs(v))+'원'}</span>
-        <span class="sw">${why}</span></div>`;
-    split.innerHTML = `<div class="splittitle">무엇 때문에 바뀌나 — 두 힘이 반대로 작용합니다</div>`
-      + line('작년 → 올해', dPrice, '공시가격 상승')
-      + line('올해 → 2027', dReform, '세제개편안')
-      + `<div class="splitfoot">공시가격이 오른 건 이미 3월에 확정됐고, 개편안은 국회를 거쳐 2027년부터 적용됩니다. 올 12월 고지서가 무거워지는 건 <b>개편안 탓이 아닙니다</b>.</div>`;
-    split.classList.remove('hidden');
-  } else {
-    split.classList.add('hidden');
-  }
-
-  $('h_pills').innerHTML = rows.map(r=>{
-    const lab = r.year===2026?'현행':r.year+'년';
-    return `<div class="pill"><div class="k">${lab}</div><div class="v">${r.total>0?fmtMan(r.total):'0'}</div></div>`;
-  }).join('');
-
-  drawChart(rows);
-
-  let hn = `<b>고지서와 비교하실 때:</b> 여기 재산세는 <b>1년치 총액</b>입니다. `
-    + `실제로는 <b>7월과 9월에 절반씩</b> 나눠 고지되니, 고지서 한 장은 이 금액의 절반입니다. `
-    + `현행 기준 재산세 ${fmtMan(cur.prop)}원이면 <b>7월 ${fmtMan(cur.prop/2)}원 + 9월 ${fmtMan(cur.prop/2)}원</b>. `
-    + `종부세는 12월에 한 번 나옵니다.`;
-  if(cur.cap && cur.cap.capped){
-    hn += `<br><br><b>과세표준상한 적용 중.</b> 공시가격 기준 과세표준은 `
-      + `${(cur.cap.raw/EOK).toFixed(2)}억이지만 상한에 걸려 <b>${(cur.cap.base/EOK).toFixed(2)}억</b>으로 잡혔습니다. `
-      + `공시가격이 그대로여도 상한선이 매년 조금씩 풀려서 재산세는 몇 해에 걸쳐 계속 오릅니다.`;
-  }
-  // 작년 공시가격을 알면 작년 실적과 나란히 보여준다 (연도 혼동 방지)
-  if(inp.prevPub>0){
-    const lastJ=jongbuse(Object.assign({},inp,{pub:inp.prevPub,year:2026}));
-    const risePct=(inp.pub/inp.prevPub-1)*100;
-    hn += `<br><br><b>작년에 내신 금액과 비교하실 때 —</b> `
-      + `종부세는 <b>12월에 한 번</b> 고지됩니다. 작년 12월에 내신 건 <b>작년 공시가격</b> 기준이에요.`
-      + `<br>· 작년 종부세(공시 ${(inp.prevPub/EOK).toFixed(2)}억) 약 <b>${fmtMan(lastJ.total)}원</b>`
-      + `<br>· 올해 종부세(공시 ${(inp.pub/EOK).toFixed(2)}억) 약 <b>${fmtMan(cur.jbs)}원</b> — 올 12월 고지 예정`;
-    if(risePct>1 && cur.jbs>lastJ.total*1.2){
-      hn += `<br><br>공시가격이 <b>${risePct.toFixed(0)}%</b> 오르면서 종부세 과세표준이 `
-        + `${((inp.prevPub-12*EOK)*0.6/EOK).toFixed(2)}억 → <b>${((inp.pub-12*EOK)*0.6/EOK).toFixed(2)}억</b>으로 뛰었습니다. `
-        + `기본공제 12억을 넘는 부분만 과세되기 때문에, 공시가격이 조금 올라도 종부세는 훨씬 크게 오릅니다. `
-        + `<b>세제개편안과는 무관하게</b> 이미 정해진 인상입니다.`;
-    }
-  }
-  if(!inp.prevPub){
-    hn += `<br><br><b>⚠️ 공시가격 상승률이 0%입니다.</b> 재산세 과세표준상한이 반영되지 않아, `
-      + `공시가격이 오른 집은 <b>실제 고지액보다 높게</b> 나옵니다. `
-      + `35% 오른 집이라면 30% 넘게 차이납니다. 위에서 상승률을 넣어주세요.`;
-  }
-  $('halfnote').innerHTML = hn;
-
-  const tb=$('tbl').querySelector('tbody');
-  tb.innerHTML = rows.map(r=>{
-    const dd=r.total-cur.total;
-    const delta = r.year===2026 ? '<span class="zero">기준</span>'
-      : `<span class="delta ${dd>0?'up':dd<0?'down':''}">${dd===0?'–':(dd>0?'+':'−')+fmtMan(Math.abs(dd))}</span>`;
-    return `<tr${r.year===2028?' class="hl"':''}>
-      <td>${r.year===2026?'현행 2026':r.year}</td>
-      <td>${(r.d.deduction/EOK).toFixed(2)}억</td>
-      <td>${Math.round(r.d.fair*100)}%</td>
-      <td>${r.d.taxBase>0?(r.d.taxBase/EOK).toFixed(2)+'억':'<span class="zero">0</span>'}</td>
-      <td>${r.jbs>0?fmtMan(r.jbs):'<span class="zero">0</span>'}</td>
-      <td>${fmtMan(r.prop)}</td>
-      <td><b>${fmtMan(r.total)}</b></td>
-      <td>${delta}</td></tr>`;
-  }).join('');
-}
-
-/* ═══════════════ 차트 ═══════════════ */
-function drawChart(rows){
-  const W=660,H=300,ML=52,MR=16,MT=26,MB=42;
-  const iw=W-ML-MR, ih=H-MT-MB;
-  const max=Math.max(...rows.map(r=>r.total),1);
-  // nice ceiling: step ∈ {1,2,2.5,5} × 10^n, 4 ticks
-  const TICKS=4;
-  const raw=max/TICKS, mag=Math.pow(10,Math.floor(Math.log10(raw)));
-  const step=[1,2,2.5,5,10].find(m=>m*mag>=raw)*mag;
-  const yMax=step*TICKS;
-  const n=rows.length, slot=iw/n, bw=Math.min(76,slot*.52);
-  const y=v=>MT+ih-(v/yMax)*ih;
-  let s='';
-
-  // gridlines + y labels
-  for(let i=0;i<=TICKS;i++){
-    const v=yMax*i/TICKS, yy=y(v);
-    s+=`<line class="gridline" x1="${ML}" y1="${yy.toFixed(1)}" x2="${W-MR}" y2="${yy.toFixed(1)}"${i===0?'':' opacity=".55"'}/>`;
-    s+=`<text class="axis-txt" x="${ML-8}" y="${(yy+4).toFixed(1)}" text-anchor="end">${v===0?'0':Math.round(v/MAN).toLocaleString()}</text>`;
-  }
-  s+=`<text class="axis-txt" x="${ML-8}" y="${MT-10}" text-anchor="end" opacity=".8">만원</text>`;
-
-  rows.forEach((r,i)=>{
-    const cx=ML+slot*i+slot/2, x=cx-bw/2;
-    const GAP=2, R=4;
-    const hp=(r.prop/yMax)*ih, hj=(r.jbs/yMax)*ih;
-    const yp=MT+ih-hp;
-    // 데이터 끝(맨 위)만 라운드, 베이스라인은 각지게
-    const capTop=(yTop,h,fill)=>{
-      const rr=Math.min(R,h/2);
-      return `<path d="M${x} ${yTop+rr} a${rr} ${rr} 0 0 1 ${rr} -${rr} h${bw-2*rr} a${rr} ${rr} 0 0 1 ${rr} ${rr} V${yTop+h} H${x} Z" fill="${fill}"/>`;
-    };
-    if(hp>0.5) s+=capTop(yp,hp,'var(--series-1)');           // 재산세
-    if(hj>0.5) s+=capTop(yp-GAP-hj,hj,'var(--series-2)');    // 종부세 (2px 간격)
-    // total label
-    const topY = hj>0.5 ? yp-GAP-hj : yp;
-    s+=`<text class="bar-lab" x="${cx}" y="${Math.max(MT+11,topY-8)}" text-anchor="middle">${r.total>0?Math.round(r.total/MAN).toLocaleString():'0'}</text>`;
-    // x label
-    const lab = r.year===2026?'현행':(r.year===2029?'2029~':String(r.year));
-    s+=`<text class="axis-txt" x="${cx}" y="${MT+ih+20}" text-anchor="middle" font-weight="600">${lab}</text>`;
-    if(r.year!==2026){
-      const dd=r.total-rows[0].total;
-      if(Math.abs(dd)>=MAN){
-        s+=`<text class="bar-lab mut" x="${cx}" y="${MT+ih+35}" text-anchor="middle" fill="${dd>0?'var(--up)':'var(--down)'}">${(dd>0?'+':'−')+Math.round(Math.abs(dd)/MAN).toLocaleString()}</text>`;
-      }
-    }
-    s+=`<rect class="hit" x="${ML+slot*i}" y="${MT}" width="${slot}" height="${ih}" data-i="${i}"/>`;
-  });
-  const el=$('chart');
-  el.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  el.innerHTML=`<title id="chartTitle">연도별 보유세 — 재산세와 종합부동산세 합계</title>`+s;
-
-  // hover / tap
-  const tip=$('tip'), wrap=el.parentElement;
-  el.querySelectorAll('.hit').forEach(h=>{
-    const show=e=>{
-      const r=rows[+h.dataset.i];
-      const rect=wrap.getBoundingClientRect(), br=h.getBoundingClientRect();
-      tip.innerHTML=`<div class="t">${r.year===2026?'현행 (2026)':r.year+'년'}</div>
-        <div class="r"><span><i class="swatch" style="display:inline-block;background:var(--series-1)"></i> 재산세</span><b>${fmtMan(r.prop)}원</b></div>
-        <div class="r"><span><i class="swatch" style="display:inline-block;background:var(--series-2)"></i> 종부세</span><b>${r.jbs>0?fmtMan(r.jbs)+'원':'0'}</b></div>
-        <div class="r tot"><span>보유세 합계</span><b>${fmtMan(r.total)}원</b></div>`;
-      tip.style.left=(br.left-rect.left+br.width/2)+'px';
-      tip.style.top=(br.top-rect.top+16)+'px';
-      tip.classList.add('on');
-    };
-    h.addEventListener('mouseenter',show);
-    h.addEventListener('touchstart',show,{passive:true});
-    h.addEventListener('mouseleave',()=>tip.classList.remove('on'));
-  });
-  wrap.addEventListener('touchend',()=>setTimeout(()=>tip.classList.remove('on'),2200),{passive:true});
-}
-
-/* ═══════════════ 렌더: 양도세 ═══════════════ */
-function renderCGT(){
-  const c=S.c;
-  const base={sell:c.sell*EOK,buy:c.buy*EOK,exp:c.exp*EOK,houses:Math.max(1,c.houses),
-              hold:c.hold,live:c.live,adj:!!c.adj};
-  const rs=YEARS.map(y=>Object.assign({year:y},cgtCalc(Object.assign({year:y},base))));
-  const cur=rs[0], last=rs[3];
-  const diff=last.total-cur.total;
-  $('c_cap').textContent='2029년 이후 양도 시 세부담 변화';
-  const big=$('c_big');
-  big.textContent = diff===0?'변화 없음':fmtSigned(diff);
-  big.className='big '+(diff>0?'up':diff<0?'down':'');
-  $('c_note').innerHTML = cur.total>0
-    ? `지금 팔면 <b>${fmtKRW(cur.total)}</b> → 2029년 이후 <b>${fmtKRW(last.total)}</b>`
-      + (cur.total>0?` (<b>${(last.total/cur.total).toFixed(1)}배</b>)`:'')
-    : `지금 팔면 <b>비과세</b> → 2029년 이후 <b>${fmtKRW(last.total)}</b>`;
-
-  $('ctbl').querySelector('tbody').innerHTML = rs.map(r=>{
-    const net=base.sell-base.buy-base.exp-r.total;
-    return `<tr${r.year===2029?' class="hl"':''}>
-      <td>${r.year===2026?'현행 2026':(r.year===2029?'2029~':r.year)}</td>
-      <td>${r.taxable>0?(r.taxable/EOK).toFixed(2)+'억':'<span class="zero">0</span>'}</td>
-      <td>${Math.round(r.ltRate*100)}%${r.ltCap?` <span class="hint">(한도 ${r.ltCap/EOK}억)</span>`:''}</td>
-      <td>${(r.ltAmt/EOK).toFixed(2)}억</td>
-      <td>${(r.base/EOK).toFixed(2)}억</td>
-      <td><b>${r.total>0?fmtKRW(r.total):'<span class="zero">비과세</span>'}</b></td>
-      <td>${(net/EOK).toFixed(2)}억</td></tr>`;
-  }).join('');
-}
-
-/* ═══════════════ 바인딩 ═══════════════ */
-function bindNum(id,obj,key,after){
-  const el=$(id);
-  el.addEventListener('input',()=>{
-    const v=parseFloat(el.value);
-    obj[key]=isNaN(v)?0:v;
-    if(after) after(v);
-    render();
-  });
-}
-function bindSeg(id,obj,key,after){
-  $(id).addEventListener('click',e=>{
-    const b=e.target.closest('button'); if(!b) return;
-    [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
-    const v=b.dataset.v;
-    obj[key]= isNaN(+v) ? v : +v;
-    if(after) after(obj[key]);
-    render();
-  });
-}
-
-bindNum('s_price',S.s,'price',v=>{ if(v>=3&&v<=100) $('s_price_r').value=v; });
-$('s_price_r').addEventListener('input',()=>{
-  S.s.price=parseFloat($('s_price_r').value); $('s_price').value=S.s.price; render();
-});
-/* 2026년 공동주택 공시가격 변동률 (국토교통부, 2026.3.17 결정·공시) */
-const REGIONS=[['서울',18.60],['전국 평균',9.13],['경기',6.37],['세종',6.28],['울산',5.22],
-               ['전북',4.32],['인천',-0.10],['대구',-0.78],['대전',-1.11],['광주',-1.27],
-               ['제주',-1.81],['직접 입력',null]];
-$('s_region').innerHTML=REGIONS.map(([n,v])=>
-  `<option value="${v===null?'':v}"${n==='서울'?' selected':''}>${n}${v===null?'':` (${v>0?'+':''}${v}%)`}</option>`).join('');
-$('s_region').addEventListener('change',e=>{
-  const v=e.target.value;
-  if(v!==''){ S.s.rise=parseFloat(v); $('s_rise').value=S.s.rise; render(); }
-});
-bindNum('s_rise',S.s,'rise',v=>{
-  const m=REGIONS.find(r=>r[1]!==null&&Math.abs(r[1]-v)<0.005);
-  $('s_region').value = m? String(m[1]) : '';
-});
-bindNum('s_pub',S.s,'pub'); bindNum('s_prev',S.s,'prev');
-bindNum('s_age',S.s,'age');
-bindNum('s_hold',S.s,'hold',()=>clampLive('s'));
-bindNum('s_live',S.s,'live',()=>clampLive('s'));
-bindNum('s_ratio',S.s,'ratio');
-bindSeg('s_houses',S.s,'houses',()=>syncShare());
-bindSeg('s_resident',S.s,'res',v=>{ if(!v && S.s.live>0){ S.s.live=0; $('s_live').value=0; } syncShare(); });
-
-bindNum('s_share',S.s,'share');
-bindSeg('g_mode',S,'mode');
-
-['c_buy|buy','c_sell|sell','c_exp|exp','c_houses|houses']
-  .forEach(p=>{const[id,k]=p.split('|'); bindNum(id,S.c,k);});
-bindNum('c_hold',S.c,'hold',()=>clampLive('c'));
-bindNum('c_live',S.c,'live',()=>clampLive('c'));
-bindSeg('c_adj',S.c,'adj');
-
-/* 거주기간은 보유기간을 넘을 수 없다. 넘겨 입력하면 조용히 잘라내고 알려준다. */
-function clampLive(which){
-  const o = which==='c' ? S.c : S.s;
-  const id = which==='c' ? 'c_live' : 's_live';
-  const warnId = which==='c' ? 'c_livewarn' : 's_livewarn';
-  const w=$(warnId);
-  if(o.live>o.hold){
-    o.live=o.hold;
-    $(id).value=o.hold;
-    if(w){ w.textContent='거주기간은 보유기간을 넘을 수 없어 '+o.hold+'년으로 맞췄습니다.'; w.classList.remove('hidden'); }
-  } else if(w){ w.classList.add('hidden'); }
-}
-
-function syncShare(){
-  $('s_share_field').style.display = (S.s.houses>=2 && S.s.res) ? '' : 'none';
-  $('s_pub_hint').textContent = S.s.houses>=2
-    ? '보유 주택 전부의 합계로 넣으세요 (시세도 합계)'
-    : '알면 넣으세요 · 모르면 비워두면 추정';
-}
-
-document.querySelectorAll('.tabs button').forEach(b=>{
-  b.addEventListener('click',()=>{
-    document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b?'true':'false'));
-    S.tab=b.dataset.tab;
-    $('panel-hold').classList.toggle('hidden',S.tab!=='hold');
-    $('panel-cgt').classList.toggle('hidden',S.tab!=='cgt');
-    $('holding-result').classList.toggle('hidden',S.tab==='cgt');
-    $('gov-example').classList.toggle('hidden',S.tab==='cgt');
-    render();
-  });
-});
-
-$('themeBtn').addEventListener('click',()=>{
-  const cur=document.documentElement.getAttribute('data-theme');
-  const sysDark=matchMedia('(prefers-color-scheme: dark)').matches;
-  const next = cur ? (cur==='dark'?'light':'dark') : (sysDark?'light':'dark');
-  document.documentElement.setAttribute('data-theme',next);
-  render();
-});
-
-function render(){
-  $('g_mode_note').innerHTML = S.mode==='gov'
-    ? '재산세 중복분 공제와 농어촌특별세를 <b>뺀</b> 값입니다. 언론에 보도된 정부 시뮬레이션 수치와 비교할 때 쓰세요. <b>실제 고지서보다 종부세가 20~30% 높게</b> 나옵니다.'
-    : '재산세 상당액 공제와 농어촌특별세 20%를 반영한, <b>실제 고지서에 가까운</b> 값입니다.';
-  $('mode-card').classList.toggle('hidden',S.tab==='cgt');
-  if(S.tab==='hold'){
-    const inp=inputs();
-    const tag=g=>g?'<b style="color:var(--down)">입력값</b>':'<span style="color:var(--text-muted)">추정</span>';
-    let t=`이 값으로 계산 중`
-      + `<br>· 올해 공시가격 <b>${(inp.pub/EOK).toFixed(2)}억</b> — ${tag(inp.pubGiven)}`
-      + (inp.pubGiven?'':` <span class="hint">(시세 ${S.s.price}억 × ${S.s.ratio}%)</span>`)
-      + `<br>· 작년 공시가격 <b>${(inp.prevPub/EOK).toFixed(2)}억</b> — ${tag(inp.prevGiven)}`
-      + (inp.prevGiven?'':` <span class="hint">(상승률 ${S.s.rise}% 역산)</span>`);
-    if(inp.pubGiven && inp.prevGiven){
-      t+=`<br><br>두 값 다 실제 공시가격이라 <b>이 계산기가 낼 수 있는 최대 정확도</b>입니다.`;
-    } else {
-      t+=`<br><br>⚠️ 추정값이 섞여 있어 실제 고지액과 차이날 수 있습니다. `
-        +`<a href="https://www.realtyprice.kr" target="_blank" rel="noopener" style="color:var(--accent)">공시가격 조회</a>해서 위 두 칸을 채우면 정확해집니다.`;
-    }
-    $('s_readout').innerHTML=t;
-  }
-  syncShare();
-  if(S.tab==='cgt') renderCGT(); else renderHolding();
-}
-render();
-</script>
 </body>
 </html>
