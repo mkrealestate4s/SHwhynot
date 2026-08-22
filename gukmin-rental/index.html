@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 SH 국민임대주택 자격·순위 자가진단 | 부동산 분석 도구</title>
+<meta name="description" content="SH 2026년 국민임대주택 모집공고(2026.08.20) 기준으로 신청 자격, 소득·자산 통과 여부, 거주지 순위, 배점 총점을 단계별로 진단합니다.">
+<meta property="og:title" content="2026 SH 국민임대주택 자격·순위 자가진단">
+<meta property="og:description" content="접수 8/31~9/3. 내 소득·자산으로 넣을 수 있는지, 배점은 몇 점인지 3분이면 확인됩니다.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --bg:#F6F7F9; --surface:#FFFFFF; --surface-2:#EEF0F5; --ink:#1A1E2B; --muted:#5A6072;
+    --line:#E3E6EE; --accent:#2E4A9E; --accent-soft:#E7EBF7; --accent-ink:#2E4A9E;
+    --ok:#1B7F4D; --ok-soft:#E4F2EA; --bad:#BE3A2E; --bad-soft:#F9E9E7;
+    --warn:#A97614; --warn-soft:#F8F0DD; --btn-ink:#FFFFFF;
+    --shadow:0 1px 2px rgba(26,30,43,.05), 0 8px 24px rgba(26,30,43,.06); --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+    --bg:#12141C; --surface:#1B1E29; --surface-2:#232736; --ink:#E8EAF2; --muted:#9AA1B5;
+    --line:#2C3143; --accent:#7EA0E8; --accent-soft:#22304F; --accent-ink:#AFC4F2;
+    --ok:#4FBF87; --ok-soft:#16301F; --bad:#E88176; --bad-soft:#3A1F1C;
+    --warn:#E0B460; --warn-soft:#332813; --btn-ink:#12141C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.5);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#12141C; --surface:#1B1E29; --surface-2:#232736; --ink:#E8EAF2; --muted:#9AA1B5;
+    --line:#2C3143; --accent:#7EA0E8; --accent-soft:#22304F; --accent-ink:#AFC4F2;
+    --ok:#4FBF87; --ok-soft:#16301F; --bad:#E88176; --bad-soft:#3A1F1C;
+    --warn:#E0B460; --warn-soft:#332813; --btn-ink:#12141C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.5);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.6;padding:20px 16px 72px;
+       font-feature-settings:"tnum" 1}
+  .wrap{max-width:720px;margin:0 auto}
+  a{color:var(--accent-ink)}
+
+  header.site{margin-bottom:20px}
+  header.site h1{font-size:1.45rem;letter-spacing:-.02em;margin-top:6px;line-height:1.3}
+  header.site p{color:var(--muted);font-size:.92rem;margin-top:6px}
+  .home{font-size:.85rem;color:var(--muted);text-decoration:none}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+  .chip{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;
+        background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+  .chip.hot{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+  .theme-btn{float:right;width:32px;height:32px;border-radius:9px;border:1px solid var(--line);
+             background:var(--surface);color:var(--muted);cursor:pointer;font-size:14px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+        padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .card h2{font-size:1rem;margin-bottom:4px;letter-spacing:-.01em}
+  .card .sub{font-size:.83rem;color:var(--muted);margin-bottom:14px}
+
+  .steps{display:flex;gap:5px;margin-bottom:16px}
+  .steps i{flex:1;height:4px;border-radius:99px;background:var(--line);transition:background .2s}
+  .steps i.on{background:var(--accent)}
+
+  .field{margin-bottom:15px}
+  .field:last-child{margin-bottom:0}
+  label,.flabel{display:block;font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:6px}
+  .flabel .h{font-weight:400;font-size:.78rem}
+  input[type=number],input[type=text],select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;
+    background:var(--bg);color:var(--ink);font-size:16px;font-family:inherit;font-weight:600}
+  input[type=number]{text-align:right}
+  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .row{display:flex;gap:8px;align-items:center}
+  .unit{font-size:.83rem;color:var(--muted);font-weight:700;flex:none}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:430px){.grid2{grid-template-columns:1fr}}
+
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+  .seg button{flex:1;min-width:78px;padding:10px 6px;border:1px solid var(--line);border-radius:10px;
+    background:var(--bg);color:var(--muted);font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--btn-ink)}
+
+  .note{font-size:.8rem;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);
+        border-radius:10px;padding:10px 12px;line-height:1.55;margin-top:9px}
+  .note b{color:var(--ink)}
+  .note.warn{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+  .note.warn b{color:var(--warn)}
+
+  .btns{display:flex;gap:8px;margin-top:18px}
+  .btn{flex:1;padding:13px;border:0;border-radius:11px;background:var(--accent);color:var(--btn-ink);
+       font-size:.95rem;font-weight:800;cursor:pointer;font-family:inherit}
+  .btn.ghost{background:var(--surface-2);color:var(--muted);border:1px solid var(--line);flex:0 0 92px}
+
+  /* 결과 */
+  .verdict{border-radius:var(--radius);padding:18px;margin-bottom:14px;border:1px solid transparent}
+  .verdict.ok{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+  .verdict.bad{background:var(--bad-soft);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+  .verdict .t{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+  .verdict.ok .t{color:var(--ok)} .verdict.bad .t{color:var(--bad)}
+  .verdict .d{font-size:.88rem;color:var(--muted);margin-top:5px}
+  .badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+  .badge{font-size:.8rem;font-weight:800;padding:5px 11px;border-radius:999px;
+         background:var(--surface);border:1px solid var(--line)}
+  .badge.p{background:var(--accent);color:var(--btn-ink);border-color:transparent}
+
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:700;font-size:.78rem}
+  td{font-variant-numeric:tabular-nums}
+  .pass{color:var(--ok);font-weight:800} .fail{color:var(--bad);font-weight:800}
+  .scoretot{display:flex;align-items:baseline;gap:8px;margin:4px 0 12px}
+  .scoretot b{font-size:2rem;letter-spacing:-.03em;color:var(--accent-ink)}
+  .scoretot span{font-size:.85rem;color:var(--muted)}
+
+  ul.docs{margin:0;padding-left:18px;font-size:.86rem;color:var(--muted);line-height:1.85}
+  ul.docs b{color:var(--ink)}
+  .hidden{display:none!important}
+  footer{font-size:.78rem;color:var(--muted);line-height:1.75;margin-top:24px}
+  footer h3{font-size:.82rem;color:var(--muted);margin-bottom:6px}
+  footer ul{padding-left:16px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<button class="theme-btn" id="themeBtn" aria-label="테마 전환">◐</button>
+<header class="site">
+  <a class="home" href="../">← 홈으로</a>
+  <h1>🏘️ 2026 국민임대주택 자격·순위 자가진단</h1>
+  <p>SH 2026년 국민임대주택 입주자 모집공고(2026.08.20.) 기준</p>
+  <div class="chips">
+    <span class="chip">공고 2026-000379</span>
+    <span class="chip">1,973세대</span>
+    <span class="chip hot" id="dday">접수 8.31~9.3</span>
+  </div>
+</header>
+
+<div class="steps" id="steps"></div>
+
+<!-- ── 1. 기본 자격 ── -->
+<section class="card" id="s1">
+  <h2>1. 기본 신청자격</h2>
+  <p class="sub">하나라도 해당하지 않으면 신청할 수 없습니다. 판단 기준일은 공고일(2026.08.20.)입니다.</p>
+
+  <div class="field">
+    <div class="flabel">공고일 현재 서울특별시에 거주하십니까? <span class="h">거주 <b>기간</b> 요건은 없습니다</span></div>
+    <div class="seg" id="q_seoul">
+      <button data-v="1" aria-pressed="true">예</button>
+      <button data-v="0" aria-pressed="false">아니오</button>
+    </div>
+    <p class="note">거주 기간은 자격이 아니라 <b>배점</b>에만 반영됩니다. 서울에 어제 전입했어도 신청 자체는 가능합니다.<br>
+      단, <b>상계장암 1·2단지</b>는 의정부·남양주·양주·포천 거주자도 신청할 수 있습니다.</p>
+  </div>
+
+  <div class="field">
+    <div class="flabel">세대원 전원이 무주택입니까? <span class="h">분양권·입주권도 주택</span></div>
+    <div class="seg" id="q_nohouse">
+      <button data-v="1" aria-pressed="true">예</button>
+      <button data-v="0" aria-pressed="false">아니오</button>
+    </div>
+    <p class="note"><b>무주택세대구성원</b> 요건입니다. 세대주가 아니어도 신청할 수 있지만, 세대원 중 한 명이라도 주택을 가지고 있으면 탈락합니다.
+      <b>주민등록이 분리된 배우자도 반드시 포함</b>됩니다.</p>
+  </div>
+
+  <div class="field">
+    <div class="flabel">만 19세 이상 성년자입니까?</div>
+    <div class="seg" id="q_adult">
+      <button data-v="1" aria-pressed="true">예</button>
+      <button data-v="0" aria-pressed="false">아니오</button>
+    </div>
+  </div>
+
+  <div class="btns"><button class="btn" onclick="go(1,2)">다음</button></div>
+</section>
+
+<!-- ── 2. 주택 유형 · 지구 ── -->
+<section class="card hidden" id="s2">
+  <h2>2. 어떤 집에 넣으실 건가요</h2>
+  <p class="sub">면적에 따라 소득 기준과 청약통장 필요 여부가 완전히 다릅니다.</p>
+
+  <div class="field">
+    <div class="flabel">신청 유형</div>
+    <div class="seg" id="q_track">
+      <button data-v="general" aria-pressed="true">일반</button>
+      <button data-v="weak" aria-pressed="false">주거약자용</button>
+    </div>
+    <p class="note" id="trackNote"></p>
+  </div>
+
+  <div class="field">
+    <div class="flabel">전용면적</div>
+    <div class="seg" id="q_area">
+      <button data-v="small" aria-pressed="true">50㎡ 미만<br><span style="font-weight:400;font-size:.75rem">29·39·46·49㎡</span></button>
+      <button data-v="mid" aria-pressed="false">59㎡<br><span style="font-weight:400;font-size:.75rem">50~60㎡</span></button>
+    </div>
+    <p class="note" id="areaNote"></p>
+  </div>
+
+  <div class="field">
+    <label for="q_zone">희망 지구·단지</label>
+    <select id="q_zone"></select>
+    <p class="note" id="zoneNote"></p>
+  </div>
+
+  <div class="field">
+    <label for="q_live">현재 거주 자치구</label>
+    <select id="q_live"></select>
+  </div>
+
+  <div class="btns">
+    <button class="btn ghost" onclick="go(2,1)">이전</button>
+    <button class="btn" onclick="go(2,3)">다음</button>
+  </div>
+</section>
+
+<!-- ── 3. 가구 · 소득 · 자산 ── -->
+<section class="card hidden" id="s3">
+  <h2>3. 가구원 · 소득 · 자산</h2>
+  <p class="sub">무주택세대구성원 전원 기준입니다. 태아도 가구원에 포함됩니다.</p>
+
+  <div class="grid2">
+    <div class="field">
+      <div class="flabel">가구원 수 <span class="h">본인 포함</span></div>
+      <div class="row"><input type="number" id="q_hh" value="1" min="1" max="6" inputmode="numeric"><span class="unit">인</span></div>
+    </div>
+    <div class="field">
+      <div class="flabel">2023.3.28. 이후 출생 자녀</div>
+      <select id="q_baby">
+        <option value="0">없음</option>
+        <option value="10">1명 (태아 포함)</option>
+        <option value="20">2명 이상</option>
+        <option value="20b">1명 + 그 이전 출생 자녀도 있음</option>
+      </select>
+    </div>
+  </div>
+  <p class="note">최근 출생 자녀가 있으면 소득·자산 기준이 <b>10~20%p 완화</b>됩니다. 6인 초과 가구는 공고문에 기준이 없어 계산할 수 없습니다.</p>
+
+  <div class="field">
+    <div class="flabel">세전 월평균소득 <span class="h">가구원 전원 합산</span></div>
+    <div class="row"><input type="number" id="q_income" value="3000000" min="0" step="10000" inputmode="numeric"><span class="unit">원</span></div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <div class="flabel">총자산 <span class="h">부채 차감 후</span></div>
+      <div class="row"><input type="number" id="q_asset" value="10000" min="0" step="100" inputmode="numeric"><span class="unit">만원</span></div>
+    </div>
+    <div class="field">
+      <div class="flabel">자동차 가액 <span class="h">보유 차량 중 최고가</span></div>
+      <div class="row"><input type="number" id="q_car" value="0" min="0" step="100" inputmode="numeric"><span class="unit">만원</span></div>
+    </div>
+  </div>
+  <p class="note">총자산 = 부동산 + 자동차 + 금융 + 기타 <b>합산액에서 부채를 뺀</b> 순자산입니다. 자동차는 여기 합산되면서 <b>별도로 한 번 더</b> 한도 판정을 받습니다.</p>
+
+  <div class="btns">
+    <button class="btn ghost" onclick="go(3,2)">이전</button>
+    <button class="btn" onclick="go(3,4)">다음</button>
+  </div>
+</section>
+
+<!-- ── 4. 배점 ── -->
+<section class="card hidden" id="s4">
+  <h2>4. 배점 항목</h2>
+  <p class="sub">같은 순위 안에서는 이 점수로 당락이 갈립니다. 동점이면 전산추첨입니다.</p>
+  <div id="scoreFields"></div>
+  <div class="field" style="margin-top:15px">
+    <div class="flabel">과거 국민임대 계약 이력 <span class="h">감점 항목</span></div>
+    <select id="q_penalty"></select>
+    <p class="note">2011.11.04. 이후 SH 국민임대를 계약한 적이 있으면 감점됩니다. 신청자 <b>및 배우자</b>가 대상입니다.</p>
+  </div>
+  <div class="btns">
+    <button class="btn ghost" onclick="go(4,3)">이전</button>
+    <button class="btn" onclick="showResult()">결과 보기</button>
+  </div>
+</section>
+
+<!-- ── 결과 ── -->
+<section class="hidden" id="result"></section>
+
+<footer>
+  <h3>계산 근거와 한계</h3>
+  <ul>
+    <li>SH 「2026년 국민임대주택 입주자 모집공고」(2026.08.20., 주택관리번호 2026-000379) 원문 기준입니다.</li>
+    <li>소득은 2025년도 도시근로자 가구원수별 월평균소득표를 적용했습니다. <b>7인 이상 가구</b>는 공고문에 기준이 없어 계산하지 않습니다.</li>
+    <li>실제 심사는 <b>사회보장정보시스템 조회 시점</b>(2026년 11월경)의 소득·자산으로 이뤄집니다. 지금 입력한 값과 다를 수 있습니다.</li>
+    <li>배점은 <b>신청자가 신청서에 직접 기재</b>합니다. 유리하게 쓰면 당첨돼도 취소되고, 불리하게 쓰면 정정해주지 않습니다.</li>
+    <li>이 도구는 자격·순위·배점만 다룹니다. 단지별 임대보증금·임대료, 동·호수 배정은 공고문을 확인하세요.</li>
+    <li>모든 결과는 참고용 추정치이며 법적 효력이 없습니다. 반드시 공고문 원문과 SH 문의(1600-3456)로 확인하세요.</li>
+  </ul>
+</footer>
+
+</div>
+
+<script src="data.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const won = n => Math.round(n).toLocaleString() + '원';
+const man = n => Math.round(n/10000).toLocaleString() + '만원';
+
+const S = { seoul:1, nohouse:1, adult:1, track:'general', area:'small', zone:0, live:'강남구',
+            hh:1, baby:'0', income:3000000, asset:10000, car:0, score:{}, penalty:0, step:1 };
+
+/* ---------- 셀렉트 채우기 ---------- */
+function fillZones(){
+  const list = ZONES.filter(z => S.track==='weak' ? true : z.type==='both');
+  $('q_zone').innerHTML = list.map((z,i)=>`<option value="${ZONES.indexOf(z)}">${z.n}</option>`).join('');
+  if(!list.some(z=>ZONES.indexOf(z)===S.zone)) S.zone = ZONES.indexOf(list[0]);
+  $('q_zone').value = S.zone;
+  zoneInfo();
+}
+function zoneInfo(){
+  const z = ZONES[S.zone];
+  let t = `<b>해당구</b> ${z.gu} · <b>연접구</b> ${z.adj.join(', ')}<br>이 지역에 살면 <b>거주지 1순위</b>, 그 외 서울이면 2순위입니다.`;
+  if(z.note) t += `<br>${z.note}`;
+  $('zoneNote').innerHTML = t;
+}
+$('q_live').innerHTML = [...SEOUL_GU, ...OUT_GU].map(g=>`<option${g===S.live?' selected':''}>${g}</option>`).join('');
+$('q_penalty').innerHTML = PENALTY.map((p,i)=>`<option value="${p[1]}">${p[0]}</option>`).join('');
+
+function fillScore(){
+  const tbl = S.track==='weak' ? SCORE_WEAK : SCORE_GENERAL;
+  $('scoreFields').innerHTML = tbl.map(f=>`
+    <div class="field">
+      <div class="flabel">${f.label} <span class="h">${f.desc}</span></div>
+      <select data-k="${f.k}">${f.opts.map((o,i)=>`<option value="${o[1]}">${o[0]}${o[1]?` · ${o[1]}점`:''}</option>`).join('')}</select>
+    </div>`).join('');
+  $('scoreFields').querySelectorAll('select').forEach(sel=>{
+    const k = sel.dataset.k;
+    // 기본값은 가장 낮은 점수(해당 없음). 고르지 않았는데 만점이 뜨면 안 된다.
+    if(S.score[k]!==undefined){ sel.value = S.score[k]; }
+    else { sel.selectedIndex = sel.options.length-1; S.score[k] = +sel.value; }
+    sel.addEventListener('change', ()=>{ S.score[k] = +sel.value; });
+  });
+}
+
+/* ---------- 계산 ---------- */
+// 소득 한도: 기준% + 가구원가산(1인20·2인10) + 자녀가산, 90% 상한
+function incomeCap(hh, base, babyPct){
+  if(hh<1 || hh>6) return null;
+  const add = hh===1 ? 20 : hh===2 ? 10 : 0;
+  const pct = Math.min(90, base + add + babyPct);
+  return { pct, amount: INCOME[hh][pct] };
+}
+const babyPct = v => v==='0' ? 0 : v==='10' ? 10 : 20;
+
+function judge(){
+  const bp = babyPct(S.baby);
+  const a = ASSET[bp];
+  const income = S.income, asset = S.asset*10000, car = S.car*10000;
+  const r = { blocked:[], warn:[] };
+
+  if(!S.seoul && !(ZONES[S.zone].adj.includes('의정부시') && ZONES[S.zone].n.includes('상계장암지구 1'))) r.blocked.push('서울특별시 거주 요건 미충족');
+  if(!S.nohouse) r.blocked.push('무주택세대구성원 요건 미충족 (세대원 중 주택 소유자 있음)');
+  if(!S.adult) r.blocked.push('성년자(만19세 이상) 요건 미충족');
+  if(S.hh>6) r.blocked.push('7인 이상 가구는 공고문에 소득기준이 없어 계산 불가');
+
+  // 소득 판정
+  const base = S.area==='small' ? 50 : 70;
+  const c1 = incomeCap(S.hh, base, bp);
+  const c2 = S.area==='small' ? incomeCap(S.hh, 70, bp) : null;
+  r.cap1 = c1; r.cap2 = c2;
+  r.incomeOK = c1 && income <= c1.amount;
+  r.incomeOK2 = c2 && income <= c2.amount;
+  if(S.area==='small'){
+    if(!r.incomeOK && !r.incomeOK2) r.blocked.push('소득 초과 (50㎡ 미만 후순위 기준도 초과)');
+  } else {
+    if(!r.incomeOK) r.blocked.push('소득 초과 (59㎡ 기준 초과)');
+  }
+
+  r.assetOK = asset <= a.total;  r.assetLimit = a.total;
+  r.carOK  = car <= a.car;       r.carLimit  = a.car;
+  if(!r.assetOK) r.blocked.push('총자산 한도 초과');
+  if(!r.carOK)   r.blocked.push('자동차 가액 한도 초과');
+
+  // 거주지 순위 (50㎡ 미만만 적용)
+  const z = ZONES[S.zone];
+  r.zoneRank = (S.live===z.gu || z.adj.includes(S.live)) ? 1 : (SEOUL_GU.includes(S.live) ? 2 : 0);
+
+  // 소득 구간
+  r.incomeTier = S.area==='small' ? (r.incomeOK ? '선순위 (소득 50% 이하)' : '후순위 (소득 50% 초과 70% 이하)') : null;
+
+  // 청약통장 순위 (59㎡)
+  if(S.area==='mid'){
+    const cnt = S.score.saving;   // 3=60+, 2=48~59, 1=36~47, 0=35이하
+    r.savingRank = cnt>=1 ? 1 : null;   // 36회 이상이면 24회 이상 확정 → 1순위
+    r.savingNote = cnt>=1 ? '납입 36회 이상 → 청약 1순위 (24회 이상)'
+                          : '납입 회차를 배점에서 35회 이하로 고르셨습니다. 24회 이상이면 1순위, 6~23회는 2순위, 그 미만은 3순위입니다.';
+  }
+
+  // 배점
+  const tbl = S.track==='weak' ? SCORE_WEAK : SCORE_GENERAL;
+  r.scoreRows = tbl.map(f=>{
+    const v = S.score[f.k] ?? 0;
+    const opt = f.opts.find(o=>o[1]===v) || f.opts[f.opts.length-1];
+    return [f.label, opt[0], v];
+  });
+  r.scoreSum = r.scoreRows.reduce((s,x)=>s+x[2],0);
+  r.penalty = +S.penalty;
+  r.scoreTotal = r.scoreSum + r.penalty;
+  r.scoreMax = tbl.reduce((s,f)=>s+Math.max(...f.opts.map(o=>o[1])),0);
+
+  // 경고
+  if(S.hh===1 && bp>0) r.warn.push('1인 가구인데 최근 출생 자녀가 있다고 선택하셨습니다. 자녀가 세대원이면 가구원 수에 포함해 다시 계산하세요.');
+  if(S.hh<=2 && bp>0) r.warn.push('1·2인 가구에 자녀 가산을 겹쳐 적용한 한도는 공고문 표가 비어 있습니다. SH(1600-3456)에 확인하세요.');
+  if(S.score.saving>0 && S.area==='small') r.warn.push('50㎡ 미만은 청약통장이 없어도 신청할 수 있습니다. 통장은 배점에만 반영됩니다.');
+  if(r.penalty<0) r.warn.push('감점 대상이지만, 출산·노부모부양·사망으로 가구원 수가 바뀌어 다른 면적에 신청하는 경우엔 감점이 배제될 수 있습니다.');
+  return r;
+}
+
+/* ---------- 결과 렌더 ---------- */
+function showResult(){
+  const r = judge(), z = ZONES[S.zone];
+  const ok = r.blocked.length===0;
+  let h = '';
+
+  h += `<div class="verdict ${ok?'ok':'bad'}">
+    <div class="t">${ok?'신청 가능합니다':'신청 요건을 충족하지 않습니다'}</div>
+    <div class="d">${ok ? `${z.n} · ${S.area==='small'?'50㎡ 미만':'59㎡'} · ${S.track==='weak'?'주거약자용':'일반공급'}`
+      : r.blocked.join(' / ')}</div>`;
+  if(ok){
+    h += `<div class="badges">`;
+    if(r.incomeTier) h += `<span class="badge p">${r.incomeTier}</span>`;
+    if(S.area==='small') h += `<span class="badge">거주지 ${r.zoneRank}순위</span>`;
+    if(S.area==='mid' && r.savingRank) h += `<span class="badge p">청약 1순위</span>`;
+    h += `<span class="badge">배점 ${r.scoreTotal}점</span></div>`;
+  }
+  h += `</div>`;
+
+  // 소득·자산 판정표
+  h += `<div class="card"><h2>소득·자산 판정</h2><p class="sub">가구원 ${S.hh}인 · 자녀가산 ${babyPct(S.baby)}%p 적용</p><table><tbody>`;
+  if(r.cap1) h += `<tr><td>${S.area==='small'?'소득 (선순위 50% 기준)':'소득 (70% 기준)'}<br><span style="font-size:.78rem;color:var(--muted)">적용 ${r.cap1.pct}% · 한도 ${won(r.cap1.amount)}</span></td>
+    <td>${won(S.income)}<br><span class="${r.incomeOK?'pass':'fail'}">${r.incomeOK?'통과':'초과'}</span></td></tr>`;
+  if(r.cap2) h += `<tr><td>소득 (후순위 70% 기준)<br><span style="font-size:.78rem;color:var(--muted)">적용 ${r.cap2.pct}% · 한도 ${won(r.cap2.amount)}</span></td>
+    <td>${won(S.income)}<br><span class="${r.incomeOK2?'pass':'fail'}">${r.incomeOK2?'통과':'초과'}</span></td></tr>`;
+  h += `<tr><td>총자산<br><span style="font-size:.78rem;color:var(--muted)">한도 ${man(r.assetLimit)}</span></td>
+    <td>${man(S.asset*10000)}<br><span class="${r.assetOK?'pass':'fail'}">${r.assetOK?'통과':'초과'}</span></td></tr>`;
+  h += `<tr><td>자동차 가액<br><span style="font-size:.78rem;color:var(--muted)">한도 ${man(r.carLimit)}</span></td>
+    <td>${man(S.car*10000)}<br><span class="${r.carOK?'pass':'fail'}">${r.carOK?'통과':'초과'}</span></td></tr>`;
+  h += `</tbody></table></div>`;
+
+  // 순위
+  h += `<div class="card"><h2>순위 판정</h2><p class="sub">${S.area==='small'
+    ? '50㎡ 미만은 청약통장이 필요 없고, 소득 구간 → 거주지 → 자녀수 → 배점 순으로 뽑습니다.'
+    : '59㎡는 청약통장이 필수입니다. 소득 → 통장 순위 → 자녀수 → 배점 순입니다.'}</p><table><tbody>`;
+  if(S.area==='small'){
+    h += `<tr><td>① 소득 구간</td><td><b>${r.incomeTier}</b></td></tr>`;
+    h += `<tr><td>② 거주지 순위<br><span style="font-size:.78rem;color:var(--muted)">${z.gu} + 연접구 = 1순위</span></td>
+      <td><b>${r.zoneRank?r.zoneRank+'순위':'해당 없음'}</b><br><span style="font-size:.78rem;color:var(--muted)">${S.live} 거주</span></td></tr>`;
+    if(S.track!=='weak') h += `<tr><td>③ 미성년 자녀 3명 이상</td><td>${S.score.child===3?'<b class="pass">해당</b>':'해당 없음'}</td></tr>`;
+    h += `<tr><td>${S.track==='weak'?'③':'④'} 배점 합산</td><td><b>${r.scoreTotal}점</b></td></tr>`;
+  } else {
+    h += `<tr><td>① 소득 70% 이하</td><td><span class="${r.incomeOK?'pass':'fail'}">${r.incomeOK?'통과':'초과'}</span></td></tr>`;
+    h += `<tr><td>② 청약통장 순위</td><td><b>${r.savingRank?'1순위':'확인 필요'}</b></td></tr>`;
+    h += `<tr><td>③ 배점 합산</td><td><b>${r.scoreTotal}점</b></td></tr>`;
+  }
+  h += `</tbody></table>`;
+  if(S.area==='mid') h += `<p class="note">${r.savingNote}</p>`;
+  h += `<p class="note">동점이면 <b>전산추첨</b>입니다. 선순위 신청자가 모집세대수의 200%를 넘으면 <b>후순위 접수(9.16)는 열리지 않습니다.</b></p></div>`;
+
+  // 배점 상세
+  h += `<div class="card"><h2>배점 상세</h2>
+    <div class="scoretot"><b>${r.scoreTotal}점</b><span>／ 만점 ${r.scoreMax}점${r.penalty?` (가점 ${r.scoreSum} · 감점 ${r.penalty})`:''}</span></div>
+    <table><tbody>`;
+  r.scoreRows.forEach(row=>{
+    h += `<tr><td>${row[0]}<br><span style="font-size:.78rem;color:var(--muted)">${row[1]}</span></td>
+      <td><b>${row[2]}점</b></td></tr>`;
+  });
+  if(r.penalty) h += `<tr><td>과거 계약 감점</td><td><b class="fail">${r.penalty}점</b></td></tr>`;
+  h += `</tbody></table></div>`;
+
+  // 일정
+  const vday = Object.entries(VISIT_DAY).find(([d,gus])=>gus.includes(z.gu));
+  h += `<div class="card"><h2>접수와 일정</h2><table><tbody>
+    <tr><td>인터넷 접수</td><td><b>${NOTICE.apply.netFrom}<br>~ ${NOTICE.apply.netTo}</b></td></tr>
+    <tr><td>방문 접수<br><span style="font-size:.78rem;color:var(--muted)">${z.gu} 지정일</span></td>
+        <td><b>${vday?vday[0]:'공고문 확인'}</b><br><span style="font-size:.78rem;color:var(--muted)">SH 2층 대강당</span></td></tr>
+    <tr><td>후순위 접수</td><td>${NOTICE.apply.late}</td></tr>
+    ${NOTICE.sched.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td></tr>`).join('')}
+    </tbody></table>
+    <p class="note warn"><b>방문접수는 자치구별 지정일에만</b> 받습니다. 날짜를 틀리면 접수할 수 없습니다.
+      그리고 <b>인터넷과 방문을 동시에 신청하면 둘 다 무효</b>입니다.</p></div>`;
+
+  // 준비 서류·주의
+  h += `<div class="card"><h2>미리 챙길 것</h2><ul class="docs">
+    <li><b>청약통장 순위확인서</b> — 청약홈에서 발급. 통장에 찍힌 회차가 아니라 <b>납입 인정회차</b>가 기준입니다.</li>
+    <li><b>주민등록표 등본·초본</b> — 서울 연속거주기간은 만19세 이후 <b>최종전입일</b>부터 셉니다. 중간에 서울 밖으로 나갔다 오면 리셋됩니다.</li>
+    <li><b>가족관계증명서</b> — 분리배우자도 검증 대상입니다. 배우자 자격검증이 안 되면 신청 자체가 불가합니다.</li>
+    ${S.score.elder===3?'<li><b>직계존속 부양 증빙</b> — 피부양자와 그 배우자도 무주택이어야 하고, 개인정보 제공 동의서가 별도로 필요합니다.</li>':''}
+    ${S.score.weak===3||S.score.weak2>0?'<li><b>사회취약계층 증빙</b> — 여러 항목에 해당해도 <b>1개만</b> 인정됩니다.</li>':''}
+    ${S.score.const===3?'<li><b>건설근로자 증빙</b> — 공제부금 1년(252일) 이상 적립 또는 고용보험 1년 이상 이력.</li>':''}
+    ${S.score.sme===3?'<li><b>중소기업 재직증명서</b> — 제조업체 한정, 임원은 제외됩니다.</li>':''}
+  </ul>
+  <p class="note warn"><b>배점은 신청자가 직접 씁니다.</b> 유리하게 적어 당첨되면 취소되고, 불리하게 적으면 유리하게 정정해주지 않습니다.
+    접수 후에는 단지·주택형·가점 <b>정정도 취소도 안 됩니다.</b></p></div>`;
+
+  if(r.warn.length) h += `<div class="card"><h2>확인이 필요한 부분</h2>${r.warn.map(w=>`<p class="note warn">${w}</p>`).join('')}</div>`;
+
+  h += `<div class="btns"><button class="btn ghost" onclick="go(0,4)">수정</button>
+        <button class="btn" onclick="location.reload()">처음부터</button></div>`;
+
+  $('result').innerHTML = h;
+  ['s1','s2','s3','s4'].forEach(id=>$(id).classList.add('hidden'));
+  $('result').classList.remove('hidden');
+  S.step = 5; drawSteps();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 단계 이동 ---------- */
+function go(from,to){
+  if(to>=1&&to<=4){
+    ['s1','s2','s3','s4'].forEach((id,i)=>$(id).classList.toggle('hidden', i+1!==to));
+    $('result').classList.add('hidden');
+    S.step = to;
+  }
+  if(to===4) fillScore();
+  drawSteps();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function drawSteps(){
+  $('steps').innerHTML = [1,2,3,4].map(i=>`<i class="${S.step>=i?'on':''}"></i>`).join('');
+}
+
+/* ---------- 바인딩 ---------- */
+function seg(id,key,after){
+  $(id).addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
+    const v=b.dataset.v; S[key] = isNaN(+v) ? v : +v;
+    if(after) after();
+  });
+}
+seg('q_seoul','seoul'); seg('q_nohouse','nohouse'); seg('q_adult','adult');
+seg('q_track','track',()=>{ fillZones(); trackNote(); S.score={}; });
+seg('q_area','area',areaNote);
+$('q_zone').addEventListener('change',e=>{ S.zone=+e.target.value; zoneInfo(); });
+$('q_live').addEventListener('change',e=>{ S.live=e.target.value; });
+['hh|q_hh','income|q_income','asset|q_asset','car|q_car'].forEach(p=>{
+  const [k,id]=p.split('|');
+  $(id).addEventListener('input',()=>{ const v=parseFloat($(id).value); S[k]=isNaN(v)?0:v; });
+});
+$('q_baby').addEventListener('change',e=>{ S.baby=e.target.value; });
+$('q_penalty').addEventListener('change',e=>{ S.penalty=+e.target.value; });
+
+function trackNote(){
+  $('trackNote').innerHTML = S.track==='weak'
+    ? '<b>만65세 이상, 장애인, 국가유공자 상이 1~7급</b> 등이 신청할 수 있는 별도 물량입니다. 배점표가 다르고(만점 15점) 나이·자녀 항목 대신 <b>장애 정도</b>가 들어갑니다.'
+    : '일반 물량입니다. 배점 9개 항목, 만점 27점입니다. 이번 공고에는 <b>우선공급(특별공급)이 없습니다</b> — 재공급 공고라서 국가유공자·한부모 등은 배점의 <b>사회취약계층 3점</b>으로 반영됩니다.';
+}
+function areaNote(){
+  $('areaNote').innerHTML = S.area==='small'
+    ? '<b>청약통장이 없어도 신청 가능</b>합니다. 소득 50% 이하가 선순위, 50~70%가 후순위로 갈립니다. 통장은 배점에만 반영됩니다.'
+    : '<b>청약통장 필수</b>입니다. 소득은 70% 이하 단일 기준이고, 순위는 납입 회차로 갈립니다(24회 이상 1순위 / 6회 이상 2순위).';
+}
+
+$('themeBtn').addEventListener('click',()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const sysDark=matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme', cur ? (cur==='dark'?'light':'dark') : (sysDark?'light':'dark'));
+});
+
+/* D-day */
+(function(){
+  const end = new Date(2026,8,3);           // 9/3 인터넷 접수 마감
+  const now = new Date();
+  const d = Math.ceil((end - now) / 86400000);
+  if(d > 0) $('dday').textContent = `접수 8.31~9.3 · D-${d}`;
+  else if(d === 0) $('dday').textContent = '오늘 접수 마감';
+  else $('dday').textContent = '선순위 접수 종료';
+})();
+
+fillZones(); trackNote(); areaNote(); drawSteps();
+</script>
+</body>
+</html>
