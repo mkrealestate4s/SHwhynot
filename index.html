@@ -76,8 +76,14 @@
   .today .stamp { font-size: 0.78rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
   .today ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
   .today li {
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    display: grid; grid-template-columns: auto 1fr; align-items: baseline;
+    column-gap: 10px; row-gap: 2px;
     font-size: 0.9rem; color: var(--text-secondary);
+  }
+  .today li .pill { grid-row: span 2; align-self: center; }
+  @media (min-width: 560px) {
+    .today li { grid-template-columns: auto auto 1fr; }
+    .today li .pill { grid-row: auto; }
   }
   .today li a { color: var(--text-primary); font-weight: 700; text-decoration: none; }
   .today li a:hover { color: var(--accent-strong); text-decoration: underline; }
