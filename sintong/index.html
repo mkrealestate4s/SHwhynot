@@ -934,7 +934,7 @@ function mergeRounds() {
         x._name = hit.name;
       } else {
         var row = { gu: x.gu, name: x.name, type: "재개발", stage: "후보지 선정(기획 전)", selected: fmtDate(r.date),
-          households: "", area: x.area || "", note: (x.note ? x.note + "; " : "") + r.title + " 선정",
+          households: "", area: x.area || "", note: (x.note ? x.note + "; " : "") + r.title + " 선정" + (String(r.date) < "2026-05" ? " · 현재 단계 미확인" : ""),
           source: r.source || "", reliability: "언론보도" };
         list.push(row); byName[row.name] = row; x._name = row.name;
       }
@@ -961,7 +961,7 @@ function renderRounds() {
     if (r.cutoff) meta.push("권리산정기준일 <b>" + esc(r.cutoff) + "</b>");
     if (r.toheo) meta.push("토지거래허가 " + esc(r.toheo));
     return '<details class="round"' + (i === 0 ? " open" : "") + '><summary><span class="dt">' + esc(fmtDate(r.date)) + '</span><span class="tt">' + esc(r.title) +
-      '</span><span class="cnt">' + r.count + "곳</span></summary>" +
+      '</span><span class="cnt">' + r.count + "곳" + ((r.sites || []).length < r.count ? " (목록 " + r.sites.length + "곳 확인)" : "") + "</span></summary>" +
       (meta.length ? '<p class="round-meta">' + meta.join(" · ") + "</p>" : "") +
       '<div class="round-sites">' + (r.sites || []).map(function (x) {
         return '<button type="button" data-name="' + esc(x._name || x.name) + '">' + esc(x.gu) + " " + esc(x.name) +

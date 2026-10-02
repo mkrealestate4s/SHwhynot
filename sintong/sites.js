@@ -70,7 +70,7 @@ window.SINTONG_SITES = [
   { gu:"영등포구", name:"신길16-2", type:"재개발", stage:"기획 완료", selected:"수시('23.8~'26.5)", households:"685", area:"34,445", note:"정비계획 도시계획위원회 심의 단계(구역지정 전); 세대수는 서울시 표기 계획(추정)치", source:"서울시 정비사업정보몽땅 재개발 추진현황 2026.5", reliability:"공식" },
   { gu:"용산구", name:"동후암1", type:"재개발", stage:"기획 중", selected:"수시('23.8~'26.5)", households:"2,081", area:"104,070", note:"신통기획(안) 수립 착수; 세대수는 서울시 표기 계획(추정)치", source:"서울시 정비사업정보몽땅 재개발 추진현황 2026.5", reliability:"공식" },
   { gu:"용산구", name:"동후암3", type:"재개발", stage:"기획 중", selected:"수시('23.8~'26.5)", households:"1,643", area:"82,173", note:"신통기획(안) 수립 착수; 세대수는 서울시 표기 계획(추정)치", source:"서울시 정비사업정보몽땅 재개발 추진현황 2026.5", reliability:"공식" },
-  { gu:"용산구", name:"중화6", type:"재개발", stage:"정비구역 지정", selected:"수시('23.8~'26.5)", households:"911", area:"45,505", note:"구역지정 고시 2026.04.23", source:"서울시 정비사업정보몽땅 재개발 추진현황 2026.5", reliability:"공식" },
+  { gu:"중랑구", name:"중화6", type:"재개발", stage:"정비구역 지정", selected:"수시('23.8~'26.5)", households:"911", area:"45,505", note:"구역지정 고시 2026.04.23", source:"서울시 정비사업정보몽땅 재개발 추진현황 2026.5", reliability:"공식" },
   { gu:"서대문구", name:"홍제동 9-81", type:"재개발", stage:"기획 중", selected:"수시('23.8~'26.5)", households:"2,395", area:"119,734", note:"신통기획(안) 수립 착수; 세대수는 서울시 표기 계획(추정)치", source:"서울시 정비사업정보몽땅 재개발 추진현황 2026.5", reliability:"공식" },
   { gu:"동작구", name:"사당동 63-1", type:"재개발", stage:"정비구역 지정", selected:"수시('23.8~'26.5)", households:"875", area:"41,276", note:"구역지정 고시 2026.01.22", source:"서울시 정비사업정보몽땅 재개발 추진현황 2026.5", reliability:"공식" },
   { gu:"중랑구", name:"면목동 174-1", type:"재개발", stage:"기획 완료", selected:"수시('23.8~'26.5)", households:"719", area:"35,970", note:"정비계획 도시계획위원회 심의 단계(구역지정 전); 세대수는 서울시 표기 계획(추정)치", source:"서울시 정비사업정보몽땅 재개발 추진현황 2026.5", reliability:"공식" },
