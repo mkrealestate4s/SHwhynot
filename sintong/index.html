@@ -1371,16 +1371,19 @@ function renderDosimHist() {
 }
 function initDosimHist() {
   var S = window.DOSIM_HIST_SUMMARY || {}, list = window.DOSIM_HIST_SITES || [], R = window.DOSIM_HIST_ROUNDS || [];
-  if (S.asOf || S.note) $("dhAsOf").textContent = "2021년 2·4 대책 이후 발표된 후보지의 현재 단계입니다." + (S.asOf ? " 누적 현황은 " + S.asOf + " 보도 기준." : "") + (S.note ? " " + S.note : "");
+  if (S.asOf) $("dhAsOf").textContent = "2021년 2·4 대책 이후 발표된 후보지 " + list.length + "곳의 현재 단계입니다(" + S.asOf + " 조사). 「후보지」로 남은 곳은 이후 진행 소식을 확인하지 못한 곳이며, 일부는 철회됐을 수 있습니다.";
   var c = {}; list.forEach(function (s) { c[s.stage] = (c[s.stage] || 0) + 1; });
   var tiles = [
-    ["발표 회차", S.rounds || (R.length ? R.length + "회" : "—"), "2021~2025"],
-    ["관리 중인 사업지", S.managed || "—", "정부 발표 기준"],
-    ["본지구 지정 이상", S.designated || ((c["본지구 지정"] || 0) + (c["사업계획 승인"] || 0) + (c["착공"] || 0)) + "곳", S.designated ? "정부 발표 기준" : "아래 목록 기준"],
-    ["사업계획 승인 이상", S.approved || ((c["사업계획 승인"] || 0) + (c["착공"] || 0)) + "곳", S.approved ? "정부 발표 기준" : "아래 목록 기준"],
-    ["철회·제외", (c["철회·제외"] || 0) + "곳", "주민 반대 등"]
+    ["발표", R.length + "회 · " + list.length + "곳", "2021. 3. ~ 2023. 12."],
+    ["본지구 지정 이상", ((c["본지구 지정"] || 0) + (c["사업계획 승인"] || 0) + (c["착공"] || 0)) + "곳", "목록 기준"],
+    ["사업계획 승인", ((c["사업계획 승인"] || 0) + (c["착공"] || 0)) + "곳", "착공 0곳 (2026. 10.)"],
+    ["예정지구 지정", (c["예정지구 지정"] || 0) + "곳", "1년 내 동의 확보 필요"],
+    ["철회·제외", (c["철회·제외"] || 0) + "곳", "주민 반대·동의 미달"],
+    ["단계 미확인", (c["후보지"] || 0) + "곳", "후보지 이후 소식 없음"]
   ];
   $("dhTiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><div class="lbl">' + t[0] + '</div><div class="val">' + esc(t[1]) + '</div><div class="note">' + t[2] + "</div></div>"; }).join("");
+  $("dhTiles").insertAdjacentHTML("afterend", '<div class="callout" style="margin-top:12px"><strong>정부·언론 집계</strong><ul style="margin:6px 0 0 18px">' +
+    [S.managed, S.designated, S.approved, S.note].filter(Boolean).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>");
   $("dhRounds").innerHTML = R.length ? '<table><thead><tr><th>발표일</th><th>회차</th><th class="num">후보지</th><th>지역</th><th>출처</th></tr></thead><tbody>' + R.map(function (r) {
     return "<tr><td>" + esc(fmtDate(r.date)) + "</td><td>" + esc(r.title) + '</td><td class="num">' + esc(r.count) + "곳</td><td>" + esc(r.region || "") + "</td><td>" + esc(r.source || "") + "</td></tr>";
   }).join("") + "</tbody></table>" : "준비 중입니다.";
