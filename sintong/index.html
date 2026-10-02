@@ -1072,6 +1072,7 @@ function renderSites() {
 /* 후보지 선정 회차: 사례 DB에 선정일을 붙이고, DB에 없는 신규 선정지는 추가 */
 function fmtDate(d) {
   var p = String(d).split("-");
+  if (!p[1]) return p[0] + ".";
   return p[0] + ". " + (+p[1]) + "." + (p[2] ? " " + (+p[2]) + "." : "");
 }
 function mergeRounds() {
