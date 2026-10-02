@@ -203,6 +203,10 @@
   #moaTable td.src { min-width: 120px; color: var(--text-muted); font-size: 0.78rem; }
   #dsTable td:nth-child(-n+6), #dpTable td:nth-child(-n+3) { white-space: nowrap; }
   #dsTable td.nm, #dpTable td.nm { font-weight: 600; }
+  #dhTable td:nth-child(-n+7) { white-space: nowrap; }
+  #dhTable td.nm { font-weight: 600; white-space: normal !important; min-width: 130px; }
+  #dhTable td.note { min-width: 220px; color: var(--text-secondary); font-size: 0.84rem; }
+  #dhTable td.src { min-width: 120px; color: var(--text-muted); font-size: 0.78rem; }
   #dpTable td.src { min-width: 150px; color: var(--text-muted); font-size: 0.78rem; }
   #dsTable td.note, #dpTable td.note { min-width: 220px; color: var(--text-secondary); font-size: 0.84rem; }
   #siteTable td.nm { font-weight: 600; min-width: 140px; }
@@ -613,6 +617,21 @@
     <div class="table-scroll"><table id="dsTable"><thead><tr><th>자치구</th><th>후보지</th><th>유형</th><th class="num">공급 호수</th><th class="num">면적(㎡)</th><th>발표</th><th>메모</th></tr></thead><tbody></tbody></table></div>
   </div>
 
+  <div class="card" id="dhCard">
+    <h2>기존 후보지 (2021~2025)</h2>
+    <p class="sub" id="dhAsOf">2021년 2·4 대책 이후 발표된 도심복합사업 후보지의 현재 단계입니다.</p>
+    <div class="tile-grid" id="dhTiles"></div>
+    <details class="help" style="margin:14px 0"><summary>회차별 발표 보기</summary><div class="body"><div id="dhRounds"></div></div></details>
+    <div class="filters">
+      <div class="field search"><input type="search" id="dh_q" placeholder="구역·동 이름 검색 (예: 증산, 쌍문)"></div>
+      <div class="field"><select id="dh_gu"><option value="">전체 지역</option></select></div>
+      <div class="field"><select id="dh_stage"><option value="">전체 단계</option></select></div>
+      <div class="field"><select id="dh_kind"><option value="">전체 유형</option><option>역세권</option><option>준공업</option><option>저층주거지</option></select></div>
+    </div>
+    <div class="count-line" id="dh_count"></div>
+    <div class="table-scroll"><table id="dhTable"><thead><tr><th>지역</th><th>후보지</th><th>유형</th><th>단계</th><th>단계 일자</th><th>발표</th><th class="num">공급 호수</th><th>메모</th><th>출처</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
   <div class="card">
     <h2>민간 도심복합개발 추진 사례</h2>
     <p class="sub">공공 도심복합사업과 달리 신탁사·리츠가 시행하는 「민간 도심복합개발」 추진 사례입니다. 공식 지정 전 단계라 계획이 바뀔 수 있습니다.</p>
@@ -639,6 +658,7 @@
 <script src="rounds.js"></script>
 <script src="moa.js"></script>
 <script src="dosim.js"></script>
+<script src="dosim_hist.js"></script>
 <script>
 "use strict";
 var TYPE = "redev";
@@ -1328,6 +1348,48 @@ function renderDosim() {
       '</td><td class="num">' + esc(s.area || "—") + "</td><td>" + esc(fmtDate(s.date)) + '</td><td class="note">' + esc(s.note || "") + "</td></tr>";
   }).join("");
 }
+var DH_STAGES = ["후보지", "예정지구 지정", "본지구 지정", "사업계획 승인", "착공", "철회·제외"];
+function renderDosimHist() {
+  var list = window.DOSIM_HIST_SITES || [];
+  var q = $("dh_q").value.trim(), gu = $("dh_gu").value, st = $("dh_stage").value, kind = $("dh_kind").value;
+  var rows = list.filter(function (s) {
+    return (!q || (s.gu + s.name + (s.note || "")).indexOf(q) >= 0) && (!gu || s.gu === gu) && (!st || s.stage === st) && (!kind || s.kind === kind);
+  });
+  rows.sort(function (a, b) {
+    var x = DH_STAGES.indexOf(a.stage), y = DH_STAGES.indexOf(b.stage);
+    if (x === 5) x = -1; if (y === 5) y = -1;               // 철회는 맨 아래
+    return y - x || a.gu.localeCompare(b.gu, "ko");
+  });
+  $("dh_count").textContent = list.length ? rows.length + "곳 표시 / " + list.length + "곳" : "기존 후보지 데이터를 준비 중입니다.";
+  $("dhTable").querySelector("tbody").innerHTML = rows.map(function (s) {
+    var si = DH_STAGES.indexOf(s.stage);
+    var b = si === 5 ? "bad" : si >= 2 ? "ok" : si === 1 ? "warn" : "na";
+    return "<tr><td>" + esc(s.gu) + '</td><td class="nm">' + esc(s.name) + "</td><td>" + esc(s.kind || "") + "</td><td>" + badge(b, esc(s.stage)) +
+      "</td><td>" + esc(s.stageDate ? fmtDate(s.stageDate) : "") + "</td><td>" + esc(s.round ? fmtDate(s.round) : "") + '</td><td class="num">' + esc(s.households || "—") +
+      '</td><td class="note">' + esc(s.note || "") + '</td><td class="src">' + esc(s.source || "") + (s.reliability && s.reliability !== "공식" ? " · " + esc(s.reliability) : "") + "</td></tr>";
+  }).join("");
+}
+function initDosimHist() {
+  var S = window.DOSIM_HIST_SUMMARY || {}, list = window.DOSIM_HIST_SITES || [], R = window.DOSIM_HIST_ROUNDS || [];
+  if (S.asOf || S.note) $("dhAsOf").textContent = "2021년 2·4 대책 이후 발표된 후보지의 현재 단계입니다." + (S.asOf ? " 누적 현황은 " + S.asOf + " 보도 기준." : "") + (S.note ? " " + S.note : "");
+  var c = {}; list.forEach(function (s) { c[s.stage] = (c[s.stage] || 0) + 1; });
+  var tiles = [
+    ["발표 회차", S.rounds || (R.length ? R.length + "회" : "—"), "2021~2025"],
+    ["관리 중인 사업지", S.managed || "—", "정부 발표 기준"],
+    ["본지구 지정 이상", S.designated || ((c["본지구 지정"] || 0) + (c["사업계획 승인"] || 0) + (c["착공"] || 0)) + "곳", S.designated ? "정부 발표 기준" : "아래 목록 기준"],
+    ["사업계획 승인 이상", S.approved || ((c["사업계획 승인"] || 0) + (c["착공"] || 0)) + "곳", S.approved ? "정부 발표 기준" : "아래 목록 기준"],
+    ["철회·제외", (c["철회·제외"] || 0) + "곳", "주민 반대 등"]
+  ];
+  $("dhTiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><div class="lbl">' + t[0] + '</div><div class="val">' + esc(t[1]) + '</div><div class="note">' + t[2] + "</div></div>"; }).join("");
+  $("dhRounds").innerHTML = R.length ? '<table><thead><tr><th>발표일</th><th>회차</th><th class="num">후보지</th><th>지역</th><th>출처</th></tr></thead><tbody>' + R.map(function (r) {
+    return "<tr><td>" + esc(fmtDate(r.date)) + "</td><td>" + esc(r.title) + '</td><td class="num">' + esc(r.count) + "곳</td><td>" + esc(r.region || "") + "</td><td>" + esc(r.source || "") + "</td></tr>";
+  }).join("") + "</tbody></table>" : "준비 중입니다.";
+  var gus = {}; list.forEach(function (s) { gus[s.gu] = 1; });
+  Object.keys(gus).sort(function (a, b) { return a.localeCompare(b, "ko"); }).forEach(function (g) { $("dh_gu").insertAdjacentHTML("beforeend", "<option>" + esc(g) + "</option>"); });
+  DH_STAGES.forEach(function (s) { $("dh_stage").insertAdjacentHTML("beforeend", "<option>" + s + "</option>"); });
+  ["dh_q", "dh_gu", "dh_stage", "dh_kind"].forEach(function (id) { $(id).addEventListener("input", renderDosimHist); });
+  renderDosimHist();
+}
 function initDosim() {
   var R = (window.DOSIM_ROUNDS || [])[0], list = window.DOSIM_SITES || [];
   if (R) {
@@ -1344,6 +1406,7 @@ function initDosim() {
     return "<tr><td>" + esc(s.gu) + '</td><td class="nm">' + esc(s.name) + "</td><td>" + badge("warn", esc(s.stage)) + '</td><td class="num">' + esc(s.households) +
       '</td><td class="num">' + esc(s.area) + '</td><td class="note">' + esc(s.note) + '</td><td class="src">' + esc(s.source) + " · " + esc(s.reliability) + "</td></tr>";
   }).join("");
+  initDosimHist();
   renderQuestions(CK_DOSIM);
 }
 
