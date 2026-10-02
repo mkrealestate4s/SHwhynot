@@ -201,6 +201,31 @@
   #siteTable td.note { min-width: 220px; color: var(--text-secondary); font-size: 0.84rem; }
   #siteTable td.src { min-width: 120px; color: var(--text-muted); font-size: 0.78rem; }
 
+  /* 후보지 선정 회차 */
+  .latest { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 10px; margin-bottom: 14px;
+    background: color-mix(in srgb, var(--accent) 8%, var(--surface-1)); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+  .latest .d { font-size: 0.78rem; color: var(--accent-strong); font-weight: 700; white-space: nowrap; }
+  .latest h3 { margin: 0 0 4px; font-size: 1rem; }
+  .latest p { font-size: 0.86rem; color: var(--text-secondary); }
+  .rounds { position: relative; }
+  details.round { border-left: 2px solid var(--grid); padding: 0 0 4px 16px; margin-left: 6px; position: relative; }
+  details.round::before { content: ""; position: absolute; left: -7px; top: 9px; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--surface-1); border: 2px solid var(--accent); }
+  details.round[open]::before { background: var(--accent); }
+  details.round summary { cursor: pointer; list-style: none; padding: 4px 0 8px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  details.round summary::-webkit-details-marker { display: none; }
+  details.round summary .dt { font-weight: 700; font-variant-numeric: tabular-nums; }
+  details.round summary .tt { color: var(--text-secondary); font-size: 0.9rem; }
+  details.round summary .cnt { font-size: 0.78rem; color: var(--text-muted); }
+  .round-meta { font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 8px; }
+  .round-meta b { color: var(--text-primary); }
+  .round-sites { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; margin-bottom: 14px; }
+  .round-sites button { text-align: left; font: inherit; cursor: pointer; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface-1); color: var(--text-primary); padding: 8px 10px; font-size: 0.86rem; }
+  .round-sites button:hover { border-color: var(--accent); }
+  .round-sites button small { display: block; color: var(--text-muted); font-size: 0.75rem; margin-top: 2px; }
+  .round-src { font-size: 0.75rem; color: var(--text-muted); margin: -6px 0 12px; }
+
   /* 체크리스트 */
   .q { padding: 13px 0; border-bottom: 1px solid var(--grid); display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; }
   .q:last-child { border-bottom: none; }
@@ -439,7 +464,13 @@
       <span><i class="s3"></i>기획 중</span><span><i class="s4"></i>기획 전(조건부)</span>
     </div>
   </div>
-  <div class="card">
+  <div class="card" id="roundCard">
+    <h2>재개발 후보지 선정 발표</h2>
+    <p class="sub">선정위원회 회차별로 어느 구역이 뽑혔는지 정리했습니다. 선정되면 바로 권리산정기준일 적용·토지거래허가구역 지정·건축허가 제한이 따라옵니다. 구역을 누르면 아래 목록에서 찾아 줍니다.</p>
+    <div id="latestRound"></div>
+    <div class="rounds" id="roundList"></div>
+  </div>
+  <div class="card" id="siteCard">
     <h2>대상지 사례 찾아보기</h2>
     <p class="sub">서울시 정비사업정보몽땅 추진현황 표(재개발 '26. 5. 31. · 재건축 '26. 7. 22. 기준)를 바탕으로, 주요 단지는 2025~2026년 보도로 단계·세대수를 갱신했습니다. 단계는 8단계로 묶어 표시했으며 원래 단계명은 메모에 있습니다. 구역 지정 전 세대수는 계획(추정)치입니다.</p>
     <div class="filters">
@@ -476,6 +507,7 @@
 </div>
 
 <script src="sites.js"></script>
+<script src="rounds.js"></script>
 <script>
 "use strict";
 var TYPE = "redev";
@@ -885,13 +917,73 @@ function renderSites() {
       '</td><td class="src">' + esc(s.source || "") + (s.reliability && s.reliability !== "공식" ? " · " + esc(s.reliability) : "") + "</td></tr>";
   }).join("");
 }
+/* 후보지 선정 회차: 사례 DB에 선정일을 붙이고, DB에 없는 신규 선정지는 추가 */
+function fmtDate(d) {
+  var p = String(d).split("-");
+  return p[0] + ". " + (+p[1]) + "." + (p[2] ? " " + (+p[2]) + "." : "");
+}
+function mergeRounds() {
+  var rounds = window.SINTONG_ROUNDS || [], list = window.SINTONG_SITES = window.SINTONG_SITES || [];
+  var byName = {};
+  list.forEach(function (s) { if (s.type === "재개발") byName[s.name] = s; });
+  rounds.forEach(function (r) {
+    (r.sites || []).forEach(function (x) {
+      var hit = x.match && byName[x.match];
+      if (hit) {
+        hit.selected = fmtDate(r.date) + (hit.selected && hit.selected.indexOf("차") > 0 ? " · " + hit.selected : "");
+        x._name = hit.name;
+      } else {
+        var row = { gu: x.gu, name: x.name, type: "재개발", stage: "후보지 선정(기획 전)", selected: fmtDate(r.date),
+          households: "", area: x.area || "", note: (x.note ? x.note + "; " : "") + r.title + " 선정",
+          source: r.source || "", reliability: "언론보도" };
+        list.push(row); byName[row.name] = row; x._name = row.name;
+      }
+    });
+  });
+}
+function daysSince(d) {
+  var p = String(d).split("-"); if (!p[2]) return null;
+  var t = new Date(+p[0], +p[1] - 1, +p[2]), n = new Date();
+  return Math.floor((new Date(n.getFullYear(), n.getMonth(), n.getDate()) - t) / 86400000);
+}
+function renderRounds() {
+  var rounds = (window.SINTONG_ROUNDS || []).slice().sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });
+  if (!rounds.length) { $("roundCard").classList.add("hidden"); return; }
+  var L = rounds[0], ds = daysSince(L.date);
+  $("latestRound").innerHTML = '<div class="latest"><div class="d">최근 선정<br>' + (ds != null ? (ds === 0 ? "오늘" : ds + "일 전") : "") +
+    '</div><div><h3>' + esc(fmtDate(L.date)) + " " + esc(L.title) + " — " + L.count + "곳</h3><p>" +
+    (L.sites || []).map(function (x) { return esc(x.gu + " " + x.name); }).join(" · ") +
+    (L.cumulative ? " · 누적 " + esc(L.cumulative) + "곳" : "") + "</p></div></div>";
+  var total = rounds.reduce(function (a, r) { return a + (+r.count || 0); }, 0);
+  $("roundList").innerHTML = rounds.map(function (r, i) {
+    var meta = [];
+    if (r.cumulative) meta.push("누적 <b>" + esc(r.cumulative) + "곳</b>");
+    if (r.cutoff) meta.push("권리산정기준일 <b>" + esc(r.cutoff) + "</b>");
+    if (r.toheo) meta.push("토지거래허가 " + esc(r.toheo));
+    return '<details class="round"' + (i === 0 ? " open" : "") + '><summary><span class="dt">' + esc(fmtDate(r.date)) + '</span><span class="tt">' + esc(r.title) +
+      '</span><span class="cnt">' + r.count + "곳</span></summary>" +
+      (meta.length ? '<p class="round-meta">' + meta.join(" · ") + "</p>" : "") +
+      '<div class="round-sites">' + (r.sites || []).map(function (x) {
+        return '<button type="button" data-name="' + esc(x._name || x.name) + '">' + esc(x.gu) + " " + esc(x.name) +
+          "<small>" + esc([x.area ? x.area + "㎡" : "", x.note || ""].filter(Boolean).join(" · ")) + "</small></button>";
+      }).join("") + "</div>" + (r.source ? '<p class="round-src">출처: ' + esc(r.source) + "</p>" : "") + "</details>";
+  }).join("") + '<p class="count-line">' + rounds.length + "개 회차 · 선정 " + total + "곳 (조건부·보류 포함 여부는 회차별 보도 기준)</p>";
+  $("roundList").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-name]"); if (!b) return;
+    $("f_q").value = b.dataset.name; $("f_gu").value = ""; $("f_type").value = ""; $("f_stage").value = "";
+    renderSites();
+    $("siteCard").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
 function initSites() {
+  mergeRounds();
   var list = window.SINTONG_SITES || [];
   var gus = {}; list.forEach(function (s) { gus[s.gu] = 1; });
   Object.keys(gus).sort(function (a, b) { return a.localeCompare(b, "ko"); }).forEach(function (g) { $("f_gu").insertAdjacentHTML("beforeend", "<option>" + esc(g) + "</option>"); });
   STAGES.forEach(function (s) { $("f_stage").insertAdjacentHTML("beforeend", "<option>" + s + "</option>"); });
   ["f_q", "f_gu", "f_type", "f_stage"].forEach(function (id) { $(id).addEventListener("input", renderSites); });
-  renderSummary(); renderSites();
+  renderSummary(); renderRounds(); renderSites();
 }
 
 /* =========================================================
