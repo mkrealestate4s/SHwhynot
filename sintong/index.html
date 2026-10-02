@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>신속통합기획·모아타운 분석</title>
+<title>서울 정비사업 분석</title>
 <meta name="description" content="서울시 신속통합기획 재개발·재건축 후보지 요건 진단, 사업성·분담금 추정, 추진 현황, 투자 리스크 체크리스트">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
@@ -201,6 +201,10 @@
   #moaTable td.nm { font-weight: 600; min-width: 140px; white-space: normal !important; }
   #moaTable td.note { min-width: 220px; color: var(--text-secondary); font-size: 0.84rem; }
   #moaTable td.src { min-width: 120px; color: var(--text-muted); font-size: 0.78rem; }
+  #dsTable td:nth-child(-n+6), #dpTable td:nth-child(-n+3) { white-space: nowrap; }
+  #dsTable td.nm, #dpTable td.nm { font-weight: 600; }
+  #dpTable td.src { min-width: 150px; color: var(--text-muted); font-size: 0.78rem; }
+  #dsTable td.note, #dpTable td.note { min-width: 220px; color: var(--text-secondary); font-size: 0.84rem; }
   #siteTable td.nm { font-weight: 600; min-width: 140px; }
   #siteTable td.note { min-width: 220px; color: var(--text-secondary); font-size: 0.84rem; }
   #siteTable td.src { min-width: 120px; color: var(--text-muted); font-size: 0.78rem; }
@@ -274,7 +278,7 @@
 
 <header class="site">
   <a class="home" href="../">← 홈으로</a>
-  <h1>🧭 신속통합기획·모아타운 분석</h1>
+  <h1>🧭 신속통합기획·모아타운·도심복합 분석</h1>
   <p>서울시 신속통합기획(신통기획) 재개발·재건축 — 후보지 요건 진단부터 사업성·분담금, 추진 현황, 투자 리스크까지</p>
 </header>
 
@@ -293,6 +297,7 @@
   <button class="tab-btn" role="tab" data-tab="list" aria-selected="false">③ 추진 현황</button>
   <button class="tab-btn" role="tab" data-tab="risk" aria-selected="false">④ 투자 체크리스트</button>
   <button class="tab-btn" role="tab" data-tab="moa" aria-selected="false">⑤ 모아타운</button>
+  <button class="tab-btn" role="tab" data-tab="dosim" aria-selected="false">⑥ 도심복합사업</button>
 </div>
 
 <!-- ================= ① 요건 진단 ================= -->
@@ -576,17 +581,64 @@
   </div>
 </section>
 
+<!-- ================= ⑥ 도심복합사업 ================= -->
+<section class="tab-panel" id="tab-dosim" role="tabpanel">
+  <div class="card">
+    <h2><span class="num">6</span>도심 공공주택 복합사업 (국토교통부)</h2>
+    <p class="sub">LH·SH 등 공공이 직접 시행해 조합 설립·관리처분 절차 없이 역세권·저층주거지를 고밀 개발하는 사업입니다. 후보지는 서울시가 아니라 <b>국토교통부 보도자료</b>로 발표됩니다.</p>
+    <div class="callout warn"><strong>매수 전 최우선 확인 — 현금청산 기준일</strong><br>
+      현행 공공주택특별법은 <b>2021. 6. 30. 이후</b> 토지등소유자가 된 사람에게 새 아파트 우선공급(입주권)을 주지 않고 <b>현금청산</b>합니다. 기준일을 「후보지 선정일」로 바꾸는 개정안이 논의되고 있지만 확정되지 않았습니다(2026. 10. 기준).
+      후보지 발표 뒤 매수는 현행 기준이면 입주권 없이 감정가로 청산될 수 있으니, 계약 전 반드시 LH·국토부에 우선공급 대상 여부를 확인하세요.</div>
+    <div class="table-scroll"><table>
+      <thead><tr><th></th><th>도심복합사업</th><th>신통기획 재개발</th><th>모아타운</th></tr></thead>
+      <tbody>
+        <tr><th>시행</th><td>공공(LH·SH) 단독</td><td>조합(또는 신탁)</td><td>블록별 조합(SH 참여형은 공동)</td></tr>
+        <tr><th>발표</th><td>국토교통부</td><td>서울시</td><td>서울시</td></tr>
+        <tr><th>동의</th><td>예정지구 지정 후 1년 내 2/3 + 면적 1/2</td><td>신청 30% → 조합 75%</td><td>신청 30% → 블록 조합 80%</td></tr>
+        <tr><th>절차</th><td>조합·관리처분 생략</td><td>정비구역 → 조합 → 관리처분</td><td>관리계획 → 블록 조합</td></tr>
+        <tr><th>권리</th><td>우선공급 또는 현금청산(기준일 주의)</td><td>권리산정기준일 이후 쪼개기 현금청산</td><td>권리산정기준일 이후 쪼개기 현금청산</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>최신 후보지 발표</h2>
+    <div id="dsRound"></div>
+    <div class="filters" style="grid-template-columns: 2fr 1fr 1fr">
+      <div class="field search"><input type="search" id="df_q" placeholder="동·역 이름 검색 (예: 방이, 염창)"></div>
+      <div class="field"><select id="df_gu"><option value="">전체 자치구</option></select></div>
+      <div class="field"><select id="df_kind"><option value="">전체 유형</option><option>역세권</option><option>저층주거지</option></select></div>
+    </div>
+    <div class="count-line" id="df_count"></div>
+    <div class="table-scroll"><table id="dsTable"><thead><tr><th>자치구</th><th>후보지</th><th>유형</th><th class="num">공급 호수</th><th class="num">면적(㎡)</th><th>발표</th><th>메모</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="card">
+    <h2>민간 도심복합개발 추진 사례</h2>
+    <p class="sub">공공 도심복합사업과 달리 신탁사·리츠가 시행하는 「민간 도심복합개발」 추진 사례입니다. 공식 지정 전 단계라 계획이 바뀔 수 있습니다.</p>
+    <div class="table-scroll"><table id="dpTable"><thead><tr><th>자치구</th><th>사업지</th><th>단계</th><th class="num">계획 세대</th><th class="num">면적(㎡)</th><th>메모</th><th>출처</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="card">
+    <h2>도심복합사업 후보지 매수 전 체크리스트</h2>
+    <div id="dq_list"></div>
+    <div id="dq_summary" style="margin-top:14px"></div>
+    <ul class="risk-list" id="dq_risks"></ul>
+  </div>
+</section>
+
 <p class="disclaimer">
   본 도구의 판정과 수치는 공개 자료를 바탕으로 한 <b>참고용 추정치</b>이며 법적 효력이 없습니다.
   신통기획 후보지 선정은 정량평가 외에 정성평가(사업 필요성·실현 가능성 등)와 위원회 심의로 결정되고,
   실제 비례율·분담금은 감정평가와 관리처분계획으로 확정됩니다. 투자 결정 전 구청·조합·전문가에게 반드시 확인하세요.<br>
-  기준 자료: 서울시 신속통합기획 정책소개·추진현황(2026. 6.), 재개발 후보지 선정기준 개선(2024. 6.), 2030 서울시 도시·주거환경정비 기본계획(사업성 보정계수, 2024. 3.), 도시정비법 개정(2025. 6. 시행), 모아타운 공모요건 개선·갈등 방지대책(2024. 3.), 모아주택 규제 완화(2026. 7.).
+  기준 자료: 서울시 신속통합기획 정책소개·추진현황(2026. 6.), 재개발 후보지 선정기준 개선(2024. 6.), 2030 서울시 도시·주거환경정비 기본계획(사업성 보정계수, 2024. 3.), 도시정비법 개정(2025. 6. 시행), 모아타운 공모요건 개선·갈등 방지대책(2024. 3.), 모아주택 규제 완화(2026. 7.), 국토교통부 도심 공공주택 복합사업 신규 후보지(2026. 9. 30.).
 </p>
 </div>
 
 <script src="sites.js"></script>
 <script src="rounds.js"></script>
 <script src="moa.js"></script>
+<script src="dosim.js"></script>
 <script>
 "use strict";
 var TYPE = "redev";
@@ -607,11 +659,11 @@ function badge(state, text) {
 function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
 /* ---------- 탭 · 유형 전환 ---------- */
-var TABS = ["req", "biz", "list", "risk", "moa"];
+var TABS = ["req", "biz", "list", "risk", "moa", "dosim"];
 function switchTab(t) {
   document.querySelectorAll(".tab-btn").forEach(function (b) { b.setAttribute("aria-selected", b.dataset.tab === t); });
   TABS.forEach(function (k) { $("tab-" + k).classList.toggle("active", k === t); });
-  document.querySelector(".type-bar").classList.toggle("hidden", t === "moa");
+  document.querySelector(".type-bar").classList.toggle("hidden", t === "moa" || t === "dosim");
   try { localStorage.setItem("sintong_tab", t); } catch (e) {}
 }
 document.querySelectorAll(".tab-btn").forEach(function (b) { b.addEventListener("click", function () { switchTab(b.dataset.tab); }); });
@@ -1107,6 +1159,14 @@ var QUESTIONS = [
     fix: "서울시 보도자료·구청 공고로 선정 여부를 직접 확인하세요." },
   { id: "m_loan", t: "moa", w: 1, bad: "unk", q: "이주비·분담금 대출과 실거주 요건을 확인했나?", d: "소규모 정비는 이주비 대출 조건이 재개발보다 불리할 수 있고, 규제지역 다주택자는 대출이 제한됩니다.",
     fix: "보유 주택 수 기준으로 은행에 한도를 확인하세요.", invert: true },
+  { id: "d_date", t: "dosim", w: 3, bad: "no", q: "2021. 6. 30. 이전부터 소유한 물건인가?", d: "현행법상 이후 취득자는 우선공급(입주권) 대신 현금청산입니다. 기준일을 후보지 선정일로 바꾸는 개정안은 아직 확정되지 않았습니다.",
+    fix: "등기부 취득일을 확인하고, LH 사업단·국토부 도심주택정책과에 우선공급 대상 여부를 문의하세요." },
+  { id: "d_consent", t: "dosim", w: 2, bad: "yes", q: "주민 반대가 커서 2/3 동의가 어려워 보이나?", d: "예정지구 지정 후 1년 안에 토지등소유자 2/3·면적 1/2 동의를 못 받으면 지구 지정이 무산되거나 철회될 수 있습니다.",
+    fix: "주민설명회(2026. 10.) 분위기와 반대 비대위 활동을 확인하세요." },
+  { id: "d_value", t: "dosim", w: 2, bad: "unk", q: "현금청산 시 감정평가액이 매수가보다 낮을 가능성을 따져 봤나?", d: "현금청산은 감정평가액 기준이라 시세·프리미엄보다 훨씬 낮을 수 있습니다.",
+    fix: "공시가격 대비 매수가 비율을 확인하고 최악의 경우(현금청산) 손실액을 계산해 두세요.", invert: true },
+  { id: "d_boundary", t: "dosim", w: 2, bad: "no", q: "내 물건이 후보지 경계 안에 확실히 들어가나?", d: "후보지 경계는 예정지구 지정 때 바뀔 수 있고, 역 이름 위주 발표라 정확한 지번이 아직 공개되지 않은 경우가 많습니다.",
+    fix: "주민설명회 자료나 LH 사업 안내 도면으로 지번을 확인하세요." },
   { id: "premium", t: "both", w: 1, bad: "yes", q: "매수가가 예상 감정가보다 2배 이상 높은가?", d: "프리미엄이 크면 비례율이 조금만 떨어져도 손실 폭이 큽니다.",
     fix: "공시가격으로 감정가를 추정해 ② 탭에서 총 투자금을 계산해 보세요." }
 ];
@@ -1205,7 +1265,7 @@ function renderMoaSites() {
     return (!q || (s.gu + s.name + (s.note || "")).indexOf(q) >= 0) && (!gu || s.gu === gu) && (!st || s.stage === st) && (!sh || s.sh);
   });
   rows.sort(function (a, b) { return String(b.selected || "").localeCompare(String(a.selected || "")) || a.gu.localeCompare(b.gu, "ko"); });
-  $("mf_count").textContent = list.length ? rows.length + "곳 표시 / 전체 " + list.length + "곳" : "모아타운 데이터를 불러오지 못했습니다.";
+  $("mf_count").textContent = list.length ? rows.length + "곳 표시 / 전체 " + list.length + "곳" : "모아타운 대상지 데이터를 준비 중입니다.";
   $("moaTable").querySelector("tbody").innerHTML = rows.map(function (s) {
     var si = MOA_STAGES.indexOf(s.stage);
     var b = si >= 3 ? "ok" : si >= 1 ? "warn" : "bad";
@@ -1254,6 +1314,39 @@ function initMoa() {
   renderQuestions(CK_MOA);
 }
 
+/* =========================================================
+   ⑥ 도심복합사업
+   ========================================================= */
+var CK_DOSIM = { q: "dq_list", sum: "dq_summary", list: "dq_risks", filter: function (q) { return q.t === "dosim"; } };
+function renderDosim() {
+  var list = window.DOSIM_SITES || [];
+  var q = $("df_q").value.trim(), gu = $("df_gu").value, kind = $("df_kind").value;
+  var rows = list.filter(function (s) { return (!q || (s.gu + s.name + s.note).indexOf(q) >= 0) && (!gu || s.gu === gu) && (!kind || s.kind === kind); });
+  $("df_count").textContent = list.length ? rows.length + "곳 표시 / " + list.length + "곳" : "데이터를 불러오지 못했습니다.";
+  $("dsTable").querySelector("tbody").innerHTML = rows.map(function (s) {
+    return "<tr><td>" + esc(s.gu) + '</td><td class="nm">' + esc(s.name) + "</td><td>" + esc(s.kind) + '</td><td class="num">' + esc(s.households || "—") +
+      '</td><td class="num">' + esc(s.area || "—") + "</td><td>" + esc(fmtDate(s.date)) + '</td><td class="note">' + esc(s.note || "") + "</td></tr>";
+  }).join("");
+}
+function initDosim() {
+  var R = (window.DOSIM_ROUNDS || [])[0], list = window.DOSIM_SITES || [];
+  if (R) {
+    var ds = daysSince(R.date);
+    $("dsRound").innerHTML = '<div class="latest"><div class="d">국토부 발표<br>' + (ds != null ? (ds === 0 ? "오늘" : ds + "일 전") : "") + "</div><div><h3>" + esc(fmtDate(R.date)) + " " + esc(R.title) +
+      " — " + R.count + "곳 · " + esc(R.households) + "호</h3><p>" + esc(R.note) + ' <a href="' + esc(R.url) + '" target="_blank" rel="noopener" style="color:var(--accent)">보도자료 원문</a></p></div></div>' +
+      '<div class="roadmap" style="margin-bottom:14px">' + R.schedule.map(function (x, i) { return '<div class="st' + (i === 0 ? " now" : "") + '"><b>' + esc(x[0]) + "</b><span>" + esc(x[1]) + "</span></div>"; }).join("") + "</div>";
+  }
+  var gus = {}; list.forEach(function (s) { gus[s.gu] = 1; });
+  Object.keys(gus).sort(function (a, b) { return a.localeCompare(b, "ko"); }).forEach(function (g) { $("df_gu").insertAdjacentHTML("beforeend", "<option>" + esc(g) + "</option>"); });
+  ["df_q", "df_gu", "df_kind"].forEach(function (id) { $(id).addEventListener("input", renderDosim); });
+  renderDosim();
+  $("dpTable").querySelector("tbody").innerHTML = (window.DOSIM_PRIVATE || []).map(function (s) {
+    return "<tr><td>" + esc(s.gu) + '</td><td class="nm">' + esc(s.name) + "</td><td>" + badge("warn", esc(s.stage)) + '</td><td class="num">' + esc(s.households) +
+      '</td><td class="num">' + esc(s.area) + '</td><td class="note">' + esc(s.note) + '</td><td class="src">' + esc(s.source) + " · " + esc(s.reliability) + "</td></tr>";
+  }).join("");
+  renderQuestions(CK_DOSIM);
+}
+
 /* ---------- 초기화 ---------- */
 (function init() {
   var t = "redev", tab = "req";
@@ -1264,6 +1357,7 @@ function initMoa() {
   updateDensityHint();
   initSites();
   initMoa();
+  initDosim();
 })();
 </script>
 </body>
