@@ -196,6 +196,7 @@
   /* 현황 목록 */
   .filters { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
   .count-line { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 6px; }
+  #siteTable td:nth-child(-n+4), #siteTable td:nth-child(6) { white-space: nowrap; }
   #siteTable td.nm { font-weight: 600; min-width: 140px; }
   #siteTable td.note { min-width: 220px; color: var(--text-secondary); font-size: 0.84rem; }
   #siteTable td.src { min-width: 120px; color: var(--text-muted); font-size: 0.78rem; }
@@ -440,7 +441,7 @@
   </div>
   <div class="card">
     <h2>대상지 사례 찾아보기</h2>
-    <p class="sub">언론·서울시 발표로 확인한 주요 대상지 사례입니다. 전체 목록이 아니며 단계는 조사 시점 기준입니다.</p>
+    <p class="sub">서울시 정비사업정보몽땅 추진현황 표(재개발 '26. 5. 31. · 재건축 '26. 7. 22. 기준)를 바탕으로, 주요 단지는 2025~2026년 보도로 단계·세대수를 갱신했습니다. 단계는 8단계로 묶어 표시했으며 원래 단계명은 메모에 있습니다. 구역 지정 전 세대수는 계획(추정)치입니다.</p>
     <div class="filters">
       <div class="field search"><input type="search" id="f_q" placeholder="구역·단지명 검색 (예: 압구정, 목동)"></div>
       <div class="field"><select id="f_gu"><option value="">전체 자치구</option></select></div>
