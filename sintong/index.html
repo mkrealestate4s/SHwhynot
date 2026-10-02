@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>신속통합기획 분석</title>
+<meta name="description" content="서울시 신속통합기획 재개발·재건축 후보지 요건 진단, 사업성·분담금 추정, 추진 현황, 투자 리스크 체크리스트">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --grid: #e1e0d9;
+    --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --accent: #12805c;
+    --accent-strong: #0b6145;
+    --accent-soft: #d3eee2;
+    --good: #0ca30c;
+    --good-text: #006300;
+    --warning: #fab219;
+    --warning-text: #8a5a00;
+    --serious: #ec835a;
+    --critical: #d03b3b;
+    --s1: #12805c; --s2: #63b597; --s3: #fab219; --s4: #c3c2b7;
+    --card-shadow: 0 1px 3px rgba(11,11,11,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-1: #1a1a19;
+      --page: #0d0d0d;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #898781;
+      --grid: #2c2c2a;
+      --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+      --accent: #3fbf8f;
+      --accent-strong: #7fd9b5;
+      --accent-soft: #143b2d;
+      --good-text: #3cc93c;
+      --warning-text: #f5c45a;
+      --s1: #3fbf8f; --s2: #227a5a; --s3: #c98f12; --s4: #4a4a46;
+      --card-shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1: #1a1a19; --page: #0d0d0d; --text-primary: #ffffff; --text-secondary: #c3c2b7;
+    --text-muted: #898781; --grid: #2c2c2a; --baseline: #383835; --border: rgba(255,255,255,0.10);
+    --accent: #3fbf8f; --accent-strong: #7fd9b5; --accent-soft: #143b2d; --good-text: #3cc93c;
+    --warning-text: #f5c45a; --s1: #3fbf8f; --s2: #227a5a; --s3: #c98f12; --s4: #4a4a46; --card-shadow: none;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    background: var(--page); color: var(--text-primary); line-height: 1.6;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 80px; }
+  header.site { padding: 20px 0 16px; }
+  header.site .home { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; }
+  header.site h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; margin-top: 6px; }
+  header.site p { color: var(--text-secondary); margin-top: 6px; font-size: 0.95rem; }
+
+  /* 사업 유형 스위치 */
+  .type-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 6px 0 18px; }
+  .type-bar .lbl { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; }
+  .seg { display: inline-flex; border: 1px solid var(--baseline); border-radius: 10px; overflow: hidden; }
+  .seg button {
+    appearance: none; border: none; background: var(--surface-1); color: var(--text-secondary);
+    font: inherit; font-weight: 600; font-size: 0.92rem; padding: 8px 18px; cursor: pointer;
+  }
+  .seg button + button { border-left: 1px solid var(--baseline); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .type-bar .desc { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* 탭 */
+  .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--grid); margin-bottom: 24px; overflow-x: auto; }
+  .tab-btn {
+    appearance: none; border: 1px solid var(--border); border-bottom: none; background: var(--surface-1);
+    color: var(--text-secondary); font: inherit; font-size: 0.95rem; font-weight: 600;
+    padding: 11px 18px; border-radius: 10px 10px 0 0; cursor: pointer; white-space: nowrap;
+  }
+  .tab-btn[aria-selected="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 22px; margin-bottom: 18px; box-shadow: var(--card-shadow);
+  }
+  .card h2 { font-size: 1.12rem; margin-bottom: 4px; }
+  .card h2 .num { color: var(--accent); margin-right: 6px; }
+  .card .sub { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px; }
+  .card h3 { font-size: 0.98rem; margin: 18px 0 8px; }
+
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px 18px; }
+  .field label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+  .field label .unit { color: var(--text-muted); font-weight: 400; }
+  .field input, .field select {
+    width: 100%; padding: 9px 11px; border: 1px solid var(--baseline); border-radius: 8px;
+    background: var(--surface-1); color: var(--text-primary); font-size: 0.95rem; font-family: inherit;
+  }
+  .field input:focus, .field select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+  .field .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; }
+  .check-row { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; }
+  .check-row input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); flex-shrink: 0; }
+  .check-row label { font-size: 0.92rem; }
+  .check-row label small { display: block; color: var(--text-muted); font-size: 0.78rem; }
+
+  .btn {
+    display: block; width: 100%; padding: 14px; margin-top: 14px; background: var(--accent); color: #fff;
+    border: none; border-radius: 10px; font: inherit; font-size: 1.02rem; font-weight: 700; cursor: pointer;
+  }
+  .btn:hover { background: var(--accent-strong); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  th { color: var(--text-muted); font-weight: 600; font-size: 0.82rem; white-space: nowrap; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .table-scroll { overflow-x: auto; }
+
+  .badge { display: inline-block; font-size: 0.74rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .b-ok   { background: color-mix(in srgb, var(--good) 14%, var(--surface-1)); color: var(--good-text); }
+  .b-bad  { background: color-mix(in srgb, var(--critical) 14%, var(--surface-1)); color: var(--critical); }
+  .b-warn { background: color-mix(in srgb, var(--warning) 20%, var(--surface-1)); color: var(--warning-text); }
+  .b-na   { background: color-mix(in srgb, var(--text-muted) 14%, var(--surface-1)); color: var(--text-muted); }
+
+  .verdict { display: flex; gap: 18px; align-items: center; padding: 18px; border-radius: 12px; margin-bottom: 16px; }
+  .verdict .icon { font-size: 2.2rem; line-height: 1; }
+  .verdict h3 { margin: 0 0 2px; font-size: 1.12rem; }
+  .verdict p { font-size: 0.9rem; color: var(--text-secondary); }
+  .verdict.ok   { background: color-mix(in srgb, var(--good) 10%, var(--surface-1)); }
+  .verdict.warn { background: color-mix(in srgb, var(--warning) 14%, var(--surface-1)); }
+  .verdict.bad  { background: color-mix(in srgb, var(--critical) 10%, var(--surface-1)); }
+
+  .tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .tile { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+  .tile .lbl { font-size: 0.78rem; color: var(--text-muted); }
+  .tile .val { font-size: 1.25rem; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .tile .note { font-size: 0.76rem; color: var(--text-secondary); margin-top: 2px; }
+  .tile.hl { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, var(--surface-1)); }
+
+  .callout {
+    border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 11px 14px;
+    background: color-mix(in srgb, var(--accent) 7%, var(--surface-1)); font-size: 0.88rem;
+    color: var(--text-secondary); margin: 12px 0;
+  }
+  .callout.warn { border-left-color: var(--serious); background: color-mix(in srgb, var(--serious) 8%, var(--surface-1)); }
+  .callout strong { color: var(--text-primary); }
+
+  /* 단계 타임라인 */
+  .roadmap { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; margin-top: 8px; }
+  .roadmap .st { border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 0.82rem; }
+  .roadmap .st b { display: block; font-size: 0.86rem; margin-bottom: 2px; }
+  .roadmap .st span { color: var(--text-muted); font-size: 0.75rem; }
+  .roadmap .st.now { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface-1)); }
+
+  /* 막대 (가로) */
+  .hbar { display: grid; grid-template-columns: 74px 1fr; gap: 12px; align-items: center; margin: 10px 0; }
+  .hbar .lbl { font-size: 0.86rem; color: var(--text-secondary); text-align: right; }
+  .stack { display: flex; height: 26px; border-radius: 4px; overflow: hidden; gap: 2px; }
+  .stack span { display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; min-width: 0; }
+  .stack span.s3, .stack span.s4 { color: #0b0b0b; }
+  .s1 { background: var(--s1); } .s2 { background: var(--s2); } .s3 { background: var(--s3); } .s4 { background: var(--s4); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--text-secondary); margin-top: 6px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+  /* 수입·비용 비교 막대 */
+  .flow { margin-top: 6px; }
+  .flow .row { display: grid; grid-template-columns: 92px 1fr 90px; gap: 10px; align-items: center; padding: 5px 0; }
+  .flow .row .lbl { font-size: 0.85rem; color: var(--text-secondary); }
+  .flow .row .v { font-size: 0.85rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .flow .track { display: flex; height: 20px; gap: 2px; }
+  .flow .track span { height: 100%; }
+  .flow .track span:first-child { border-radius: 3px 0 0 3px; }
+  .flow .track span:last-child { border-radius: 0 3px 3px 0; }
+
+  /* 민감도 표 */
+  .sens td.num { font-weight: 600; }
+  .sens td.base { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .heat-good { background: color-mix(in srgb, var(--good) 14%, transparent); }
+  .heat-mid  { background: color-mix(in srgb, var(--warning) 16%, transparent); }
+  .heat-bad  { background: color-mix(in srgb, var(--critical) 14%, transparent); }
+
+  /* 현황 목록 */
+  .filters { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+  .count-line { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 6px; }
+  #siteTable td.nm { font-weight: 600; min-width: 140px; }
+  #siteTable td.note { min-width: 220px; color: var(--text-secondary); font-size: 0.84rem; }
+  #siteTable td.src { min-width: 120px; color: var(--text-muted); font-size: 0.78rem; }
+
+  /* 체크리스트 */
+  .q { padding: 13px 0; border-bottom: 1px solid var(--grid); display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; }
+  .q:last-child { border-bottom: none; }
+  .q .t { font-size: 0.93rem; font-weight: 600; }
+  .q .t small { display: block; font-weight: 400; color: var(--text-muted); font-size: 0.8rem; margin-top: 2px; }
+  .q .seg button { padding: 6px 12px; font-size: 0.84rem; }
+  .q .seg button[aria-pressed="true"].yes-bad { background: var(--critical); }
+  .q .seg button[aria-pressed="true"].unk { background: var(--warning); color: #0b0b0b; }
+  .risk-list li { margin: 0 0 10px 0; list-style: none; padding: 10px 12px; border-radius: 8px; font-size: 0.9rem; color: var(--text-secondary); }
+  .risk-list li b { color: var(--text-primary); display: block; margin-bottom: 2px; }
+  .risk-list li.hi { background: color-mix(in srgb, var(--critical) 9%, var(--surface-1)); }
+  .risk-list li.md { background: color-mix(in srgb, var(--warning) 13%, var(--surface-1)); }
+  .meter { height: 12px; background: var(--grid); border-radius: 6px; overflow: hidden; margin: 8px 0 4px; }
+  .meter span { display: block; height: 100%; border-radius: 6px; transition: width .4s ease; }
+
+  details.help { margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  details.help summary {
+    padding: 11px 16px; cursor: pointer; font-size: 0.9rem; font-weight: 600; list-style: none;
+    background: color-mix(in srgb, var(--accent) 6%, var(--surface-1));
+  }
+  details.help summary::-webkit-details-marker { display: none; }
+  details.help summary::after { content: " ▾"; color: var(--text-muted); }
+  details.help[open] summary::after { content: " ▴"; }
+  details.help .body { padding: 12px 18px; font-size: 0.87rem; color: var(--text-secondary); }
+  details.help .body li { margin: 0 0 6px 18px; }
+  .hidden { display: none !important; }
+
+  .disclaimer { font-size: 0.78rem; color: var(--text-muted); border-top: 1px solid var(--grid); padding-top: 14px; margin-top: 28px; }
+  .disclaimer a { color: var(--text-muted); }
+
+  @media (max-width: 640px) {
+    .filters { grid-template-columns: 1fr 1fr; }
+    .filters .search { grid-column: 1 / -1; }
+    .q { grid-template-columns: 1fr; }
+    .flow .row { grid-template-columns: 70px 1fr 74px; }
+    .card { padding: 18px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="site">
+  <a class="home" href="../">← 홈으로</a>
+  <h1>🧭 신속통합기획 분석</h1>
+  <p>서울시 신속통합기획(신통기획) 재개발·재건축 — 후보지 요건 진단부터 사업성·분담금, 추진 현황, 투자 리스크까지</p>
+</header>
+
+<div class="type-bar">
+  <span class="lbl">사업 유형</span>
+  <div class="seg" id="typeSeg">
+    <button type="button" data-type="redev" aria-pressed="true">재개발</button>
+    <button type="button" data-type="recon" aria-pressed="false">재건축</button>
+  </div>
+  <span class="desc" id="typeDesc">노후 단독·다세대 밀집지 — 토지등소유자 기준</span>
+</div>
+
+<div class="tabs" role="tablist">
+  <button class="tab-btn" role="tab" data-tab="req" aria-selected="true">① 요건 진단</button>
+  <button class="tab-btn" role="tab" data-tab="biz" aria-selected="false">② 사업성·분담금</button>
+  <button class="tab-btn" role="tab" data-tab="list" aria-selected="false">③ 추진 현황</button>
+  <button class="tab-btn" role="tab" data-tab="risk" aria-selected="false">④ 투자 체크리스트</button>
+</div>
+
+<!-- ================= ① 요건 진단 ================= -->
+<section class="tab-panel active" id="tab-req" role="tabpanel">
+
+  <div class="card only-redev">
+    <h2><span class="num">1</span>재개발 후보지 신청 요건</h2>
+    <p class="sub">신통기획 재개발은 「정비구역 지정 요건(필수+선택)」을 충족하고 토지등소유자 30% 이상이 동의하면 수시 신청할 수 있습니다.</p>
+    <div class="form-grid">
+      <div class="field"><label>구역 면적 <span class="unit">(㎡)</span></label><input type="number" id="rd_area" value="32000" min="0"><div class="hint">필수 1만㎡ 이상</div></div>
+      <div class="field"><label>전체 건축물 동수 <span class="unit">(동)</span></label><input type="number" id="rd_bld" value="260" min="0"></div>
+      <div class="field"><label>노후·불량 건축물 동수 <span class="unit">(동)</span></label><input type="number" id="rd_old" value="180" min="0"><div class="hint">철근콘크리트 30년 등 조례 기준 경과 건축물</div></div>
+      <div class="field"><label>노후 건축물 연면적 비율 <span class="unit">(%)</span></label><input type="number" id="rd_oldArea" value="55" min="0" max="100"><div class="hint">선택 ① 60% 이상</div></div>
+      <div class="field"><label>주택접도율 <span class="unit">(%)</span></label><input type="number" id="rd_road" value="38" min="0" max="100"><div class="hint">선택 ② 폭 4m 이상 도로에 접한 주택 비율 40% 이하</div></div>
+      <div class="field"><label>과소필지 비율 <span class="unit">(%)</span></label><input type="number" id="rd_small" value="25" min="0" max="100"><div class="hint">선택 ③ 90㎡ 미만 필지 40% 이상</div></div>
+      <div class="field"><label>반지하 주택 비율 <span class="unit">(%)</span></label><input type="number" id="rd_semi" value="20" min="0" max="100"><div class="hint">선택 ⑤ 50% 이상</div></div>
+      <div class="field"><label>호수밀도 <span class="unit">(동/ha)</span></label><input type="number" id="rd_density" value="" placeholder="비우면 자동 계산"><div class="hint">선택 ④ 60동/ha 이상 · <span id="rd_densityAuto"></span></div></div>
+    </div>
+    <h3>주민 동의</h3>
+    <div class="form-grid">
+      <div class="field"><label>찬성 동의율 <span class="unit">(토지등소유자 %)</span></label><input type="number" id="rd_yes" value="48" min="0" max="100"><div class="hint">신청 요건 30% 이상</div></div>
+      <div class="field"><label>반대 동의율 <span class="unit">(%)</span></label><input type="number" id="rd_no" value="8" min="0" max="100"><div class="hint">25% 초과 시 선정 제외</div></div>
+    </div>
+    <button class="btn" type="button" id="rd_run">요건 진단하기</button>
+  </div>
+
+  <div class="card only-recon hidden">
+    <h2><span class="num">1</span>재건축 신통기획 신청 요건</h2>
+    <p class="sub">공동주택 재건축은 준공 연한·규모 요건을 충족한 단지가 토지등소유자 30% 이상 동의(반대 10% 미만)로 신통기획 자문을 신청합니다.</p>
+    <div class="form-grid">
+      <div class="field"><label>준공(사용승인) 연도</label><input type="number" id="rc_year" value="1988" min="1950" max="2030"><div class="hint">준공 후 30년 경과</div></div>
+      <div class="field"><label>세대수 <span class="unit">(세대)</span></label><input type="number" id="rc_hh" value="1200" min="0"><div class="hint">300세대 이상 또는 부지 1만㎡ 이상</div></div>
+      <div class="field"><label>부지 면적 <span class="unit">(㎡)</span></label><input type="number" id="rc_area" value="52000" min="0"></div>
+      <div class="field"><label>현재 용적률 <span class="unit">(%)</span></label><input type="number" id="rc_far" value="185" min="0"><div class="hint">높을수록 일반분양 여유 적음</div></div>
+      <div class="field"><label>재건축진단(옛 안전진단)</label>
+        <select id="rc_diag">
+          <option value="pass">통과 (D·E등급)</option>
+          <option value="none" selected>미실시 · 진행 중</option>
+          <option value="fail">C등급 이상 (유지보수)</option>
+        </select>
+        <div class="hint">2025. 6.부터 사업시행인가 전까지만 통과하면 됨</div></div>
+    </div>
+    <h3>주민 동의</h3>
+    <div class="form-grid">
+      <div class="field"><label>찬성 동의율 <span class="unit">(%)</span></label><input type="number" id="rc_yes" value="42" min="0" max="100"><div class="hint">자문 신청 30% 이상</div></div>
+      <div class="field"><label>반대 동의율 <span class="unit">(%)</span></label><input type="number" id="rc_no" value="4" min="0" max="100"><div class="hint">10% 미만이어야 신청 가능</div></div>
+    </div>
+    <button class="btn" type="button" id="rc_run">요건 진단하기</button>
+  </div>
+
+  <div id="reqResult" class="hidden">
+    <div class="verdict" id="reqVerdict"></div>
+    <div class="card">
+      <h2>판정 근거</h2>
+      <div class="table-scroll"><table id="reqTable"><thead><tr><th>구분</th><th>항목</th><th class="num">입력값</th><th class="num">기준</th><th>판정</th></tr></thead><tbody></tbody></table></div>
+      <div id="reqScore"></div>
+    </div>
+    <div class="card">
+      <h2>앞으로의 절차</h2>
+      <p class="sub">신통기획은 정비계획 수립 단계를 서울시가 함께 짜 주는 제도입니다. 구역 지정 이후는 일반 정비사업과 같은 절차를 밟습니다.</p>
+      <div class="roadmap" id="roadmap"></div>
+      <div id="nextNotes"></div>
+    </div>
+  </div>
+
+  <details class="help">
+    <summary>입력값은 어디서 확인하나요?</summary>
+    <div class="body"><ul>
+      <li><b>노후도·접도율·과소필지·호수밀도</b>: 구청 정비사업 담당 부서, 또는 주민 추진 측이 받은 사전 타당성 검토 자료에 나옵니다. 개별 건물 준공연도는 세움터·건축물대장으로 확인합니다.</li>
+      <li><b>노후·불량 건축물</b>: 서울시 조례 기준(철근콘크리트·철골 공동주택은 준공 후 30년 등)으로 따지며, 건물 구조와 용도에 따라 연한이 다릅니다.</li>
+      <li><b>동의율</b>: 신청은 토지등소유자 기준입니다. 공유자는 대표 1인만 1명으로 칩니다.</li>
+      <li><b>재건축 연한·규모</b>: 단지 정보는 공동주택관리정보시스템(K-apt)이나 건축물대장 표제부에서 확인합니다.</li>
+    </ul></div>
+  </details>
+</section>
+
+<!-- ================= ② 사업성·분담금 ================= -->
+<section class="tab-panel" id="tab-biz" role="tabpanel">
+  <div class="card">
+    <h2><span class="num">2</span>구역 사업성 추정</h2>
+    <p class="sub">용적률 → 세대수 → 분양수입 − 사업비 → <b>비례율</b> 순으로 추정합니다. 기본값은 예시이며, 구역 정비계획(안)의 숫자를 넣을수록 정확해집니다.</p>
+
+    <h3>규모 · 용적률</h3>
+    <div class="form-grid">
+      <div class="field"><label>구역(부지) 면적 <span class="unit">(㎡)</span></label><input type="number" id="b_area" value="50000"></div>
+      <div class="field"><label>정비기반시설 등 제외 비율 <span class="unit">(%)</span></label><input type="number" id="b_infra" value="20"><div class="hint">도로·공원 등으로 빠지는 면적. 재개발 15~25%, 재건축 5~15%</div></div>
+      <div class="field"><label>현재 용도지역</label>
+        <select id="b_zone">
+          <option value="z1">제1종 일반주거</option>
+          <option value="z2" selected>제2종 일반주거</option>
+          <option value="z3">제3종 일반주거</option>
+        </select></div>
+      <div class="field"><label>종상향</label>
+        <select id="b_up">
+          <option value="0" selected>없음</option>
+          <option value="1">1단계 종상향 (공공기여 10%)</option>
+        </select></div>
+      <div class="field"><label>구역 평균 공시지가 <span class="unit">(원/㎡)</span></label><input type="number" id="b_land" value="5500000"><div class="hint">사업성 보정계수 계산용. 서울 재개발 대상지 평균 <b id="b_landAvgLbl"></b></div></div>
+      <div class="field"><label>계획 용적률 직접 입력 <span class="unit">(%)</span></label><input type="number" id="b_farOverride" placeholder="비우면 자동 산정"><div class="hint">정비계획(안) 용적률을 알면 입력</div></div>
+    </div>
+    <div class="check-row"><input type="checkbox" id="b_upper" checked><label for="b_upper">법적상한용적률까지 적용<small>허용용적률을 넘는 증가분의 50%를 공공임대로 짓는다고 가정합니다.</small></label></div>
+    <div class="callout" id="farBox"></div>
+
+    <h3>세대 · 분양가</h3>
+    <div class="form-grid">
+      <div class="field"><label>세대 평균 공급면적 <span class="unit">(평)</span></label><input type="number" id="b_py" value="30"><div class="hint">전용 59㎡≈25평, 84㎡≈34평</div></div>
+      <div class="field"><label>조합원 수 <span class="unit">(명)</span></label><input type="number" id="b_members" value="650"><div class="hint">분양 신청 대상 조합원</div></div>
+      <div class="field"><label>의무 임대 비율 <span class="unit">(세대 %)</span></label><input type="number" id="b_rentPct" value="10"><div class="hint">상한 증가분 임대와 별도. 재건축은 보통 0</div></div>
+      <div class="field"><label>일반분양가 <span class="unit">(만원/평)</span></label><input type="number" id="b_genP" value="4500"></div>
+      <div class="field"><label>조합원 분양가 <span class="unit">(일반분양가 대비 %)</span></label><input type="number" id="b_memRate" value="80"></div>
+      <div class="field"><label>임대주택 인수가 <span class="unit">(억원/세대)</span></label><input type="number" id="b_rentP" value="2.2" step="0.1"><div class="hint">서울시·SH 매입가(표준건축비 기준)</div></div>
+    </div>
+
+    <h3>사업비 · 종전자산</h3>
+    <div class="form-grid">
+      <div class="field"><label>공사비 <span class="unit">(만원/평, 연면적)</span></label><input type="number" id="b_cost" value="900"><div class="hint">2026 서울 정비사업 800~1,000만원대</div></div>
+      <div class="field"><label>지하 포함 연면적 배수</label><input type="number" id="b_ug" value="1.55" step="0.05"><div class="hint">지상 연면적 × 배수 = 공사 연면적</div></div>
+      <div class="field"><label>기타 사업비 <span class="unit">(공사비 대비 %)</span></label><input type="number" id="b_etc" value="35"><div class="hint">설계·금융·보상·세금 등. 재개발이 더 큼</div></div>
+      <div class="field"><label>조합원 평균 종전자산 <span class="unit">(억원)</span></label><input type="number" id="b_prev" value="4.5" step="0.1"><div class="hint">감정평가액 기준(시세보다 낮음)</div></div>
+    </div>
+
+    <h3>내 물건</h3>
+    <div class="form-grid">
+      <div class="field"><label>내 종전자산 감정가 <span class="unit">(억원)</span></label><input type="number" id="m_prev" value="4" step="0.1"><div class="hint">모르면 공시가격×1.3~1.5로 추정</div></div>
+      <div class="field"><label>매수가 <span class="unit">(억원, 프리미엄 포함)</span></label><input type="number" id="m_buy" value="8" step="0.1"><div class="hint">이미 보유 중이면 비워 두세요</div></div>
+      <div class="field"><label>신청 평형 <span class="unit">(공급 평)</span></label><input type="number" id="m_py" value="34"></div>
+      <div class="field"><label>입주 후 예상 시세 <span class="unit">(억원)</span></label><input type="number" id="m_after" value="" step="0.1" placeholder="비우면 일반분양가×1.1"></div>
+    </div>
+    <button class="btn" type="button" id="b_run">사업성 분석하기</button>
+  </div>
+
+  <div id="bizResult" class="hidden">
+    <div class="card">
+      <h2>구역 사업성</h2>
+      <div class="tile-grid" id="bizTiles"></div>
+      <h3>수입과 사업비</h3>
+      <div class="flow" id="flow"></div>
+      <div class="legend" id="flowLegend"></div>
+      <div class="table-scroll" style="margin-top:14px"><table id="bizTable"><tbody></tbody></table></div>
+    </div>
+    <div class="card">
+      <h2>내 분담금 · 투자 수익</h2>
+      <div class="tile-grid" id="myTiles"></div>
+      <div id="myNote"></div>
+    </div>
+    <div class="card">
+      <h2>민감도 — 공사비와 분양가가 바뀌면</h2>
+      <p class="sub">칸 안은 비례율 / 내 분담금. 굵은 테두리가 현재 입력값입니다. 공사비 상승은 2020년대 정비사업 갈등의 가장 큰 원인입니다.</p>
+      <div class="table-scroll"><table class="sens" id="sensTable"></table></div>
+    </div>
+  </div>
+
+  <details class="help">
+    <summary>계산 방식과 한계</summary>
+    <div class="body"><ul>
+      <li><b>용적률</b>: 기준용적률 + 허용용적률 인센티브(20%p × 사업성 보정계수, 최대 40%p) → 체크 시 법적상한용적률. 보정계수 = 서울 재개발 대상지 평균 공시지가 ÷ 구역 평균 공시지가 (1.0~2.0). 실제 보정계수는 세대당 평균 대지면적 등으로 추가 조정됩니다.</li>
+      <li><b>종상향</b>은 한 단계 위 용도지역 용적률을 적용하고, 부지의 10%를 공공기여로 뺍니다.</li>
+      <li><b>세대수</b> = 지상 연면적 ÷ (공급면적 × 1.1 — 커뮤니티·주민시설 포함 계수)</li>
+      <li><b>비례율</b> = (총 분양수입 − 총사업비) ÷ 종전자산 총액. <b>권리가액</b> = 내 종전자산 × 비례율. <b>분담금</b> = 조합원 분양가 − 권리가액.</li>
+      <li>상가·현금청산자·세입자 보상, 재건축초과이익환수(재건축), 분양가상한제, 금리 변동은 따로 반영하지 않았습니다. 기타 사업비 비율로 뭉뚱그려 조정하세요.</li>
+    </ul></div>
+  </details>
+</section>
+
+<!-- ================= ③ 추진 현황 ================= -->
+<section class="tab-panel" id="tab-list" role="tabpanel">
+  <div class="card">
+    <h2><span class="num">3</span>서울시 신통기획 추진 현황</h2>
+    <p class="sub" id="sumAsOf">서울시 「신속통합기획 추진 현황」 기준</p>
+    <div class="tile-grid" id="sumTiles"></div>
+    <div id="sumBars" style="margin-top:14px"></div>
+    <div class="legend">
+      <span><i class="s1"></i>기획완료·구역지정</span><span><i class="s2"></i>기획완료·지정추진</span>
+      <span><i class="s3"></i>기획 중</span><span><i class="s4"></i>기획 전(조건부)</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2>대상지 사례 찾아보기</h2>
+    <p class="sub">언론·서울시 발표로 확인한 주요 대상지 사례입니다. 전체 목록이 아니며 단계는 조사 시점 기준입니다.</p>
+    <div class="filters">
+      <div class="field search"><input type="search" id="f_q" placeholder="구역·단지명 검색 (예: 압구정, 목동)"></div>
+      <div class="field"><select id="f_gu"><option value="">전체 자치구</option></select></div>
+      <div class="field"><select id="f_type"><option value="">재개발+재건축</option><option>재개발</option><option>재건축</option></select></div>
+      <div class="field"><select id="f_stage"><option value="">전체 단계</option></select></div>
+    </div>
+    <div class="count-line" id="f_count"></div>
+    <div class="table-scroll"><table id="siteTable"><thead><tr><th>자치구</th><th>구역·단지</th><th>유형</th><th>단계</th><th class="num">계획 세대</th><th>선정</th><th>메모</th><th>출처</th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<!-- ================= ④ 투자 체크리스트 ================= -->
+<section class="tab-panel" id="tab-risk" role="tabpanel">
+  <div class="card">
+    <h2><span class="num">4</span>매수 전 리스크 체크리스트</h2>
+    <p class="sub">신통기획 구역 물건을 사기 전에 확인할 항목입니다. 모르는 항목은 「모름」을 고르세요 — 모름도 리스크로 계산됩니다.</p>
+    <div id="qList"></div>
+  </div>
+  <div class="card" id="riskResult">
+    <h2>점검 결과</h2>
+    <div id="riskSummary"></div>
+    <ul class="risk-list" id="riskList"></ul>
+  </div>
+</section>
+
+<p class="disclaimer">
+  본 도구의 판정과 수치는 공개 자료를 바탕으로 한 <b>참고용 추정치</b>이며 법적 효력이 없습니다.
+  신통기획 후보지 선정은 정량평가 외에 정성평가(사업 필요성·실현 가능성 등)와 위원회 심의로 결정되고,
+  실제 비례율·분담금은 감정평가와 관리처분계획으로 확정됩니다. 투자 결정 전 구청·조합·전문가에게 반드시 확인하세요.<br>
+  기준 자료: 서울시 신속통합기획 정책소개·추진현황(2026. 6.), 재개발 후보지 선정기준 개선(2024. 6.), 2030 서울시 도시·주거환경정비 기본계획(사업성 보정계수, 2024. 3.), 도시정비법 개정(2025. 6. 시행).
+</p>
+</div>
+
+<script src="sites.js"></script>
+<script>
+"use strict";
+var TYPE = "redev";
+var $ = function (id) { return document.getElementById(id); };
+function num(id) { var v = parseFloat($(id).value); return isNaN(v) ? null : v; }
+function f0(n) { return Math.round(n).toLocaleString("ko-KR"); }
+function f1(n) { return (Math.round(n * 10) / 10).toLocaleString("ko-KR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+function eok(n) { // 억 단위 숫자를 사람이 읽는 형식으로
+  var s = n < 0 ? "−" : ""; n = Math.abs(n);
+  if (n >= 10000) return s + f1(n / 10000) + "조";
+  if (n >= 100) return s + f0(n) + "억";
+  return s + f1(n) + "억";
+}
+function badge(state, text) {
+  var cls = { ok: "b-ok", bad: "b-bad", warn: "b-warn", na: "b-na" }[state];
+  return '<span class="badge ' + cls + '">' + text + "</span>";
+}
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+/* ---------- 탭 · 유형 전환 ---------- */
+var TABS = ["req", "biz", "list", "risk"];
+function switchTab(t) {
+  document.querySelectorAll(".tab-btn").forEach(function (b) { b.setAttribute("aria-selected", b.dataset.tab === t); });
+  TABS.forEach(function (k) { $("tab-" + k).classList.toggle("active", k === t); });
+  try { localStorage.setItem("sintong_tab", t); } catch (e) {}
+}
+document.querySelectorAll(".tab-btn").forEach(function (b) { b.addEventListener("click", function () { switchTab(b.dataset.tab); }); });
+
+var BIZ_DEFAULT = {
+  redev: { b_infra: 20, b_zone: "z2", b_land: 5500000, b_members: 650, b_rentPct: 10, b_etc: 35, b_prev: 4.5, m_prev: 4, m_buy: 8, b_genP: 4500, b_area: 50000 },
+  recon: { b_infra: 8, b_zone: "z3", b_land: 9000000, b_members: 900, b_rentPct: 0, b_etc: 22, b_prev: 10, m_prev: 10, m_buy: 16, b_genP: 6000, b_area: 52000 }
+};
+function setType(t) {
+  TYPE = t;
+  document.querySelectorAll("#typeSeg button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.type === t); });
+  $("typeDesc").textContent = t === "redev" ? "노후 단독·다세대 밀집지 — 토지등소유자 기준" : "노후 아파트 단지 — 구분소유자 기준";
+  document.querySelectorAll(".only-redev").forEach(function (el) { el.classList.toggle("hidden", t !== "redev"); });
+  document.querySelectorAll(".only-recon").forEach(function (el) { el.classList.toggle("hidden", t !== "recon"); });
+  var d = BIZ_DEFAULT[t];
+  Object.keys(d).forEach(function (k) { $(k).value = d[k]; });
+  $("reqResult").classList.add("hidden");
+  $("bizResult").classList.add("hidden");
+  updateFarBox();
+  renderQuestions();
+  try { localStorage.setItem("sintong_type", t); } catch (e) {}
+}
+document.querySelectorAll("#typeSeg button").forEach(function (b) { b.addEventListener("click", function () { setType(b.dataset.type); }); });
+
+/* =========================================================
+   ① 요건 진단
+   ========================================================= */
+var REQ = {
+  minArea: 10000,       // 구역 면적 필수 1만㎡
+  oldBld: 60,           // 노후 동수 필수 60%
+  oldBldFree: 75,       // 노후 동수 75% 이상이면 선택요건 면제
+  oldArea: 60, road: 40, small: 40, density: 60, semi: 50,
+  applyYes: 30,         // 신청 동의율
+  rejectNo: 25,         // 반대 25% 초과 시 제외
+  reconYears: 30, reconHH: 300, reconArea: 10000, reconNoMax: 10
+};
+
+function densityAuto() {
+  var a = num("rd_area"), b = num("rd_bld");
+  if (!a || !b) return null;
+  return b / (a / 10000);
+}
+function updateDensityHint() {
+  var d = densityAuto();
+  $("rd_densityAuto").textContent = d ? "건축물 동수 기준 자동 " + f1(d) + "동/ha" : "";
+}
+["rd_area", "rd_bld"].forEach(function (id) { $(id).addEventListener("input", updateDensityHint); });
+
+// 정량평가 동의율 점수(추정): 찬성 50→75%에서 0→+15점, 반대 5→25%에서 0→−15점 선형
+function consentScore(yes, no) {
+  var plus = yes <= 50 ? 0 : Math.min(15, (yes - 50) / 25 * 15);
+  var minus = no <= 5 ? 0 : Math.min(15, (no - 5) / 20 * 15);
+  return { plus: plus, minus: minus };
+}
+
+function runRedev() {
+  var area = num("rd_area") || 0, bld = num("rd_bld") || 0, old = num("rd_old") || 0;
+  var oldPct = bld ? old / bld * 100 : 0;
+  var dens = num("rd_density"); if (dens == null) dens = densityAuto() || 0;
+  var yes = num("rd_yes") || 0, no = num("rd_no") || 0;
+  var rows = [], fails = [], warns = [];
+
+  var okArea = area >= REQ.minArea;
+  rows.push(["필수", "구역 면적", f0(area) + "㎡", "1만㎡ 이상", okArea]);
+  var okOld = oldPct >= REQ.oldBld;
+  rows.push(["필수", "노후 동수 비율", f1(oldPct) + "%", "60% 이상", okOld]);
+  if (!okArea) fails.push("구역 면적이 1만㎡에 못 미칩니다. 인접 지역을 포함해 구역을 넓히거나, 모아타운·가로주택 등 소규모 정비를 검토하세요.");
+  if (!okOld) fails.push("노후 동수 비율 " + f1(oldPct) + "%로 필수 요건(60%)에 미달합니다. 신축 빌라가 많은 곳은 신통기획 진입이 어렵습니다.");
+
+  var opts = [
+    ["노후 연면적 비율", num("rd_oldArea"), "60% 이상", function (v) { return v >= REQ.oldArea; }, "%"],
+    ["주택접도율", num("rd_road"), "40% 이하", function (v) { return v <= REQ.road; }, "%"],
+    ["과소필지 비율", num("rd_small"), "40% 이상", function (v) { return v >= REQ.small; }, "%"],
+    ["호수밀도", dens, "60동/ha 이상", function (v) { return v >= REQ.density; }, "동/ha"],
+    ["반지하 주택 비율", num("rd_semi"), "50% 이상", function (v) { return v >= REQ.semi; }, "%"]
+  ];
+  var optHit = 0;
+  opts.forEach(function (o) {
+    var has = o[1] != null && o[1] !== "";
+    var ok = has && o[3](o[1]);
+    if (ok) optHit++;
+    rows.push(["선택", o[0], has ? f1(o[1]) + o[4] : "—", o[2], has ? ok : null]);
+  });
+  var free = oldPct >= REQ.oldBldFree;
+  var okOpt = optHit >= 1 || free;
+  rows.push(["선택", "선택 요건 충족 수", optHit + "개", "1개 이상" + (free ? " (노후 75%↑ 면제)" : ""), okOpt]);
+  if (!okOpt) fails.push("선택 요건(노후 연면적·접도율·과소필지·호수밀도·반지하)을 하나도 충족하지 못했습니다. 노후 동수가 75% 이상이면 선택 요건 없이도 가능합니다.");
+
+  var okYes = yes >= REQ.applyYes;
+  rows.push(["동의", "찬성 동의율", f1(yes) + "%", "30% 이상", okYes]);
+  var okNo = no <= REQ.rejectNo;
+  rows.push(["동의", "반대 동의율", f1(no) + "%", "25% 이하", okNo]);
+  if (!okYes) fails.push("신청에 필요한 토지등소유자 30% 동의를 아직 모으지 못했습니다.");
+  if (!okNo) fails.push("반대가 25%를 넘으면 정량평가에서 선정 대상에서 제외됩니다.");
+  if (okNo && no > 5) warns.push("반대 " + f1(no) + "%는 정량평가 감점 구간(5% 초과)입니다. 반대 의견을 줄일수록 선정 가능성이 올라갑니다.");
+  if (okYes && yes < 50) warns.push("찬성률을 50% 이상으로 올리면 정량평가 가점(최대 15점)을 받을 수 있습니다.");
+
+  var sc = consentScore(yes, no);
+  var scoreHtml = '<div class="callout"><strong>정량평가 동의율 점수(추정)</strong> 가점 +' + f1(sc.plus) + "점 / 감점 −" + f1(sc.minus) +
+    "점 → 합계 <strong>" + (sc.plus - sc.minus >= 0 ? "+" : "−") + f1(Math.abs(sc.plus - sc.minus)) + "점</strong>" +
+    "<br><small>서울시는 찬성 50~75% 구간에 최대 15점 가점, 반대 5~25% 구간에 최대 15점 감점을 둡니다(2024. 6. 개선). 구간 내 세부 배점은 공개되지 않아 선형으로 추정했습니다.</small></div>";
+
+  renderReq(rows, fails, warns, scoreHtml, okArea && okOld && okOpt && okYes && okNo);
+}
+
+function runRecon() {
+  var year = num("rc_year") || 0, hh = num("rc_hh") || 0, area = num("rc_area") || 0;
+  var far = num("rc_far") || 0, diag = $("rc_diag").value;
+  var yes = num("rc_yes") || 0, no = num("rc_no") || 0;
+  var thisYear = new Date().getFullYear();
+  var age = thisYear - year;
+  var rows = [], fails = [], warns = [];
+
+  var okAge = age >= REQ.reconYears;
+  rows.push(["필수", "준공 후 경과", age + "년 (" + year + "년)", "30년 이상", okAge]);
+  if (!okAge) fails.push("준공 " + age + "년차로 재건축 연한(30년)까지 " + (REQ.reconYears - age) + "년 남았습니다. 그 전에는 리모델링이 대안입니다.");
+  var okSize = hh >= REQ.reconHH || area >= REQ.reconArea;
+  rows.push(["필수", "규모", f0(hh) + "세대 / " + f0(area) + "㎡", "300세대 또는 1만㎡ 이상", okSize]);
+  if (!okSize) fails.push("300세대·1만㎡ 미만 단지는 정비계획 대상이 아닙니다. 소규모재건축·가로주택정비 등을 검토하세요.");
+
+  var diagState = diag === "pass" ? true : diag === "fail" ? false : null;
+  rows.push(["참고", "재건축진단", { pass: "통과", none: "미실시", fail: "C등급 이상" }[diag], "사업시행인가 전까지 D·E", diagState]);
+  if (diag === "fail") warns.push("재건축진단에서 유지보수 판정을 받았다면 재진단이 필요합니다. 2025. 6. 개정으로 사업시행인가 전까지만 통과하면 되어 신통기획 신청 자체는 가능합니다.");
+  if (diag === "none") warns.push("재건축진단은 이제 정비구역 지정 전 필수가 아닙니다(2025. 6. 시행). 다만 사업시행인가 전까지 반드시 통과해야 합니다.");
+
+  var okYes = yes >= REQ.applyYes;
+  rows.push(["동의", "찬성 동의율", f1(yes) + "%", "30% 이상", okYes]);
+  var okNo = no < REQ.reconNoMax;
+  rows.push(["동의", "반대 동의율", f1(no) + "%", "10% 미만", okNo]);
+  if (!okYes) fails.push("신통기획 자문 신청에 필요한 토지등소유자 30% 동의가 부족합니다.");
+  if (!okNo) fails.push("반대가 10% 이상이면 신통기획 자문을 신청할 수 없습니다.");
+
+  var farNote = "";
+  if (far >= 250) farNote = "현재 용적률 " + f0(far) + "%는 높은 편입니다. 서울시 「현황용적률 인정」과 사업성 보정계수가 적용돼야 일반분양 물량이 나옵니다. ② 탭에서 분담금을 꼭 계산해 보세요.";
+  else if (far >= 200) farNote = "현재 용적률 " + f0(far) + "% — 중간 수준입니다. 3종 일반주거 상한(300%)까지 늘려도 증가 폭이 크지 않아 분담금 부담이 생길 수 있습니다.";
+  else farNote = "현재 용적률 " + f0(far) + "% — 낮은 편이라 늘릴 여지가 커 사업성이 좋은 조건입니다.";
+  warns.push(farNote);
+  warns.push("조합설립 동의 요건은 전체 구분소유자 70% 이상 + 동별 1/3 이상입니다(2025. 6. 완화). 30% 신청 동의는 출발점일 뿐입니다.");
+
+  var html = '<div class="callout"><strong>참고</strong> 재건축 신통기획은 동의율 가점 경쟁이 아니라 신청 요건 충족 후 서울시 자문 → 정비계획 입안 순서로 진행됩니다.</div>';
+  renderReq(rows, fails, warns, html, okAge && okSize && okYes && okNo);
+}
+
+function renderReq(rows, fails, warns, extra, pass) {
+  var tb = $("reqTable").querySelector("tbody");
+  tb.innerHTML = rows.map(function (r) {
+    var st = r[4] === true ? badge("ok", "충족") : r[4] === false ? badge("bad", "미충족") : badge("na", "참고");
+    return "<tr><td>" + r[0] + "</td><td>" + r[1] + '</td><td class="num">' + r[2] + '</td><td class="num">' + r[3] + "</td><td>" + st + "</td></tr>";
+  }).join("");
+  $("reqScore").innerHTML = extra;
+  var v = $("reqVerdict");
+  var label = TYPE === "redev" ? "재개발 후보지" : "재건축 신통기획 자문";
+  if (pass) {
+    v.className = "verdict " + (warns.length && TYPE === "redev" && warns.length > 1 ? "warn" : "ok");
+    v.innerHTML = '<div class="icon">✅</div><div><h3>' + label + " 신청 요건 충족</h3><p>입력한 기준으로는 신청할 수 있습니다." +
+      (TYPE === "redev" ? " 실제 선정은 정량·정성평가와 선정위원회 심의로 결정됩니다." : "") + "</p></div>";
+  } else {
+    v.className = "verdict bad";
+    v.innerHTML = '<div class="icon">⛔</div><div><h3>' + label + " 신청 요건 미충족 (" + fails.length + "건)</h3><p>아래 사유를 먼저 해결해야 합니다.</p></div>";
+  }
+  var notes = "";
+  if (fails.length) notes += '<div class="callout warn"><strong>보완 필요</strong><ul style="margin:6px 0 0 18px">' + fails.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul></div>";
+  if (warns.length) notes += '<div class="callout"><strong>참고</strong><ul style="margin:6px 0 0 18px">' + warns.map(function (s) { return "<li>" + s + "</li>"; }).join("") + "</ul></div>";
+  $("nextNotes").innerHTML = notes;
+  renderRoadmap(pass);
+  $("reqResult").classList.remove("hidden");
+  $("reqResult").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+var ROADMAP = {
+  redev: [["후보지 신청", "동의 30%"], ["후보지 선정", "권리산정일·토허제"], ["신통기획 수립", "약 1년"], ["정비구역 지정", "목표 2년 내"], ["조합 설립", "동의 75%·면적 1/2"], ["사업시행인가", "건축계획 확정"], ["관리처분인가", "분담금 확정"], ["이주·착공", "신통 2.0 지원"]],
+  recon: [["자문 신청", "동의 30%·반대 10%↓"], ["신통 자문·기획", "약 1년"], ["정비구역 지정", "재건축진단 불필요"], ["조합 설립", "동의 70%·동별 1/3"], ["사업시행인가", "재건축진단 통과"], ["관리처분인가", "분담금 확정"], ["이주·착공", ""], ["준공·입주", "재초환 정산"]]
+};
+function renderRoadmap(pass) {
+  $("roadmap").innerHTML = ROADMAP[TYPE].map(function (s, i) {
+    return '<div class="st' + (i === (pass ? 0 : -1) ? " now" : "") + '"><b>' + (i + 1) + ". " + s[0] + "</b><span>" + s[1] + "</span></div>";
+  }).join("");
+}
+
+$("rd_run").addEventListener("click", runRedev);
+$("rc_run").addEventListener("click", runRecon);
+
+/* =========================================================
+   ② 사업성 · 분담금
+   ========================================================= */
+var PY = 3.3058;
+var LAND_AVG = 8043979; // 2025년 서울 재개발 대상지 평균 공시지가(원/㎡)
+// 용도지역별 기준·법적상한 용적률(%) — 서울시 정비기본계획 기준 단순화
+var ZONES = {
+  z1: { name: "1종", base: 150, upper: 200 },
+  z2: { name: "2종", base: 190, upper: 250 },
+  z3: { name: "3종", base: 210, upper: 300 },
+  zq: { name: "준주거", base: 300, upper: 400 }
+};
+var ZONE_UP = { z1: "z2", z2: "z3", z3: "zq" };
+$("b_landAvgLbl").textContent = f0(LAND_AVG) + "원/㎡";
+
+function calcFar() {
+  var zk = $("b_zone").value, up = $("b_up").value === "1";
+  if (up) zk = ZONE_UP[zk];
+  var z = ZONES[zk];
+  var land = num("b_land") || LAND_AVG;
+  var coef = Math.max(1, Math.min(2, LAND_AVG / land));
+  var incentive = 20 * coef;
+  var allowed = Math.min(z.base + incentive, z.upper);
+  var useUpper = $("b_upper").checked;
+  var planned = useUpper ? z.upper : allowed;
+  var override = num("b_farOverride");
+  if (override) planned = override;
+  var extra = Math.max(0, planned - allowed); // 허용 초과 증가분
+  return { zone: z, coef: coef, incentive: incentive, allowed: allowed, planned: planned, extra: extra, up: up, override: !!override };
+}
+function updateFarBox() {
+  var r = calcFar();
+  $("farBox").innerHTML = "<strong>용적률 산정</strong> " + (r.up ? "종상향 후 " : "") + r.zone.name + " 기준 " + r.zone.base + "% + 허용 인센티브 " +
+    f1(r.incentive) + "%p (보정계수 " + r.coef.toFixed(2) + ") = 허용 " + f1(r.allowed) + "% → <strong>계획 " + f1(r.planned) + "%</strong>" +
+    (r.override ? " (직접 입력)" : "") + (r.extra > 0 ? " · 상한 증가분 " + f1(r.extra) + "%p의 절반은 공공임대" : "");
+}
+["b_zone", "b_up", "b_land", "b_farOverride", "b_upper"].forEach(function (id) { $(id).addEventListener("input", updateFarBox); $(id).addEventListener("change", updateFarBox); });
+
+function bizModel(o) {
+  // o: 입력 묶음. 금액 단위 = 억원
+  var site = o.area * (1 - o.infra / 100) * (o.up ? 0.9 : 1);
+  var gfa = site * o.far / 100;                      // 지상 연면적(㎡)
+  var unitGfa = o.py * PY * 1.1;                     // 세대당 지상 연면적
+  var total = Math.floor(gfa / unitGfa);
+  var rentUpper = Math.floor(site * o.extra / 100 * 0.5 / (25 * PY * 1.1)); // 상한 증가분 50% → 임대(25평 기준)
+  var rentBase = Math.round(total * o.rentPct / 100);
+  var rent = Math.min(total, rentUpper + rentBase);
+  var sale = total - rent;
+  var mem = Math.min(o.members, sale);
+  var gen = sale - mem;
+  var genUnit = o.py * o.genP / 10000;               // 일반분양 세대당(억)
+  var memUnit = genUnit * o.memRate / 100;
+  var revGen = gen * genUnit, revMem = mem * memUnit, revRent = rent * o.rentP;
+  var revenue = revGen + revMem + revRent;
+  var buildPy = gfa * o.ug / PY;
+  var costBuild = buildPy * o.cost / 10000;
+  var costEtc = costBuild * o.etc / 100;
+  var cost = costBuild + costEtc;
+  var prevTotal = o.members * o.prev;
+  var ratio = prevTotal > 0 ? (revenue - cost) / prevTotal : 0;
+  return { site: site, gfa: gfa, total: total, rent: rent, mem: mem, gen: gen, genUnit: genUnit, memUnit: memUnit,
+    revGen: revGen, revMem: revMem, revRent: revRent, revenue: revenue, costBuild: costBuild, costEtc: costEtc, cost: cost,
+    prevTotal: prevTotal, ratio: ratio, short: o.members > sale };
+}
+function readBiz() {
+  var fr = calcFar();
+  return {
+    area: num("b_area") || 0, infra: num("b_infra") || 0, up: fr.up, far: fr.planned, extra: fr.extra,
+    py: num("b_py") || 30, members: num("b_members") || 0, rentPct: num("b_rentPct") || 0,
+    genP: num("b_genP") || 0, memRate: num("b_memRate") || 80, rentP: num("b_rentP") || 0,
+    cost: num("b_cost") || 0, ug: num("b_ug") || 1.5, etc: num("b_etc") || 0, prev: num("b_prev") || 0, fr: fr
+  };
+}
+function myCalc(o, m) {
+  var right = m.prev * m.ratio;
+  var price = m.py * o.genP / 10000 * o.memRate / 100;   // 조합원 분양가(억)
+  var burden = price - right;
+  return { right: right, price: price, burden: burden };
+}
+
+function runBiz() {
+  var o = readBiz();
+  var r = bizModel(o);
+  var tiles = [
+    ["계획 용적률", f1(o.far) + "%", "보정계수 " + o.fr.coef.toFixed(2)],
+    ["총 세대수", f0(r.total) + "세대", "조합원 " + f0(r.mem) + " · 일반 " + f0(r.gen) + " · 임대 " + f0(r.rent)],
+    ["일반분양 비율", f1(r.total ? r.gen / r.total * 100 : 0) + "%", "높을수록 사업성 좋음"],
+    ["추정 비례율", f1(r.ratio * 100) + "%", r.ratio >= 1.1 ? "양호" : r.ratio >= 0.9 ? "보통" : "낮음 — 분담금 증가 위험", true]
+  ];
+  $("bizTiles").innerHTML = tiles.map(function (t) {
+    return '<div class="tile' + (t[3] ? " hl" : "") + '"><div class="lbl">' + t[0] + '</div><div class="val">' + t[1] + '</div><div class="note">' + t[2] + "</div></div>";
+  }).join("");
+
+  // 수입 vs 비용+종전자산 막대
+  var max = Math.max(r.revenue, r.cost + r.prevTotal);
+  function seg(v, cls, title) { return '<span class="' + cls + '" style="width:' + (v / max * 100) + '%" title="' + title + " " + eok(v) + '"></span>'; }
+  $("flow").innerHTML =
+    '<div class="row"><span class="lbl">총 수입</span><div class="track">' + seg(r.revGen, "s1", "일반분양") + seg(r.revMem, "s2", "조합원분양") + seg(r.revRent, "s3", "임대 인수") + '</div><span class="v">' + eok(r.revenue) + "</span></div>" +
+    '<div class="row"><span class="lbl">사업비+종전</span><div class="track">' + seg(r.costBuild, "s4", "공사비") + seg(r.costEtc, "s3", "기타 사업비") + seg(r.prevTotal, "s2", "종전자산") + '</div><span class="v">' + eok(r.cost + r.prevTotal) + "</span></div>";
+  $("flowLegend").innerHTML = '<span><i class="s1"></i>일반분양</span><span><i class="s2"></i>조합원분양 / 종전자산</span><span><i class="s3"></i>임대 인수 / 기타 사업비</span><span><i class="s4"></i>공사비</span>';
+
+  var rows = [
+    ["사업 부지", f0(r.site) + "㎡", "기반시설" + (o.up ? "·종상향 공공기여 10%" : "") + " 제외"],
+    ["지상 연면적", f0(r.gfa) + "㎡", "부지 × " + f1(o.far) + "%"],
+    ["일반분양 수입", eok(r.revGen), f0(r.gen) + "세대 × " + f1(r.genUnit) + "억"],
+    ["조합원분양 수입", eok(r.revMem), f0(r.mem) + "세대 × " + f1(r.memUnit) + "억"],
+    ["임대 인수 수입", eok(r.revRent), f0(r.rent) + "세대 × " + f1(o.rentP) + "억"],
+    ["공사비", eok(r.costBuild), "공사 연면적 " + f0(r.gfa * o.ug / PY) + "평 × " + f0(o.cost) + "만원"],
+    ["기타 사업비", eok(r.costEtc), "공사비의 " + f0(o.etc) + "%"],
+    ["종전자산 총액", eok(r.prevTotal), f0(o.members) + "명 × " + f1(o.prev) + "억"],
+    ["비례율", f1(r.ratio * 100) + "%", "(수입 − 사업비) ÷ 종전자산"]
+  ];
+  $("bizTable").querySelector("tbody").innerHTML = rows.map(function (x) { return "<tr><th>" + x[0] + '</th><td class="num">' + x[1] + "</td><td>" + x[2] + "</td></tr>"; }).join("");
+
+  // 내 물건
+  var m = { prev: num("m_prev") || 0, py: num("m_py") || 34, ratio: r.ratio };
+  var my = myCalc(o, m);
+  var buy = num("m_buy");
+  var after = num("m_after"); if (!after) after = m.py * o.genP / 10000 * 1.1;
+  var t2 = [
+    ["권리가액", eok(my.right), "감정가 " + f1(m.prev) + "억 × 비례율"],
+    ["조합원 분양가", eok(my.price), f0(m.py) + "평 기준"],
+    [my.burden >= 0 ? "추가 분담금" : "환급금", eok(Math.abs(my.burden)), my.burden >= 0 ? "입주 전 납부" : "청산 시 돌려받음", true]
+  ];
+  if (buy) {
+    var invest = buy + Math.max(0, my.burden) - Math.max(0, -my.burden);
+    var gain = after - invest;
+    t2.push(["총 투자금", eok(invest), "매수가 + 분담금"]);
+    t2.push(["예상 차익", eok(gain), "입주 후 시세 " + f1(after) + "억 기준", true]);
+    t2.push(["수익률", f1(invest ? gain / invest * 100 : 0) + "%", "세금·이자·기회비용 제외"]);
+  }
+  $("myTiles").innerHTML = t2.map(function (t) {
+    return '<div class="tile' + (t[3] ? " hl" : "") + '"><div class="lbl">' + t[0] + '</div><div class="val">' + t[1] + '</div><div class="note">' + t[2] + "</div></div>";
+  }).join("");
+  var note = "";
+  if (r.short) note += '<div class="callout warn"><strong>세대수 부족</strong> 조합원 수가 분양 가능 세대보다 많습니다. 용적률이나 평형 구성을 다시 확인하세요 — 이 경우 일부 조합원은 원하는 평형을 받지 못합니다.</div>';
+  if (buy && buy > m.prev) note += '<div class="callout">매수가 ' + f1(buy) + "억 중 감정가를 넘는 <strong>" + f1(buy - m.prev) + "억은 프리미엄</strong>입니다. 프리미엄은 권리가액에 반영되지 않으므로 비례율이 떨어지면 그대로 손실이 됩니다.</div>";
+  if (TYPE === "recon") note += '<div class="callout warn"><strong>재건축초과이익환수</strong> 조합원 1인당 평균 이익이 8,000만원을 넘으면 부담금이 부과됩니다(2024. 3. 완화). 이 계산에는 빠져 있습니다.</div>';
+  $("myNote").innerHTML = note;
+
+  // 민감도
+  var costs = [-10, 0, 10, 20], prices = [-10, 0, 10];
+  var h = '<thead><tr><th>공사비 \\ 일반분양가</th>' + prices.map(function (p) { return '<th class="num">' + (p > 0 ? "+" : "") + p + "%</th>"; }).join("") + "</tr></thead><tbody>";
+  costs.forEach(function (c) {
+    h += "<tr><th>" + (c > 0 ? "+" : "") + c + "% (" + f0(o.cost * (1 + c / 100)) + "만)</th>";
+    prices.forEach(function (p) {
+      var o2 = Object.assign({}, o, { cost: o.cost * (1 + c / 100), genP: o.genP * (1 + p / 100) });
+      var r2 = bizModel(o2);
+      var my2 = myCalc(o2, { prev: m.prev, py: m.py, ratio: r2.ratio });
+      var cls = r2.ratio >= 1.0 ? "heat-good" : r2.ratio >= 0.85 ? "heat-mid" : "heat-bad";
+      h += '<td class="num ' + cls + (c === 0 && p === 0 ? " base" : "") + '">' + f0(r2.ratio * 100) + "%<br><small>" + (my2.burden >= 0 ? "" : "환급 ") + eok(Math.abs(my2.burden)) + "</small></td>";
+    });
+    h += "</tr>";
+  });
+  $("sensTable").innerHTML = h + "</tbody>";
+
+  $("bizResult").classList.remove("hidden");
+  $("bizResult").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+$("b_run").addEventListener("click", runBiz);
+
+/* =========================================================
+   ③ 추진 현황
+   ========================================================= */
+var STAGES = ["후보지 선정(기획 전)", "기획 중", "기획 완료", "정비구역 지정", "조합 설립", "사업시행인가", "관리처분인가", "착공/이주"];
+function renderSummary() {
+  var S = window.SINTONG_SUMMARY || {
+    asOf: "2026. 6.", total: 309,
+    redev: { selected: 176, designated: 78, planned: 24, planning: 44, conditional: 30 },
+    recon: { selected: 133, designated: 57, planned: 29, planning: 47, conditional: 0 }
+  };
+  $("sumAsOf").textContent = "서울시 「신속통합기획 추진 현황」 " + S.asOf + " 기준 · 2021년 도입 이후 누적";
+  var designated = S.redev.designated + S.recon.designated;
+  $("sumTiles").innerHTML = [
+    ["전체 선정", f0(S.total) + "곳", "재개발 " + S.redev.selected + " · 재건축 " + S.recon.selected],
+    ["구역 지정 완료", f0(designated) + "곳", f0(designated / S.total * 100) + "%"],
+    ["기획 중", f0(S.redev.planning + S.recon.planning) + "곳", "기획 완료·지정 추진 " + (S.redev.planned + S.recon.planned) + "곳"]
+  ].map(function (t) { return '<div class="tile"><div class="lbl">' + t[0] + '</div><div class="val">' + t[1] + '</div><div class="note">' + t[2] + "</div></div>"; }).join("");
+  function bar(lbl, d) {
+    var parts = [[d.designated, "s1"], [d.planned, "s2"], [d.planning, "s3"], [d.conditional || 0, "s4"]];
+    return '<div class="hbar"><span class="lbl">' + lbl + '</span><div class="stack">' + parts.filter(function (p) { return p[0] > 0; }).map(function (p) {
+      return '<span class="' + p[1] + '" style="flex:' + p[0] + '" title="' + p[0] + '곳">' + (p[0] / d.selected > 0.08 ? p[0] : "") + "</span>";
+    }).join("") + "</div></div>";
+  }
+  $("sumBars").innerHTML = bar("재개발 " + S.redev.selected, S.redev) + bar("재건축 " + S.recon.selected, S.recon);
+}
+
+function renderSites() {
+  var list = window.SINTONG_SITES || [];
+  var q = $("f_q").value.trim(), gu = $("f_gu").value, ty = $("f_type").value, st = $("f_stage").value;
+  var rows = list.filter(function (s) {
+    return (!q || (s.name + s.gu + (s.note || "")).indexOf(q) >= 0) && (!gu || s.gu === gu) && (!ty || s.type === ty) && (!st || s.stage === st);
+  });
+  rows.sort(function (a, b) { return STAGES.indexOf(b.stage) - STAGES.indexOf(a.stage) || a.gu.localeCompare(b.gu, "ko"); });
+  $("f_count").textContent = list.length ? rows.length + "곳 표시 / 사례 " + list.length + "곳" : "사례 데이터를 불러오지 못했습니다.";
+  $("siteTable").querySelector("tbody").innerHTML = rows.map(function (s) {
+    var si = STAGES.indexOf(s.stage);
+    var b = si >= 4 ? "ok" : si === 3 ? "ok" : si === 2 ? "warn" : "na";
+    return "<tr><td>" + esc(s.gu) + '</td><td class="nm">' + esc(s.name) + "</td><td>" + esc(s.type) + "</td><td>" + badge(b, esc(s.stage)) +
+      '</td><td class="num">' + esc(s.households || "—") + "</td><td>" + esc(s.selected || "") + '</td><td class="note">' + esc(s.note || "") +
+      '</td><td class="src">' + esc(s.source || "") + (s.reliability && s.reliability !== "공식" ? " · " + esc(s.reliability) : "") + "</td></tr>";
+  }).join("");
+}
+function initSites() {
+  var list = window.SINTONG_SITES || [];
+  var gus = {}; list.forEach(function (s) { gus[s.gu] = 1; });
+  Object.keys(gus).sort(function (a, b) { return a.localeCompare(b, "ko"); }).forEach(function (g) { $("f_gu").insertAdjacentHTML("beforeend", "<option>" + esc(g) + "</option>"); });
+  STAGES.forEach(function (s) { $("f_stage").insertAdjacentHTML("beforeend", "<option>" + s + "</option>"); });
+  ["f_q", "f_gu", "f_type", "f_stage"].forEach(function (id) { $(id).addEventListener("input", renderSites); });
+  renderSummary(); renderSites();
+}
+
+/* =========================================================
+   ④ 투자 체크리스트
+   ========================================================= */
+// bad: 위험한 답("yes"/"no"), w: 가중치(3 치명 · 2 높음 · 1 보통), t: 적용 유형
+var QUESTIONS = [
+  { id: "cutoff", t: "both", w: 3, bad: "no", q: "권리산정기준일 이전에 지어졌거나 분할된 물건인가?", d: "기준일 이후 신축·지분 쪼개기 물건은 입주권 없이 현금청산될 수 있습니다. 신통 후보지는 보통 공모 공고일 또는 선정일로 정해집니다.",
+    fix: "구청 고시문에서 권리산정기준일을 확인하고, 건축물대장 사용승인일·토지 분할일과 비교하세요." },
+  { id: "landsize", t: "redev", w: 2, bad: "no", q: "토지만 있다면 면적이 90㎡ 이상인가? (건물 소유자는 '예')", d: "서울 재개발에서 90㎡ 미만 토지만 가진 경우 분양 자격이 제한되고, 30㎡ 미만은 원칙적으로 현금청산입니다.",
+    fix: "토지대장 면적과 조례상 분양 대상 기준을 확인하세요." },
+  { id: "multi", t: "both", w: 2, bad: "yes", q: "같은 구역에 이미 다른 물건을 가진 사람(나·세대원)이 있나?", d: "한 구역에 여러 물건을 가져도 입주권은 원칙적으로 1개입니다. 세대 분리 시점도 따집니다.",
+    fix: "조합원 1인 1분양 원칙과 세대 합가·분리 이력을 확인하세요." },
+  { id: "toheo", t: "both", w: 2, bad: "unk", q: "토지거래허가구역 여부와 실거주 의무를 확인했나?", d: "신통 후보지는 선정 즉시 토지거래허가구역으로 묶입니다. 허가 후 2년 실거주 의무가 있어 갭투자(전세 끼고 매수)가 불가능합니다.",
+    fix: "서울시 토지이용규제 정보서비스에서 허가구역·지정기간을 확인하세요.", invert: true },
+  { id: "transfer", t: "both", w: 3, bad: "yes", q: "조합원 지위 양도 제한 시점이 지났나? (투기과열지구 기준)", d: "투기과열지구에서 재건축은 조합설립인가 후, 재개발은 관리처분인가 후 매수하면 입주권이 아닌 현금청산 대상이 됩니다(예외 요건 있음).",
+    fix: "구역의 조합설립·관리처분인가일과 매도인의 보유·거주 기간 예외 해당 여부를 확인하세요." },
+  { id: "oppose", t: "both", w: 2, bad: "yes", q: "반대 비율이 높거나 비대위(반대 모임)가 활발한가?", d: "반대가 크면 후보지 선정 탈락, 조합설립 지연, 소송으로 수년이 늦어질 수 있습니다.",
+    fix: "동의율 현황, 반대 측 주장(상가·고령 단독주택 등)을 확인하세요." },
+  { id: "rehaul", t: "redev", w: 2, bad: "yes", q: "과거 정비구역이 해제된 이력이 있거나 신축 빌라가 늘고 있나?", d: "해제 이력은 주민 갈등의 신호이고, 신축이 늘면 노후도가 떨어져 요건을 잃을 수 있습니다.",
+    fix: "구청에서 해제 이력과 최근 건축허가 현황을 확인하세요." },
+  { id: "cost", t: "both", w: 2, bad: "yes", q: "공사비 증액·시공사 갈등 소식이 있나?", d: "평당 공사비가 100만원만 올라도 분담금이 수천만원 늘어납니다. ② 탭 민감도 표를 확인하세요.",
+    fix: "조합 총회 자료의 공사비 변경 이력과 물가 연동 조항을 확인하세요." },
+  { id: "loan", t: "both", w: 1, bad: "unk", q: "이주비·중도금·분담금 대출 한도를 확인했나?", d: "규제지역 다주택자는 이주비 대출이 막히거나 줄어듭니다. 분담금은 입주 전 현금 마련이 필요할 수 있습니다.",
+    fix: "보유 주택 수 기준으로 LTV·DSR 한도를 은행에 확인하세요.", invert: true },
+  { id: "rechal", t: "recon", w: 2, bad: "unk", q: "재건축초과이익환수 예상 부담금을 확인했나?", d: "조합원 1인당 평균 이익 8,000만원 초과분에 최대 50% 부담금이 붙습니다. 1주택 장기보유자는 감면됩니다.",
+    fix: "조합이 받은 예정액 통지나 추정치를 확인하세요.", invert: true },
+  { id: "store", t: "both", w: 1, bad: "yes", q: "상가 소유자 비중이 크거나 상가 협의가 안 됐나?", d: "상가 조합원과의 협의 지연은 재건축 단지 지연의 흔한 원인입니다.",
+    fix: "상가 분리 재건축·독립정산 합의 여부를 확인하세요." },
+  { id: "illegal", t: "redev", w: 2, bad: "yes", q: "무허가 건축물이거나 근린생활시설을 주거로 쓰는 물건인가?", d: "무허가(특정 시점 이후)·근생 빌라는 주택으로 인정받지 못해 분양 자격이나 평형이 불리할 수 있습니다.",
+    fix: "건축물대장 용도와 무허가건축물 관리대장 등재 여부를 확인하세요." },
+  { id: "premium", t: "both", w: 1, bad: "yes", q: "매수가가 예상 감정가보다 2배 이상 높은가?", d: "프리미엄이 크면 비례율이 조금만 떨어져도 손실 폭이 큽니다.",
+    fix: "공시가격으로 감정가를 추정해 ② 탭에서 총 투자금을 계산해 보세요." }
+];
+var ANSWERS = {};
+function renderQuestions() {
+  var list = QUESTIONS.filter(function (q) { return q.t === "both" || q.t === TYPE; });
+  $("qList").innerHTML = list.map(function (q) {
+    var opts = q.invert ? [["yes", "예"], ["no", "아니오"], ["unk", "모름"]] : [["yes", "예"], ["no", "아니오"], ["unk", "모름"]];
+    return '<div class="q"><div class="t">' + q.q + "<small>" + q.d + '</small></div><div class="seg" data-q="' + q.id + '">' + opts.map(function (o) {
+      var cls = o[0] === "unk" ? "unk" : (o[0] === q.bad || (q.invert && o[0] === "no")) ? "yes-bad" : "";
+      return '<button type="button" class="' + cls + '" data-v="' + o[0] + '" aria-pressed="' + (ANSWERS[q.id] === o[0]) + '">' + o[1] + "</button>";
+    }).join("") + "</div></div>";
+  }).join("");
+  $("qList").querySelectorAll(".seg").forEach(function (sg) {
+    sg.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      ANSWERS[sg.dataset.q] = b.dataset.v;
+      sg.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); });
+      renderRisk();
+    });
+  });
+  renderRisk();
+}
+function renderRisk() {
+  var list = QUESTIONS.filter(function (q) { return q.t === "both" || q.t === TYPE; });
+  var max = 0, score = 0, answered = 0, items = [];
+  list.forEach(function (q) {
+    max += q.w;
+    var a = ANSWERS[q.id];
+    if (!a) return;
+    answered++;
+    // invert 문항: '예'(확인함)가 안전, '아니오'·'모름'이 위험
+    var risky = q.invert ? (a !== "yes") : (a === q.bad);
+    var unknown = !q.invert && a === "unk";
+    var pts = risky ? q.w : unknown ? q.w * 0.5 : 0;
+    score += pts;
+    if (pts > 0) items.push({ q: q, lvl: risky && q.w >= 2 ? "hi" : "md", unknown: unknown });
+  });
+  if (!answered) {
+    $("riskSummary").innerHTML = '<p class="sub">항목에 답하면 위험도를 계산합니다.</p>';
+    $("riskList").innerHTML = ""; return;
+  }
+  var pct = score / max * 100;
+  var fatal = items.some(function (i) { return i.q.w === 3 && !i.unknown; });
+  var lvl = fatal ? ["치명적 위험 있음", "var(--critical)"] : pct >= 35 ? ["위험 높음", "var(--critical)"] : pct >= 15 ? ["주의", "var(--warning)"] : ["양호", "var(--good)"];
+  $("riskSummary").innerHTML = '<p><strong style="font-size:1.15rem;color:' + lvl[1] + '">' + lvl[0] + "</strong> · 위험 점수 " + f0(pct) + "점 / 100 (" + answered + "/" + list.length + "개 응답)</p>" +
+    '<div class="meter"><span style="width:' + Math.max(2, pct) + "%;background:" + lvl[1] + '"></span></div>' +
+    (fatal ? '<div class="callout warn"><strong>입주권을 받지 못할 수 있는 항목</strong>이 있습니다. 해결되기 전에는 계약하지 마세요.</div>' : "");
+  items.sort(function (a, b) { return b.q.w - a.q.w; });
+  $("riskList").innerHTML = items.map(function (i) {
+    return '<li class="' + i.lvl + '"><b>' + (i.unknown ? "확인 필요 · " : "") + i.q.q + "</b>" + i.q.fix + "</li>";
+  }).join("") || '<li class="md"><b>지금까지 답한 항목에서 위험 신호가 없습니다.</b>남은 항목도 확인하세요.</li>';
+}
+
+/* ---------- 초기화 ---------- */
+(function init() {
+  var t = "redev", tab = "req";
+  try { t = localStorage.getItem("sintong_type") || t; tab = localStorage.getItem("sintong_tab") || tab; } catch (e) {}
+  if (!BIZ_DEFAULT[t]) t = "redev";
+  setType(t);
+  if (TABS.indexOf(tab) >= 0) switchTab(tab);
+  updateDensityHint();
+  initSites();
+})();
+</script>
+</body>
+</html>
